@@ -3,93 +3,109 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Create Mom's Surprise 🌺</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<title>Create Bro's Surprise 🔥</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{--rose:#d4456a;--gold:#c9873a;--cream:#fdf8f2;--deep:#1e0f0a;--muted:#7a5045;--border:rgba(212,69,106,0.15);--card-bg:rgba(255,255,255,0.92);}
-body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--deep);min-height:100vh;overflow-x:hidden;}
+:root{
+  --amber:#d47c2a;
+  --rust:#b84a2e;
+  --cream:#faf4eb;
+  --deep:#1a0f05;
+  --muted:#6b4a2a;
+  --sand:#e8d5b0;
+  --border:rgba(212,124,42,0.18);
+  --card-bg:rgba(255,252,244,0.94);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--deep);min-height:100vh;overflow-x:hidden;}
 .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;}
-.bg-layer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 90% -10%,rgba(212,69,106,0.12) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at -10% 100%,rgba(201,135,58,0.1) 0%,transparent 55%);}
+.bg-layer::before{content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 60% at 90% -10%,rgba(184,74,46,0.13) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at -10% 100%,rgba(212,124,42,0.11) 0%,transparent 55%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") center/180px;
+  opacity:0.03;
+  mix-blend-mode:multiply;
+}
 .petal{position:fixed;pointer-events:none;animation:fall linear infinite;opacity:0;z-index:0;}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:.7;}100%{transform:translateY(110vh) rotate(540deg);opacity:0;}}
 header{position:relative;z-index:2;text-align:center;padding:56px 20px 24px;}
-.mama-badge{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--rose);background:rgba(212,69,106,0.07);border:1px solid rgba(212,69,106,0.2);padding:8px 20px;border-radius:100px;margin-bottom:22px;}
-h1{font-family:'Playfair Display',serif;font-size:clamp(40px,9vw,80px);font-weight:700;line-height:1;letter-spacing:-1px;color:var(--deep);}
-h1 em{font-style:italic;color:var(--rose);}
+.bro-badge{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--amber);background:rgba(212,124,42,0.08);border:1px solid rgba(212,124,42,0.22);padding:8px 20px;border-radius:100px;margin-bottom:22px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(40px,9vw,80px);font-weight:900;line-height:1;letter-spacing:-2px;color:var(--deep);}
+h1 em{font-style:italic;color:var(--amber);}
 .tagline{margin-top:12px;font-size:14px;color:var(--muted);font-weight:300;}
 .wrap{position:relative;z-index:2;max-width:700px;margin:0 auto 100px;padding:0 18px;}
-.card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;padding:38px;margin-bottom:20px;box-shadow:0 8px 40px rgba(212,69,106,0.07);}
-.step-badge{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#e8698a);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(212,69,106,0.3);}
-.card-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px;}
+.card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:20px;padding:38px;margin-bottom:20px;box-shadow:0 8px 40px rgba(212,124,42,0.08);}
+.step-badge{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--amber),#e8993a);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(212,124,42,0.32);}
+.card-title{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:4px;}
 .card-sub{font-size:12px;color:var(--muted);margin-bottom:26px;}
 .lbl{display:block;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-input[type=text],textarea{width:100%;padding:14px 18px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--deep);background:rgba(253,248,242,0.8);border:1.5px solid rgba(212,69,106,0.14);border-radius:14px;outline:none;transition:border-color .2s,box-shadow .2s;resize:none;}
-input[type=text]:focus,textarea:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(212,69,106,0.09);}
+input[type=text],textarea{width:100%;padding:14px 18px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--deep);background:rgba(250,244,235,0.85);border:1.5px solid rgba(212,124,42,0.16);border-radius:12px;outline:none;transition:border-color .2s,box-shadow .2s;resize:none;}
+input[type=text]:focus,textarea:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(212,124,42,0.1);}
 textarea{height:90px;line-height:1.6;}
 .f{margin-bottom:22px;}
 .balloon-list{display:flex;flex-direction:column;gap:14px;margin-bottom:16px;}
-.b-item{background:rgba(253,248,242,0.9);border:1.5px solid rgba(212,69,106,0.12);border-radius:18px;padding:20px;transition:border-color .2s;}
-.b-item:hover{border-color:rgba(212,69,106,0.3);}
+.b-item{background:rgba(250,244,235,0.95);border:1.5px solid rgba(212,124,42,0.13);border-radius:16px;padding:20px;transition:border-color .2s;}
+.b-item:hover{border-color:rgba(212,124,42,0.32);}
 .b-item-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-.b-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#e8698a);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.b-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--amber),#e8993a);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .b-item-title{font-weight:600;font-size:14px;flex:1;}
 .b-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:4px;border-radius:50%;transition:background .2s,color .2s;}
-.b-del:hover{background:rgba(212,69,106,0.1);color:var(--rose);}
+.b-del:hover{background:rgba(212,124,42,0.1);color:var(--amber);}
 .b-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 @media(max-width:500px){.b-row{grid-template-columns:1fr;}}
-.photo-slot{aspect-ratio:1;border:2px dashed rgba(212,69,106,0.25);border-radius:12px;position:relative;overflow:hidden;background:rgba(253,248,242,0.5);transition:border-color .2s;cursor:pointer;}
-.photo-slot:hover{border-color:var(--rose);}
+.photo-slot{aspect-ratio:1;border:2px dashed rgba(212,124,42,0.28);border-radius:12px;position:relative;overflow:hidden;background:rgba(250,244,235,0.6);transition:border-color .2s;cursor:pointer;}
+.photo-slot:hover{border-color:var(--amber);}
 .photo-slot input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:3;}
 .photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:1;}
 .photo-slot.filled img{display:block;}
-.photo-icon{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;color:rgba(212,69,106,0.35);pointer-events:none;}
+.photo-icon{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;color:rgba(212,124,42,0.38);pointer-events:none;}
 .photo-icon small{font-size:10px;color:var(--muted);opacity:.6;margin-top:4px;}
 .photo-slot.filled .photo-icon{display:none;}
-.photo-uploading{position:absolute;inset:0;background:rgba(253,248,242,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:5;font-size:11px;color:var(--muted);}
+.photo-uploading{position:absolute;inset:0;background:rgba(250,244,235,0.88);display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:5;font-size:11px;color:var(--muted);}
 .photo-slot.uploading .photo-uploading{display:flex;}
-.upload-spinner{width:22px;height:22px;border:2px solid rgba(212,69,106,0.2);border-top-color:var(--rose);border-radius:50%;animation:spin .7s linear infinite;}
+.upload-spinner{width:22px;height:22px;border:2px solid rgba(212,124,42,0.22);border-top-color:var(--amber);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .del-x{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.95);border:none;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:4;color:#c0392b;font-weight:700;padding:0;}
 .photo-slot.filled .del-x{display:flex;}
-.add-balloon-btn{width:100%;padding:16px;background:rgba(212,69,106,0.06);border:2px dashed rgba(212,69,106,0.25);border-radius:18px;color:var(--rose);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
-.add-balloon-btn:hover{background:rgba(212,69,106,0.1);border-color:var(--rose);}
-.hint-box{background:rgba(201,135,58,0.08);border:1px solid rgba(201,135,58,0.2);border-radius:14px;padding:16px 20px;margin-bottom:18px;font-size:13px;color:var(--gold);line-height:1.6;}
+.add-balloon-btn{width:100%;padding:16px;background:rgba(212,124,42,0.06);border:2px dashed rgba(212,124,42,0.28);border-radius:16px;color:var(--amber);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.add-balloon-btn:hover{background:rgba(212,124,42,0.12);border-color:var(--amber);}
+.hint-box{background:rgba(184,74,46,0.07);border:1px solid rgba(184,74,46,0.18);border-radius:12px;padding:16px 20px;margin-bottom:18px;font-size:13px;color:var(--rust);line-height:1.6;}
 .hint-box strong{font-weight:600;}
-.price-badge{background:linear-gradient(135deg,rgba(212,69,106,0.08),rgba(212,69,106,0.04));border:1.5px solid rgba(212,69,106,0.2);border-radius:18px;padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.price-badge{background:linear-gradient(135deg,rgba(212,124,42,0.09),rgba(212,124,42,0.04));border:1.5px solid rgba(212,124,42,0.22);border-radius:16px;padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .price-left{display:flex;flex-direction:column;gap:4px;}
 .price-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-.price-amount{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--rose);}
+.price-amount{font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:var(--amber);}
 .price-amount span{font-size:16px;font-weight:400;}
 .price-features{display:flex;flex-direction:column;gap:4px;}
 .price-feat{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
-.price-feat::before{content:'✓';color:var(--rose);font-weight:700;}
-.free-prev-btn{width:100%;padding:16px;background:transparent;border:2px solid rgba(212,69,106,0.25);border-radius:16px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--rose);cursor:pointer;transition:all .2s;margin-bottom:12px;}
-.free-prev-btn:hover{background:rgba(212,69,106,0.06);}
-.pay-btn{width:100%;padding:20px;background:linear-gradient(135deg,var(--rose),#c94d7a);color:#fff;border:none;border-radius:16px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 32px rgba(212,69,106,0.35);transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;}
-.pay-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(212,69,106,0.45);}
+.price-feat::before{content:'✓';color:var(--amber);font-weight:700;}
+.free-prev-btn{width:100%;padding:16px;background:transparent;border:2px solid rgba(212,124,42,0.28);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--amber);cursor:pointer;transition:all .2s;margin-bottom:12px;}
+.free-prev-btn:hover{background:rgba(212,124,42,0.07);}
+.pay-btn{width:100%;padding:20px;background:linear-gradient(135deg,var(--amber),#c8691a);color:#fff;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 32px rgba(212,124,42,0.38);transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.pay-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(212,124,42,0.5);}
 .pay-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
 .err{display:none;background:rgba(255,80,80,0.07);border:1.5px solid rgba(255,80,80,0.18);border-radius:12px;padding:12px 16px;color:#c0392b;font-size:13px;margin-bottom:14px;}
-.result{display:none;background:var(--card-bg);border:1px solid var(--border);border-radius:24px;padding:40px;text-align:center;box-shadow:0 8px 40px rgba(212,69,106,0.1);margin-top:20px;}
+.result{display:none;background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:40px;text-align:center;box-shadow:0 8px 40px rgba(212,124,42,0.1);margin-top:20px;}
 .result-icon{font-size:56px;margin-bottom:16px;}
-.result h3{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;margin-bottom:8px;}
+.result h3{font-family:'Fraunces',serif;font-size:30px;font-weight:900;margin-bottom:8px;}
 .result p{color:var(--muted);font-size:13px;margin-bottom:24px;}
-.link-box{display:flex;gap:8px;align-items:center;background:rgba(212,69,106,0.05);border:1.5px solid rgba(212,69,106,0.14);border-radius:12px;padding:12px 16px;margin-bottom:16px;}
-.copy-btn{background:var(--rose);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;}
-.open-btn{display:inline-block;padding:15px 36px;background:linear-gradient(135deg,var(--rose),#c94d7a);color:#fff;border-radius:100px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 24px rgba(212,69,106,0.35);margin-bottom:12px;}
-.reset-btn{background:transparent;color:var(--muted);border:1.5px solid rgba(212,69,106,0.18);border-radius:12px;padding:12px 24px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;margin-top:6px;display:block;width:100%;}
-.paid-banner{background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.05));border:1.5px solid rgba(34,197,94,0.3);border-radius:16px;padding:16px 20px;margin-bottom:20px;display:none;align-items:center;gap:12px;font-size:13px;color:#166534;}
+.link-box{display:flex;gap:8px;align-items:center;background:rgba(212,124,42,0.06);border:1.5px solid rgba(212,124,42,0.16);border-radius:12px;padding:12px 16px;margin-bottom:16px;}
+.copy-btn{background:var(--amber);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.open-btn{display:inline-block;padding:15px 36px;background:linear-gradient(135deg,var(--amber),#c8691a);color:#fff;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 24px rgba(212,124,42,0.38);margin-bottom:12px;}
+.reset-btn{background:transparent;color:var(--muted);border:1.5px solid rgba(212,124,42,0.2);border-radius:12px;padding:12px 24px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-top:6px;display:block;width:100%;}
+.paid-banner{background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.05));border:1.5px solid rgba(34,197,94,0.3);border-radius:14px;padding:16px 20px;margin-bottom:20px;display:none;align-items:center;gap:12px;font-size:13px;color:#166534;}
 .paid-banner.show{display:flex;}
 .paid-banner strong{font-weight:600;}
-.loading-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(253,248,242,0.95);backdrop-filter:blur(10px);flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+.loading-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(250,244,235,0.95);backdrop-filter:blur(10px);flex-direction:column;align-items:center;justify-content:center;gap:20px;}
 .loading-overlay.show{display:flex;}
-.loading-orb{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#e8698a);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 12px 40px rgba(212,69,106,0.4);animation:pulse 1.5s ease-in-out infinite;}
+.loading-orb{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--amber),#e8993a);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 12px 40px rgba(212,124,42,0.42);animation:pulse 1.5s ease-in-out infinite;}
 @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
-.loading-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--deep);}
+.loading-title{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--deep);}
 .loading-sub{font-size:13px;color:var(--muted);}
 .loading-dots{display:flex;gap:6px;}
-.loading-dots span{width:8px;height:8px;border-radius:50%;background:var(--rose);animation:dot 1.2s ease-in-out infinite;}
+.loading-dots span{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:dot 1.2s ease-in-out infinite;}
 .loading-dots span:nth-child(2){animation-delay:.2s;}
 .loading-dots span:nth-child(3){animation-delay:.4s;}
 @keyframes dot{0%,80%,100%{transform:scale(0);opacity:.3;}40%{transform:scale(1);opacity:1;}}
@@ -100,36 +116,36 @@ textarea{height:90px;line-height:1.6;}
 <div id="petals"></div>
 
 <div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-orb">🌺</div>
+  <div class="loading-orb">🔥</div>
   <div class="loading-title" id="loadingTitle">Creating your surprise…</div>
   <div class="loading-sub" id="loadingSub">Uploading photos with love</div>
   <div class="loading-dots"><span></span><span></span><span></span></div>
 </div>
 
 <header>
-  <div class="mama-badge">🌺 Mother's Day · May 2026</div>
-  <h1>Surprise <em>Mom</em></h1>
+  <div class="bro-badge">🤜 Brothers Day · August 2026</div>
+  <h1>Surprise <em>Bro</em></h1>
   <p class="tagline">Pop-the-balloon cards · a personal message · made with love</p>
 </header>
 
 <div class="wrap">
   <div class="paid-banner" id="paidBanner">
     <span style="font-size:24px;">✅</span>
-    <div><strong>Payment successful!</strong> Here is your permanent surprise link 💕</div>
+    <div><strong>Payment successful!</strong> Here is your permanent surprise link 🔥</div>
   </div>
 
   <div class="card">
     <div class="step-badge">1</div>
-    <div class="card-title">About her</div>
+    <div class="card-title">About him</div>
     <div class="card-sub">The basics that make it personal</div>
-    <div class="f"><label class="lbl">Her Name *</label><input type="text" id="herName" placeholder="Mom, Maa, Amma, Ummi…"/></div>
+    <div class="f"><label class="lbl">His Name *</label><input type="text" id="herName" placeholder="Bhai, Bro, Anna, Dada…"/></div>
     <div class="f"><label class="lbl">Your Name</label><input type="text" id="yourName" placeholder="Who is this from?"/></div>
   </div>
 
   <div class="card">
     <div class="step-badge">2</div>
     <div class="card-title">Balloon Cards 🎈</div>
-    <div class="card-sub">Each balloon she pops reveals a polaroid — add a photo &amp; sweet message for each</div>
+    <div class="card-sub">Each balloon he pops reveals a polaroid — add a photo &amp; message for each</div>
     <div class="balloon-list" id="balloonList"></div>
     <button class="add-balloon-btn" onclick="addBalloon()">+ Add another balloon card</button>
   </div>
@@ -137,14 +153,14 @@ textarea{height:90px;line-height:1.6;}
   <div class="card">
     <div class="step-badge">3</div>
     <div class="card-title">Final Message 💌</div>
-    <div class="card-sub">The heartfelt note she reads at the end — leave blank for a beautiful default</div>
+    <div class="card-sub">The heartfelt note he reads at the end — leave blank for a beautiful default</div>
     <div class="f"><label class="lbl">Your Message</label>
       <textarea id="msg" placeholder="Leave blank and a beautiful message will be written for you…"></textarea>
     </div>
   </div>
 
   <div class="hint-box">
-    <strong>📸 Full quality photos</strong> — Photos are stored safely in the cloud. Your link works on any phone or device 🌺
+    <strong>📸 Full quality photos</strong> — Photos are stored safely in the cloud. Your link works on any phone or device 🔥
   </div>
 
   <div class="price-badge">
@@ -162,18 +178,18 @@ textarea{height:90px;line-height:1.6;}
 
   <div class="err" id="errBox"></div>
   <button class="free-prev-btn" onclick="doPreview()">👁 Preview First (Free · 30s)</button>
-  <button class="pay-btn" id="payBtn" onclick="doPay()">🌺 &nbsp; Get Her Surprise Link — ₹59</button>
+  <button class="pay-btn" id="payBtn" onclick="doPay()">🔥 &nbsp; Get His Surprise Link — ₹59</button>
 
   <div class="result" id="resultBox">
-    <div class="result-icon">🌺</div>
-    <h3>Send it to Mom!</h3>
-    <p>Copy this link and send it — works on any phone 💕</p>
+    <div class="result-icon">🤜🤛</div>
+    <h3>Send it to Bro!</h3>
+    <p>Copy this link and send it — works on any phone 🔥</p>
     <div class="link-box">
-      <a id="openLinkInline" href="#" target="_blank" rel="noopener" style="flex:1;font-size:12px;color:var(--rose);word-break:break-all;text-decoration:underline;">—</a>
+      <a id="openLinkInline" href="#" target="_blank" rel="noopener" style="flex:1;font-size:12px;color:var(--amber);word-break:break-all;text-decoration:underline;">—</a>
       <button class="copy-btn" id="copyBtn" onclick="copyIt()">Copy Link</button>
     </div>
     <a id="openLink" class="open-btn" href="#" target="_blank" rel="noopener">Open &amp; Preview →</a>
-    <a id="waLink" href="#" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border:none;border-radius:16px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:12px;">📲 Share via WhatsApp</a>
+    <a id="waLink" href="#" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:12px;">📲 Share via WhatsApp</a>
     <button class="reset-btn" onclick="resetAll()">Make another ↩</button>
   </div>
 </div>
@@ -183,11 +199,10 @@ var SUPA_URL = 'https://otyzaidfjkryynciuqhp.supabase.co';
 var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90eXphaWRmamtyeXluY2l1cWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTgxMTgsImV4cCI6MjA5MzkzNDExOH0.VEBjtoA3w182b4FtGUEBwb0ssKIhaFUBcNTtzJAgKIw';
 var RZP_KEY = 'rzp_live_SmizRaPApu81ZS';
 var SITE_URL = 'https://luminaa-f37.pages.dev/';
-var BUCKET = 'photos'; // your Supabase storage bucket name
+var BUCKET = 'photos';
 
-// ── Petals ──
 (function(){
-  var e=['🌸','🌺','🌼','🍀','🌹'], w=document.getElementById('petals');
+  var e=['🔥','⚡','🏆','🎯','💪'], w=document.getElementById('petals');
   for(var i=0;i<14;i++){
     var d=document.createElement('div'); d.className='petal';
     d.textContent=e[i%e.length];
@@ -197,79 +212,39 @@ var BUCKET = 'photos'; // your Supabase storage bucket name
 })();
 
 var balloons=[], bCount=0;
-var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🩷'];
+var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🟤'];
 
-// ── Compress image before upload ──
 function compress(dataURL, maxPx, q) {
   return new Promise(function(res) {
     var img = new Image();
-
     img.onload = function() {
       var w = img.width, h = img.height;
-
-      if (w > h) {
-        if (w > maxPx) {
-          h = Math.round(h * maxPx / w);
-          w = maxPx;
-        }
-      } else {
-        if (h > maxPx) {
-          w = Math.round(w * maxPx / h);
-          h = maxPx;
-        }
-      }
-
-      var c = document.createElement('canvas');
-
-      c.width = w;
-      c.height = h;
-
-      var ctx = c.getContext('2d');
-
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-
-      ctx.drawImage(img, 0, 0, w, h);
-
-      res(c.toDataURL('image/webp', q));
+      if (w > h) { if (w > maxPx) { h = Math.round(h * maxPx / w); w = maxPx; } }
+      else { if (h > maxPx) { w = Math.round(w * maxPx / h); h = maxPx; } }
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, w, h); res(c.toDataURL('image/webp', q));
     };
-
     img.src = dataURL;
   });
 }
 
-// ── Upload to Supabase Storage, returns public URL ──
 async function uploadToStorage(dataURL, idx) {
-  // Convert base64 to blob
-  var res = await fetch(dataURL);
-  var blob = await res.blob();
+  var res = await fetch(dataURL); var blob = await res.blob();
   var fileName = 'balloon-' + Date.now() + '-' + idx + '.webp';
-
   var uploadRes = await fetch(SUPA_URL + '/storage/v1/object/' + BUCKET + '/' + fileName, {
     method: 'POST',
-    headers: {
-      'apikey': SUPA_KEY,
-      'Authorization': 'Bearer ' + SUPA_KEY,
-      'Content-Type': 'image/webp',
-      'x-upsert': 'true'
-    },
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': 'image/webp', 'x-upsert': 'true' },
     body: blob
   });
-
-  if (!uploadRes.ok) {
-    var err = await uploadRes.text();
-    throw new Error('Photo upload failed: ' + err);
-  }
-
+  if (!uploadRes.ok) { var err = await uploadRes.text(); throw new Error('Photo upload failed: ' + err); }
   return SUPA_URL + '/storage/v1/object/public/' + BUCKET + '/' + fileName;
 }
 
-// ── Add balloon ──
 function addBalloon() {
   var idx = bCount++;
   balloons.push({ msg: '', photoUrl: null });
-  var item = document.createElement('div');
-  item.className = 'b-item'; item.id = 'bi' + idx;
+  var item = document.createElement('div'); item.className = 'b-item'; item.id = 'bi' + idx;
   item.innerHTML =
     '<div class="b-item-header">' +
       '<div class="b-num">' + (idx+1) + '</div>' +
@@ -289,89 +264,64 @@ function addBalloon() {
       '</div>' +
       '<div style="display:flex;flex-direction:column;">' +
         '<label class="lbl">Message *</label>' +
-        '<textarea id="bm' + idx + '" placeholder="e.g. You are my sunshine ☀️" style="flex:1;min-height:80px;" oninput="updateMsg(' + idx + ',this.value)"></textarea>' +
+        '<textarea id="bm' + idx + '" placeholder="e.g. Always got your back bro 💪" style="flex:1;min-height:80px;" oninput="updateMsg(' + idx + ',this.value)"></textarea>' +
       '</div>' +
     '</div>';
   document.getElementById('balloonList').appendChild(item);
 }
 
 function removeBalloon(idx) {
-  var el = document.getElementById('bi' + idx);
-  if(el) el.remove();
+  var el = document.getElementById('bi' + idx); if(el) el.remove();
   if(balloons[idx]) balloons[idx] = null;
 }
 
-// ── Load, compress, upload photo immediately ──
 function loadPic(idx, inp) {
   if(!inp.files || !inp.files[0]) return;
-  var slot = document.getElementById('ps' + idx);
-  slot.classList.add('uploading');
-
+  var slot = document.getElementById('ps' + idx); slot.classList.add('uploading');
   var r = new FileReader();
   r.onload = async function(e) {
     try {
-      // Compress hard — 600px, webp 0.72 quality
       var compressed = await compress(e.target.result, 600, 0.70);
-      // Upload to storage
       var url = await uploadToStorage(compressed, idx);
       balloons[idx].photoUrl = url;
       document.getElementById('pi' + idx).src = url;
-      slot.classList.remove('uploading');
-      slot.classList.add('filled');
-    } catch(err) {
-      slot.classList.remove('uploading');
-      showErr('Photo upload failed. Check your internet and try again.');
-      console.error(err);
-    }
+      slot.classList.remove('uploading'); slot.classList.add('filled');
+    } catch(err) { slot.classList.remove('uploading'); showErr('Photo upload failed. Check your internet and try again.'); console.error(err); }
   };
   r.readAsDataURL(inp.files[0]);
 }
 
 function removePic(idx, e) {
-  e.stopPropagation();
-  balloons[idx].photoUrl = null;
+  e.stopPropagation(); balloons[idx].photoUrl = null;
   document.getElementById('pi' + idx).src = '';
   document.getElementById('ps' + idx).classList.remove('filled');
-  var inp = document.querySelector('#ps' + idx + ' input[type=file]');
-  if(inp) inp.value = '';
+  var inp = document.querySelector('#ps' + idx + ' input[type=file]'); if(inp) inp.value = '';
 }
 
-function updateMsg(idx, val) {
-  if(balloons[idx]) balloons[idx].msg = val;
-}
+function updateMsg(idx, val) { if(balloons[idx]) balloons[idx].msg = val; }
 
-// Start with 3 balloons
 addBalloon(); addBalloon(); addBalloon();
 
-// ── Gather data — now stores URLs not base64 ──
 function gatherData() {
   var herName = document.getElementById('herName').value.trim();
   var yourName = document.getElementById('yourName').value.trim();
   var msg = document.getElementById('msg').value.trim();
-  if(!herName) { showErr('Please enter her name 🌺'); return null; }
+  if(!herName) { showErr('Please enter his name 🔥'); return null; }
   var active = balloons.filter(function(b){ return b && b.msg.trim(); });
   if(!active.length) { showErr('Add at least one balloon message 🎈'); return null; }
-  // Check if any photos are still uploading
   var uploading = document.querySelectorAll('.photo-slot.uploading');
   if(uploading.length) { showErr('Please wait for photos to finish uploading 📸'); return null; }
   return { n: herName, f: yourName, m: msg, b: active };
 }
 
-// ── Save to Supabase — lean payload, only URLs not base64 ──
 async function saveToSupabase(payload) {
   var res = await fetch(SUPA_URL + '/rest/v1/mday', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPA_KEY,
-      'Authorization': 'Bearer ' + SUPA_KEY,
-      'Prefer': 'return=representation'
-    },
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Prefer': 'return=representation' },
     body: JSON.stringify({ data: JSON.stringify(payload) })
   });
   if(!res.ok) throw new Error(await res.text());
-  var j = await res.json();
-  return j[0].id;
+  var j = await res.json(); return j[0].id;
 }
 
 function viewURL(id) { return SITE_URL + 'view.html?id=' + id; }
@@ -380,31 +330,21 @@ async function doPreview() {
   var d = gatherData(); if(!d) return;
   d.isPreview = true;
   try {
-    // Encode data directly in URL — no Supabase write
     var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(d))));
     var url = SITE_URL + 'view.html?preview=' + encoded;
-    var a = document.createElement('a');
-    a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    var a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   } catch(e) { showErr('Failed: ' + e.message); }
 }
 
 async function doPay() {
   var d = gatherData(); if (!d) return;
-
-  // No isPreview flag needed — previews never reach this function anymore
-  showLoading('Saving your surprise…', 'Almost there 🌺');
-
+  showLoading('Saving your surprise…', 'Almost there 🔥');
   try {
-    var id = await saveToSupabase(d);
-    hideLoading();
-
+    var id = await saveToSupabase(d); hideLoading();
     var options = {
-      key: RZP_KEY,
-      amount: 5900,
-      currency: 'INR',
-      name: 'Lumina',
-      description: "Mother's Day Surprise Link 🌺",
+      key: RZP_KEY, amount: 5900, currency: 'INR', name: 'Lumina',
+      description: "Brothers Day Surprise Link 🔥",
       image: 'https://luminaa-f37.pages.dev/favicon.ico',
       handler: function (response) {
         document.getElementById('paidBanner').classList.add('show');
@@ -412,57 +352,35 @@ async function doPay() {
         document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
       },
       prefill: { name: '', email: '', contact: '' },
-      theme: { color: '#d4456a' },
+      theme: { color: '#d47c2a' },
       modal: { ondismiss: function () {} }
     };
-
     var rzp = new Razorpay(options);
-    rzp.on('payment.failed', function (response) {
-      showErr('Payment failed: ' + response.error.description);
-    });
+    rzp.on('payment.failed', function (response) { showErr('Payment failed: ' + response.error.description); });
     rzp.open();
-
-  } catch (e) {
-    hideLoading();
-    showErr('Failed to save: ' + e.message);
-  }
+  } catch (e) { hideLoading(); showErr('Failed to save: ' + e.message); }
 }
 
 function showResult(id) {
-  var url = viewURL(id);
-  window._url = url;
-  document.getElementById('openLinkInline').href = url;
-  document.getElementById('openLinkInline').textContent = url;
+  var url = viewURL(id); window._url = url;
+  document.getElementById('openLinkInline').href = url; document.getElementById('openLinkInline').textContent = url;
   document.getElementById('openLink').href = url;
-  document.getElementById('waLink').href = 'https://wa.me/?text=' + encodeURIComponent("🌺 Happy Mother's Day! Open your surprise 💕 " + url);
-  var box = document.getElementById('resultBox');
-  box.style.display = 'block';
+  document.getElementById('waLink').href = 'https://wa.me/?text=' + encodeURIComponent("🔥 Happy Brothers Day! Open your surprise 🤜🤛 " + url);
+  var box = document.getElementById('resultBox'); box.style.display = 'block';
   box.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-function showLoading(t, s) {
-  document.getElementById('loadingTitle').textContent = t;
-  document.getElementById('loadingSub').textContent = s;
-  document.getElementById('loadingOverlay').classList.add('show');
-}
+function showLoading(t, s) { document.getElementById('loadingTitle').textContent = t; document.getElementById('loadingSub').textContent = s; document.getElementById('loadingOverlay').classList.add('show'); }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
-function showErr(m) {
-  var b = document.getElementById('errBox');
-  b.textContent = '⚠️ ' + m; b.style.display = 'block';
-  setTimeout(function(){ b.style.display = 'none'; }, 9000);
-}
+function showErr(m) { var b = document.getElementById('errBox'); b.textContent = '⚠️ ' + m; b.style.display = 'block'; setTimeout(function(){ b.style.display = 'none'; }, 9000); }
 
 function copyIt() {
   var url = window._url || document.getElementById('openLink').href;
   var btn = document.getElementById('copyBtn');
   if(navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(url).then(function(){
-      btn.textContent = 'Copied ✓';
-      setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2500);
-    });
+    navigator.clipboard.writeText(url).then(function(){ btn.textContent = 'Copied ✓'; setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2500); });
   } else {
-    var ta = document.createElement('textarea'); ta.value = url;
-    ta.style.cssText = 'position:fixed;opacity:0;'; document.body.appendChild(ta);
+    var ta = document.createElement('textarea'); ta.value = url; ta.style.cssText = 'position:fixed;opacity:0;'; document.body.appendChild(ta);
     ta.focus(); ta.select();
     try { document.execCommand('copy'); btn.textContent = 'Copied ✓'; setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2500); } catch(e){}
     document.body.removeChild(ta);
@@ -470,49 +388,32 @@ function copyIt() {
 }
 
 function resetAll() {
-  document.getElementById('herName').value = '';
-  document.getElementById('yourName').value = '';
-  document.getElementById('msg').value = '';
-  document.getElementById('balloonList').innerHTML = '';
-  document.getElementById('resultBox').style.display = 'none';
+  document.getElementById('herName').value = ''; document.getElementById('yourName').value = ''; document.getElementById('msg').value = '';
+  document.getElementById('balloonList').innerHTML = ''; document.getElementById('resultBox').style.display = 'none';
   document.getElementById('paidBanner').classList.remove('show');
-  balloons = []; bCount = 0;
-  addBalloon(); addBalloon(); addBalloon();
+  balloons = []; bCount = 0; addBalloon(); addBalloon(); addBalloon();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── Pre-fill form from ?prefill=id ──
 window.addEventListener('load', function() {
   var prefillId = new URLSearchParams(window.location.search).get('prefill');
-  if(prefillId) {
-    window.history.replaceState({}, '', window.location.pathname);
-    prefillForm(prefillId);
-  }
+  if(prefillId) { window.history.replaceState({}, '', window.location.pathname); prefillForm(prefillId); }
 });
 
 async function prefillForm(id) {
   try {
-    var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id + '&select=data', {
-      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
-    });
-    var j = await res.json();
-    if(!j || !j[0] || !j[0].data) return;
+    var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id + '&select=data', { headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY } });
+    var j = await res.json(); if(!j || !j[0] || !j[0].data) return;
     var d = JSON.parse(j[0].data);
     if(d.n) document.getElementById('herName').value = d.n;
     if(d.f) document.getElementById('yourName').value = d.f;
     if(d.m) document.getElementById('msg').value = d.m;
     if(d.b && d.b.length) {
-      document.getElementById('balloonList').innerHTML = '';
-      balloons = []; bCount = 0;
+      document.getElementById('balloonList').innerHTML = ''; balloons = []; bCount = 0;
       d.b.forEach(function(b, i) {
         addBalloon();
         if(b.msg) { balloons[i].msg = b.msg; var ta = document.getElementById('bm'+i); if(ta) ta.value = b.msg; }
-        // Photos come back as URLs now — just show them
-        if(b.photoUrl) {
-          balloons[i].photoUrl = b.photoUrl;
-          document.getElementById('pi'+i).src = b.photoUrl;
-          document.getElementById('ps'+i).classList.add('filled');
-        }
+        if(b.photoUrl) { balloons[i].photoUrl = b.photoUrl; document.getElementById('pi'+i).src = b.photoUrl; document.getElementById('ps'+i).classList.add('filled'); }
       });
     }
   } catch(e) { console.error('prefill failed', e); }
