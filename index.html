@@ -72,6 +72,11 @@ textarea{height:90px;line-height:1.6;}
 .add-balloon-btn:hover{background:rgba(212,124,42,0.12);border-color:var(--amber);}
 .hint-box{background:rgba(184,74,46,0.07);border:1px solid rgba(184,74,46,0.18);border-radius:12px;padding:16px 20px;margin-bottom:18px;font-size:13px;color:var(--rust);line-height:1.6;}
 .hint-box strong{font-weight:600;}
+
+/* Preview quality note */
+.quality-note{background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.22);border-radius:12px;padding:14px 18px;margin-bottom:18px;font-size:12px;color:#166534;display:flex;align-items:flex-start;gap:10px;line-height:1.6;}
+.quality-note .qn-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+
 .price-badge{background:linear-gradient(135deg,rgba(212,124,42,0.09),rgba(212,124,42,0.04));border:1.5px solid rgba(212,124,42,0.22);border-radius:16px;padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .price-left{display:flex;flex-direction:column;gap:4px;}
 .price-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
@@ -108,8 +113,12 @@ textarea{height:90px;line-height:1.6;}
 .loading-dots span:nth-child(2){animation-delay:.2s;}
 .loading-dots span:nth-child(3){animation-delay:.4s;}
 @keyframes dot{0%,80%,100%{transform:scale(0);opacity:.3;}40%{transform:scale(1);opacity:1;}}
+
+/* Webhook pending notice */
 .webhook-note{background:rgba(212,124,42,0.06);border:1px solid rgba(212,124,42,0.18);border-radius:12px;padding:12px 16px;margin-top:12px;font-size:12px;color:var(--muted);text-align:center;line-height:1.6;display:none;}
 .webhook-note.show{display:block;}
+
+/* ── Coupon system ── */
 .coupon-wrap{margin-bottom:16px;}
 .coupon-row{display:flex;gap:8px;}
 .coupon-row input[type=text]{flex:1;padding:13px 16px;font-size:13px;}
@@ -168,8 +177,10 @@ textarea{height:90px;line-height:1.6;}
     </div>
   </div>
 
+  
+
   <div class="hint-box">
-    <strong>🔒 Permanent link</strong> — After payment, your link works forever on any phone.
+    <strong>🔒 Permanent link</strong> — After payment, your link works forever on any phone. We also send you a backup via webhook so you never lose it.
   </div>
 
   <div class="price-badge">
@@ -185,6 +196,7 @@ textarea{height:90px;line-height:1.6;}
     </div>
   </div>
 
+  <!-- ── Coupon ── -->
   <div class="coupon-wrap">
     <label class="lbl">Have a coupon?</label>
     <div class="coupon-row">
@@ -268,7 +280,7 @@ function compress(dataURL, maxPx, quality) {
   });
 }
 
-// ─── dataURL → blob ───────────────────────────────────────────────────────────
+// ─── dataURL → blob WITHOUT fetch() ──────────────────────────────────────────
 function dataURLtoBlob(dataURL) {
   var parts = dataURL.split(',');
   var mime = parts[0].match(/:(.*?);/)[1];
@@ -326,6 +338,7 @@ function addBalloon() {
       '</div>' +
     '</div>';
   document.getElementById('balloonList').appendChild(item);
+  // attach listener properly — no oninput in HTML string
   document.getElementById('bm' + idx).addEventListener('input', function(e) {
     if (balloons[idx]) balloons[idx].msg = e.target.value;
   });
@@ -372,22 +385,18 @@ function removePic(idx, e) {
 
 addBalloon(); addBalloon(); addBalloon();
 
-// ─── Read balloon data fresh from DOM ────────────────────────────────────────
+// ─── Read ALL balloon data fresh from DOM at submit time ──────────────────────
 function getActiveBalloons() {
   var active = [];
   for (var i = 0; i < bCount; i++) {
-    if (!balloons[i]) continue;
+    if (!balloons[i]) continue; // removed
     var ta = document.getElementById('bm' + i);
     var msg = ta ? ta.value.trim() : balloons[i].msg.trim();
+    // sync back
     if (balloons[i]) balloons[i].msg = msg;
-    if (msg || balloons[i].photoB64Preview || balloons[i].photoUrl) {
-      active.push({
-        idx: i,
-        msg: msg,
-        photoB64Preview: balloons[i].photoB64Preview,
-        photoB64Paid: balloons[i].photoB64Paid,
-        existingPhotoUrl: balloons[i].photoUrl  // already uploaded, reuse on pay
-      });
+    // include if has message OR photo
+    if (msg || balloons[i].photoB64Preview) {
+      active.push({ idx: i, msg: msg, photoB64Preview: balloons[i].photoB64Preview, photoB64Paid: balloons[i].photoB64Paid });
     }
   }
   return active;
@@ -404,36 +413,43 @@ async function doPreview() {
   if(!herName) { showErr('Please enter his name 🔥'); return; }
 
   var active = getActiveBalloons();
+  console.log('Active balloons for preview:', active.length, active);
   if(!active.length) { showErr('Add at least one balloon message 🎈'); return; }
 
   showLoading('Building your preview…', 'Saving data…');
   try {
+    // Save with empty photoUrls first
     var balloonPayload = active.map(function(b){ return { msg: b.msg, photoUrl: null }; });
     var payload = { n: herName, f: yourName, m: msg, b: balloonPayload };
     var id = await saveToSupabase(payload);
+    console.log('Saved to Supabase, id:', id);
 
+    // Upload photos
     for(var i = 0; i < active.length; i++) {
       if(active[i].photoB64Preview) {
         document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + active.length + '…';
+        console.log('Uploading photo', i+1, 'size:', active[i].photoB64Preview.length);
         try {
           payload.b[i].photoUrl = await uploadToStorage(active[i].photoB64Preview, i);
+          console.log('Uploaded photo', i+1, '→', payload.b[i].photoUrl);
         } catch(ue) {
           console.error('Photo', i+1, 'upload failed:', ue);
         }
-      } else if(active[i].existingPhotoUrl) {
-        payload.b[i].photoUrl = active[i].existingPhotoUrl;
       }
     }
 
-    await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
+    // Patch with photo URLs
+    var patchRes = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY },
       body: JSON.stringify({ data: JSON.stringify(payload) })
     });
+    console.log('Patch status:', patchRes.status);
 
     hideLoading();
-    // Navigate same tab — user comes back via goHome() with prefill
-    window.location.href = SITE_URL + 'view.html?id=' + id + '&preview=true';
+    var url = SITE_URL + 'view.html?id=' + id + '&preview=true';
+    console.log('Opening preview:', url);
+    window.location.href = url;
   } catch(e) {
     hideLoading();
     showErr('Preview failed: ' + e.message);
@@ -455,6 +471,7 @@ async function saveToSupabase(payload) {
   });
   if(!res.ok) throw new Error(await res.text());
   var j = await res.json();
+  console.log('saveToSupabase response:', j);
   return j[0].id;
 }
 
@@ -504,12 +521,8 @@ async function doPay() {
         try {
           for(var i = 0; i < active.length; i++) {
             if(active[i].photoB64Paid) {
-              // Fresh photo — upload it
               document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + active.length + '…';
               payload.b[i].photoUrl = await uploadToStorage(active[i].photoB64Paid, i);
-            } else if(active[i].existingPhotoUrl) {
-              // Already uploaded during preview — reuse URL directly
-              payload.b[i].photoUrl = active[i].existingPhotoUrl;
             }
           }
           await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
@@ -621,57 +634,36 @@ function resetAll() {
   }
 })();
 
-// ─── Prefill from preview return ──────────────────────────────────────────────
+// ─── Prefill ──────────────────────────────────────────────────────────────────
 window.addEventListener('load', function() {
   var prefillId = new URLSearchParams(window.location.search).get('prefill');
-  if (prefillId) {
-    window.history.replaceState({}, '', window.location.pathname);
-    // Clear the 3 default balloons before prefilling
-    document.getElementById('balloonList').innerHTML = '';
-    balloons = []; bCount = 0;
-    prefillForm(prefillId);
-  }
+  if(prefillId) { window.history.replaceState({}, '', window.location.pathname); prefillForm(prefillId); }
 });
 
 async function prefillForm(id) {
   try {
-    showLoading('Loading your data…', 'Getting everything back 🔥');
     var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id + '&select=data', {
       headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
     });
-    var j = await res.json();
-    hideLoading();
-    if (!j || !j[0] || !j[0].data) {
-      addBalloon(); addBalloon(); addBalloon(); return;
-    }
+    var j = await res.json(); if(!j || !j[0] || !j[0].data) return;
     var d = JSON.parse(j[0].data);
-    if (d.n) document.getElementById('herName').value = d.n;
-    if (d.f) document.getElementById('yourName').value = d.f;
-    if (d.m) document.getElementById('msg').value = d.m;
-    if (d.b && d.b.length) {
+    if(d.n) document.getElementById('herName').value = d.n;
+    if(d.f) document.getElementById('yourName').value = d.f;
+    if(d.m) document.getElementById('msg').value = d.m;
+    if(d.b && d.b.length) {
+      document.getElementById('balloonList').innerHTML = ''; balloons = []; bCount = 0;
       d.b.forEach(function(b, i) {
         addBalloon();
-        if (b.msg) {
-          balloons[i].msg = b.msg;
-          var ta = document.getElementById('bm' + i);
-          if (ta) ta.value = b.msg;
-        }
-        if (b.photoUrl) {
-          balloons[i].photoUrl = b.photoUrl;        // reused on pay
-          balloons[i].photoB64Preview = b.photoUrl; // so getActiveBalloons includes it
-          balloons[i].photoB64Paid = null;           // no raw file — will reuse URL
-          document.getElementById('pi' + i).src = b.photoUrl;
-          document.getElementById('ps' + i).classList.add('filled');
+        if(b.msg) { balloons[i].msg = b.msg; var ta = document.getElementById('bm'+i); if(ta) ta.value = b.msg; }
+        if(b.photoUrl) {
+          balloons[i].photoUrl = b.photoUrl;
+          balloons[i].photoB64Preview = b.photoUrl;
+          document.getElementById('pi'+i).src = b.photoUrl;
+          document.getElementById('ps'+i).classList.add('filled');
         }
       });
-    } else {
-      addBalloon(); addBalloon(); addBalloon();
     }
-  } catch(e) {
-    hideLoading();
-    console.error('prefill failed', e);
-    addBalloon(); addBalloon(); addBalloon();
-  }
+  } catch(e) { console.error('prefill failed', e); }
 }
 </script>
 </body>
