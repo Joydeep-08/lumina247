@@ -6,18 +6,38 @@
 <title>Happy Brothers Day 🔥</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,900;1,300;1,400;1,600&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet"/>
 <style>
-.preview-watermark{position:fixed;inset:0;display:none;align-items:center;justify-content:center;font-size:clamp(32px,8vw,82px);font-weight:800;color:rgba(140,60,10,.15);z-index:9999;pointer-events:none;transform:rotate(-28deg);text-align:center;line-height:1.6;letter-spacing:6px;user-select:none;white-space:nowrap;}
-#previewBanner{position:fixed;top:0;left:0;right:0;z-index:10000;background:linear-gradient(90deg,#c8691a,#9e4a0e);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 20px;text-align:center;display:none;box-shadow:0 2px 12px rgba(0,0,0,.2);}
-#previewBanner a{color:#fff;font-weight:600;text-decoration:underline;margin-left:8px;}
+/* ── Preview overlay (minimal, non-intrusive) ── */
+#previewOverlay{
+  position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9999;
+  background:rgba(26,15,5,0.88);backdrop-filter:blur(14px);
+  color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;
+  padding:10px 20px;border-radius:100px;
+  display:none;align-items:center;gap:10px;
+  box-shadow:0 4px 24px rgba(0,0,0,0.3);white-space:nowrap;
+}
+#previewOverlay.show{display:flex;}
+#previewOverlay a{color:#d47c2a;font-weight:600;text-decoration:none;}
+#previewOverlay .timer{font-weight:700;color:#f97316;}
+
+/* ── Redirect overlay (after preview expires) ── */
+#redirectOverlay{
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:rgba(18,8,2,.84);backdrop-filter:blur(16px);
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;text-align:center;padding:32px;
+}
+#redirectOverlay.show{display:flex;}
+.ro-emoji{font-size:52px;}
+.ro-title{font-family:'Fraunces',serif;font-size:28px;font-style:italic;color:#fff;font-weight:300;}
+.ro-sub{font-size:13px;color:rgba(255,255,255,.65);letter-spacing:.5px;}
+.ro-btn{margin-top:8px;padding:16px 40px;background:linear-gradient(135deg,#d47c2a,#9e4a0e);color:#fff;border:none;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 28px rgba(212,124,42,.5);}
+.ro-progress{width:220px;height:3px;background:rgba(255,255,255,.15);border-radius:10px;overflow:hidden;}
+.ro-bar{height:100%;background:linear-gradient(90deg,#d47c2a,#e8b07a);border-radius:10px;width:0%;transition:width linear;}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --ink:#1a0f05;
-  --amber:#d47c2a;
-  --rust:#b84a2e;
-  --cream:#faf4eb;
-  --warm:#f3e8d2;
-  --muted:#6b4a2a;
-  --sand:#e8d5b0;
+  --ink:#1a0f05;--amber:#d47c2a;--rust:#b84a2e;
+  --cream:#faf4eb;--warm:#f3e8d2;--muted:#6b4a2a;--sand:#e8d5b0;
 }
 html,body{height:100%;overflow:hidden;}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);display:flex;flex-direction:column;}
@@ -32,10 +52,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);d
 .ls-dots span:nth-child(3){animation-delay:.4s;}
 @keyframes lsDot{0%,80%,100%{transform:scale(0);opacity:.3;}40%{transform:scale(1);opacity:1;}}
 .grain{position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px;mix-blend-mode:overlay;}
-.scene{position:fixed;inset:0;z-index:0;background:
-  radial-gradient(ellipse 75% 65% at 15% 10%,rgba(232,176,120,.2) 0%,transparent 55%),
-  radial-gradient(ellipse 60% 50% at 92% 92%,rgba(184,74,46,.13) 0%,transparent 50%),
-  linear-gradient(160deg,#faf4eb 0%,#f3e8d2 42%,#ecdcbf 100%);}
+.scene{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 75% 65% at 15% 10%,rgba(232,176,120,.2) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 92% 92%,rgba(184,74,46,.13) 0%,transparent 50%),linear-gradient(160deg,#faf4eb 0%,#f3e8d2 42%,#ecdcbf 100%);}
 .blob{position:fixed;border-radius:60% 40% 70% 30%/40% 60% 30% 70%;filter:blur(64px);pointer-events:none;z-index:1;animation:blobF ease-in-out infinite;}
 .b1{width:440px;height:440px;background:rgba(232,176,120,.17);top:-110px;left:-70px;animation-duration:22s;}
 .b2{width:330px;height:330px;background:rgba(184,74,46,.11);bottom:-90px;right:-70px;animation-duration:27s;animation-delay:-9s;}
@@ -148,20 +165,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);d
 .cfwrap{position:fixed;inset:0;pointer-events:none;z-index:108;}
 .cf{position:absolute;opacity:0;border-radius:2px;animation:cfF linear infinite;}
 @keyframes cfF{0%{transform:translateY(-20px) rotate(0);opacity:.9;}100%{transform:translateY(110vh) rotate(520deg);opacity:0;}}
-#redirectOverlay{display:none;position:fixed;inset:0;z-index:99999;background:rgba(18,8,2,.84);backdrop-filter:blur(16px);flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:32px;}
-#redirectOverlay.show{display:flex;}
-.ro-emoji{font-size:52px;}
-.ro-title{font-family:'Fraunces',serif;font-size:28px;font-style:italic;color:#fff;font-weight:300;}
-.ro-sub{font-size:13px;color:rgba(255,255,255,.65);letter-spacing:.5px;}
-.ro-btn{margin-top:8px;padding:16px 40px;background:linear-gradient(135deg,#d47c2a,#9e4a0e);color:#fff;border:none;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 28px rgba(212,124,42,.5);}
-.ro-progress{width:220px;height:3px;background:rgba(255,255,255,.15);border-radius:10px;overflow:hidden;}
-.ro-bar{height:100%;background:linear-gradient(90deg,#d47c2a,#e8b07a);border-radius:10px;width:0%;transition:width linear;}
 </style>
 </head>
 <body>
-<div class="preview-watermark" id="previewMark">PREVIEW</div>
-<div id="previewBanner">🔍 Preview Mode — <span id="previewCountdown">30</span>s remaining · <a id="previewBannerLink" href="https://luminaa-f37.pages.dev/">Create yours →</a></div>
 
+<!-- Preview pill — subtle, bottom-center, non-intrusive -->
+<div id="previewOverlay">
+  <span>👁 Preview · <span class="timer" id="pvTimer">30</span>s</span>
+  <a id="pvLink" href="#">Create yours →</a>
+</div>
+
+<!-- Redirect after preview expires -->
 <div id="redirectOverlay">
   <div class="ro-emoji">🔥</div>
   <div class="ro-title">Loved what you saw?</div>
@@ -262,7 +276,6 @@ var HOME_URL = 'https://luminaa-f37.pages.dev/';
 var DEFAULT_MSG = "You are not just my brother — you are my first best friend, my loudest cheerleader, and the person I know will always show up. Every adventure, every stupid inside joke, every moment we've had each other's backs — that's a lifetime of memories I wouldn't trade for anything. On this Brothers Day, I want you to know: I am proud of you, I am grateful for you, and I love you more than words can say. Here's to us, always.";
 var data = null, isPreview = false;
 var cfC = ['#d47c2a','#e8b07a','#b84a2e','#f7e8d2','#ffd6a0','#fffdf6','#e8c890'];
-
 var _pageId = new URLSearchParams(window.location.search).get('id');
 
 function goHome() {
@@ -274,50 +287,80 @@ function goHome() {
 async function loadData() {
   var previewParam = new URLSearchParams(window.location.search).get('preview');
   if (previewParam) {
-    try { data = JSON.parse(decodeURIComponent(escape(atob(previewParam)))); isPreview = true; }
-    catch (e) { console.error('Preview decode failed:', e); data = null; isPreview = false; }
+    try {
+      data = JSON.parse(decodeURIComponent(escape(atob(previewParam))));
+      isPreview = true;
+    } catch(e) { console.error('Preview decode failed:', e); data = null; isPreview = false; }
   } else if (_pageId) {
     try {
-      var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + _pageId + '&select=data', { headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY } });
+      var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + _pageId + '&select=data', {
+        headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+      });
       var j = await res.json();
       if (j && j[0] && j[0].data) { data = JSON.parse(j[0].data); }
-      isPreview = !!(data && data.isPreview);
-    } catch (e) { console.error('Supabase load failed:', e); data = null; }
+      isPreview = false;
+    } catch(e) { console.error('Supabase load failed:', e); data = null; }
   } else {
-    data = { n: 'Bro', f: '', m: '', b: [{ msg: 'Always got your back 💪', photoUrl: null }, { msg: 'Best bro ever 🔥', photoUrl: null }, { msg: 'Ride or die forever 🤜🤛', photoUrl: null }] };
+    data = { n: 'Bro', f: '', m: '', b: [
+      { msg: 'Always got your back 💪', photoUrl: null },
+      { msg: 'Best bro ever 🔥', photoUrl: null },
+      { msg: 'Ride or die forever 🤜🤛', photoUrl: null }
+    ]};
     isPreview = false;
   }
-  if (!data) { data = { n: 'Bro', f: '', m: '', b: [{ msg: 'Always got your back 💪', photoUrl: null }, { msg: 'Best bro ever 🔥', photoUrl: null }, { msg: 'Ride or die forever 🤜🤛', photoUrl: null }] }; }
-  var ls = document.getElementById('loadScreen'); ls.classList.add('out');
-  setTimeout(function () { ls.style.display = 'none'; }, 900);
+  if (!data) { data = { n: 'Bro', f: '', m: '', b: [
+    { msg: 'Always got your back 💪' }, { msg: 'Best bro ever 🔥' }, { msg: 'Ride or die forever 🤜🤛' }
+  ]}; }
+
+  var ls = document.getElementById('loadScreen');
+  ls.classList.add('out');
+  setTimeout(function(){ ls.style.display = 'none'; }, 900);
   init();
 }
 
 function init() {
-  var bannerLink = document.getElementById('previewBannerLink');
-  if(bannerLink) bannerLink.href = HOME_URL + (_pageId ? '?prefill=' + _pageId : '');
-  if(isPreview) { document.getElementById('previewMark').style.display = 'flex'; document.getElementById('previewBanner').style.display = 'block'; startPreviewTimer(); }
-  document.title = "Happy Brothers Day, " + (data.n || 'Bro') + ' 🔥';
+  if(isPreview) {
+    // Subtle pill at the bottom, non-intrusive — same experience otherwise
+    var pvLink = document.getElementById('pvLink');
+    pvLink.href = HOME_URL;
+    document.getElementById('previewOverlay').classList.add('show');
+    startPreviewTimer();
+  }
+
+  document.title = 'Happy Brothers Day, ' + (data.n || 'Bro') + ' 🔥';
   document.getElementById('iname').textContent = data.n || 'Bro';
   if(data.f) document.getElementById('isub').textContent = data.f + ' made this especially for you 🔥';
+
+  // Portrait: prefer photoUrl (paid, from Supabase), then photoB64 (preview, high-res base64)
   var fp = data.b && data.b.find(function(b){ return b && (b.photoUrl || b.photoB64); });
   if(fp) {
     var pno = document.getElementById('pno'); if(pno) pno.remove();
-    var img = document.createElement('img'); img.className = 'pimg'; img.src = fp.photoUrl || fp.photoB64;
+    var img = document.createElement('img'); img.className = 'pimg';
+    img.src = fp.photoUrl || fp.photoB64;
     document.getElementById('portrait').insertBefore(img, document.getElementById('portrait').firstChild);
   }
+
   buildName(data.n || 'Bro');
   buildBalloons(data.b || []);
   document.getElementById('lbody').textContent = data.m || DEFAULT_MSG;
-  if(data.f) { document.getElementById('mbyline').textContent = 'Written for you by ' + data.f; document.getElementById('lfrom').textContent = data.f; document.getElementById('polFrom').textContent = 'with love from ' + data.f + ' 🔥'; }
+  if(data.f) {
+    document.getElementById('mbyline').textContent = 'Written for you by ' + data.f;
+    document.getElementById('lfrom').textContent = data.f;
+    document.getElementById('polFrom').textContent = 'with love from ' + data.f + ' 🔥';
+  }
 }
 
 function startPreviewTimer() {
-  var s = 30, el = document.getElementById('previewCountdown');
-  var t = setInterval(function(){ s--; if(el) el.textContent = s; if(s <= 0){ clearInterval(t); showRedirectOverlay(); } }, 1000);
+  var s = 30, el = document.getElementById('pvTimer');
+  var t = setInterval(function(){
+    s--;
+    if(el) el.textContent = s;
+    if(s <= 0){ clearInterval(t); showRedirectOverlay(); }
+  }, 1000);
 }
 
 function showRedirectOverlay() {
+  document.getElementById('previewOverlay').classList.remove('show');
   var overlay = document.getElementById('redirectOverlay'); overlay.classList.add('show');
   var bar = document.getElementById('roBar'); bar.style.transition = 'width 4s linear';
   setTimeout(function(){ bar.style.width = '100%'; }, 50);
@@ -382,9 +425,17 @@ function popBalloon(i, b, el) {
   var polPhoto = document.getElementById('polPhoto'), polCard = document.getElementById('polCard');
   polCard.style.setProperty('--tilt', tilts[i%tilts.length]+'deg');
   document.getElementById('polMsg').textContent = b.msg || '';
+
+  // Support both paid (photoUrl from Supabase) and preview (photoB64 inline base64)
   var photoSrc = b.photoUrl || b.photoB64 || null;
-  if(photoSrc) { document.getElementById('polImg').src = photoSrc; polPhoto.classList.add('hasimg'); polPhoto.style.background = 'none'; }
-  else { document.getElementById('polImg').src = ''; polPhoto.classList.remove('hasimg'); polPhoto.style.background = gradients[i%gradients.length]; document.getElementById('balInside').innerHTML = '<svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="72">'+bsvg(pals[i%pals.length])+'</svg><div class="balthread"></div>'; }
+  if(photoSrc) {
+    document.getElementById('polImg').src = photoSrc;
+    polPhoto.classList.add('hasimg'); polPhoto.style.background = 'none';
+  } else {
+    document.getElementById('polImg').src = '';
+    polPhoto.classList.remove('hasimg'); polPhoto.style.background = gradients[i%gradients.length];
+    document.getElementById('balInside').innerHTML = '<svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="72">'+bsvg(pals[i%pals.length])+'</svg><div class="balthread"></div>';
+  }
   document.getElementById('cardReveal').classList.add('show');
   if(balLeft === 0) setTimeout(function(){ closeCard(); document.getElementById('bfield').style.display='none'; document.getElementById('adone').style.display='block'; }, 2700);
 }

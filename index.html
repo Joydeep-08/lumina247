@@ -25,8 +25,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--deep);
     radial-gradient(ellipse 70% 60% at 90% -10%,rgba(184,74,46,0.13) 0%,transparent 60%),
     radial-gradient(ellipse 60% 50% at -10% 100%,rgba(212,124,42,0.11) 0%,transparent 55%),
     url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") center/180px;
-  opacity:0.03;
-  mix-blend-mode:multiply;
+  opacity:0.03;mix-blend-mode:multiply;
 }
 .petal{position:fixed;pointer-events:none;animation:fall linear infinite;opacity:0;z-index:0;}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:.7;}100%{transform:translateY(110vh) rotate(540deg);opacity:0;}}
@@ -73,6 +72,11 @@ textarea{height:90px;line-height:1.6;}
 .add-balloon-btn:hover{background:rgba(212,124,42,0.12);border-color:var(--amber);}
 .hint-box{background:rgba(184,74,46,0.07);border:1px solid rgba(184,74,46,0.18);border-radius:12px;padding:16px 20px;margin-bottom:18px;font-size:13px;color:var(--rust);line-height:1.6;}
 .hint-box strong{font-weight:600;}
+
+/* Preview quality note */
+.quality-note{background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.22);border-radius:12px;padding:14px 18px;margin-bottom:18px;font-size:12px;color:#166534;display:flex;align-items:flex-start;gap:10px;line-height:1.6;}
+.quality-note .qn-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+
 .price-badge{background:linear-gradient(135deg,rgba(212,124,42,0.09),rgba(212,124,42,0.04));border:1.5px solid rgba(212,124,42,0.22);border-radius:16px;padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .price-left{display:flex;flex-direction:column;gap:4px;}
 .price-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
@@ -109,6 +113,10 @@ textarea{height:90px;line-height:1.6;}
 .loading-dots span:nth-child(2){animation-delay:.2s;}
 .loading-dots span:nth-child(3){animation-delay:.4s;}
 @keyframes dot{0%,80%,100%{transform:scale(0);opacity:.3;}40%{transform:scale(1);opacity:1;}}
+
+/* Webhook pending notice */
+.webhook-note{background:rgba(212,124,42,0.06);border:1px solid rgba(212,124,42,0.18);border-radius:12px;padding:12px 16px;margin-top:12px;font-size:12px;color:var(--muted);text-align:center;line-height:1.6;display:none;}
+.webhook-note.show{display:block;}
 </style>
 </head>
 <body>
@@ -159,8 +167,15 @@ textarea{height:90px;line-height:1.6;}
     </div>
   </div>
 
+  <div class="quality-note">
+    <div class="qn-icon">📸</div>
+    <div>
+      <strong>Preview uses full-quality photos</strong> stored only in your browser — nothing is saved to our servers. When you pay, photos are compressed to ~120KB each (still beautiful!) so your link is fast for everyone. 500 users × 6 photos = manageable. 🔥
+    </div>
+  </div>
+
   <div class="hint-box">
-    <strong>📸 Full quality photos</strong> — Photos are stored safely in the cloud. Your link works on any phone or device 🔥
+    <strong>🔒 Permanent link</strong> — After payment, your link works forever on any phone. We also send you a backup via webhook so you never lose it.
   </div>
 
   <div class="price-badge">
@@ -179,6 +194,9 @@ textarea{height:90px;line-height:1.6;}
   <div class="err" id="errBox"></div>
   <button class="free-prev-btn" onclick="doPreview()">👁 Preview First (Free · 30s)</button>
   <button class="pay-btn" id="payBtn" onclick="doPay()">🔥 &nbsp; Get His Surprise Link — ₹59</button>
+  <div class="webhook-note" id="webhookNote">
+    ⏳ Payment received — generating your link. If it doesn't appear in 10 seconds, <a href="#" onclick="pollForLink(event)" style="color:var(--amber);">click here to check</a>.
+  </div>
 
   <div class="result" id="resultBox">
     <div class="result-icon">🤜🤛</div>
@@ -201,49 +219,55 @@ var RZP_KEY = 'rzp_live_SmizRaPApu81ZS';
 var SITE_URL = 'https://luminaa-f37.pages.dev/';
 var BUCKET = 'photos';
 
-(function(){
-  var e=['🔥','⚡','🏆','🎯','💪'], w=document.getElementById('petals');
-  for(var i=0;i<14;i++){
-    var d=document.createElement('div'); d.className='petal';
-    d.textContent=e[i%e.length];
-    d.style.cssText='left:'+Math.random()*100+'%;animation-delay:'+Math.random()*18+'s;animation-duration:'+(10+Math.random()*12)+'s;font-size:'+(13+Math.random()*12)+'px;position:fixed;z-index:0;';
-    w.appendChild(d);
-  }
-})();
-
-var balloons=[], bCount=0;
-var colors=['🔴','🟠','🟡','🟣','🔵','🟢','🟤'];
-
-function compress(dataURL, maxPx, q) {
-  return new Promise(function(res) {
+// ─── Compression ──────────────────────────────────────────────────────────────
+// PREVIEW: high quality, inline base64 (never hits server)
+// PAID VIEW: compressed ~120KB, uploaded to Supabase storage
+function compress(dataURL, maxPx, quality) {
+  return new Promise(function(resolve) {
     var img = new Image();
     img.onload = function() {
       var w = img.width, h = img.height;
       if (w > h) { if (w > maxPx) { h = Math.round(h * maxPx / w); w = maxPx; } }
       else { if (h > maxPx) { w = Math.round(w * maxPx / h); h = maxPx; } }
       var c = document.createElement('canvas'); c.width = w; c.height = h;
-      var ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, w, h); res(c.toDataURL('image/webp', q));
+      var ctx = c.getContext('2d');
+      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(c.toDataURL('image/webp', quality));
     };
     img.src = dataURL;
   });
 }
 
 async function uploadToStorage(dataURL, idx) {
-  var res = await fetch(dataURL); var blob = await res.blob();
+  var res = await fetch(dataURL);
+  var blob = await res.blob();
   var fileName = 'balloon-' + Date.now() + '-' + idx + '.webp';
   var uploadRes = await fetch(SUPA_URL + '/storage/v1/object/' + BUCKET + '/' + fileName, {
     method: 'POST',
-    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': 'image/webp', 'x-upsert': 'true' },
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'image/webp',
+      'x-upsert': 'true'
+    },
     body: blob
   });
-  if (!uploadRes.ok) { var err = await uploadRes.text(); throw new Error('Photo upload failed: ' + err); }
+  if (!uploadRes.ok) {
+    var err = await uploadRes.text();
+    throw new Error('Photo upload failed: ' + err);
+  }
   return SUPA_URL + '/storage/v1/object/public/' + BUCKET + '/' + fileName;
 }
 
+// ─── Balloon UI ───────────────────────────────────────────────────────────────
+var balloons = [], bCount = 0;
+var colors = ['🔴','🟠','🟡','🟣','🔵','🟢','🟤'];
+
 function addBalloon() {
   var idx = bCount++;
-  balloons.push({ msg: '', photoUrl: null });
+  // Store both a preview-quality base64 AND a flag for the paid URL
+  balloons.push({ msg: '', photoUrl: null, photoB64Preview: null, photoB64Paid: null });
   var item = document.createElement('div'); item.className = 'b-item'; item.id = 'bi' + idx;
   item.innerHTML =
     '<div class="b-item-header">' +
@@ -258,7 +282,7 @@ function addBalloon() {
           '<input type="file" accept="image/*" onchange="loadPic(' + idx + ',this)"/>' +
           '<img id="pi' + idx + '" src="" alt=""/>' +
           '<div class="photo-icon">📷<small>Add photo</small></div>' +
-          '<div class="photo-uploading" id="pu' + idx + '"><div class="upload-spinner"></div><span>Uploading…</span></div>' +
+          '<div class="photo-uploading" id="pu' + idx + '"><div class="upload-spinner"></div><span>Processing…</span></div>' +
           '<button class="del-x" type="button" onclick="removePic(' + idx + ',event)">✕</button>' +
         '</div>' +
       '</div>' +
@@ -281,120 +305,273 @@ function loadPic(idx, inp) {
   var r = new FileReader();
   r.onload = async function(e) {
     try {
-      var compressed = await compress(e.target.result, 600, 0.70);
-      var url = await uploadToStorage(compressed, idx);
-      balloons[idx].photoUrl = url;
-      document.getElementById('pi' + idx).src = url;
-      slot.classList.remove('uploading'); slot.classList.add('filled');
-    } catch(err) { slot.classList.remove('uploading'); showErr('Photo upload failed. Check your internet and try again.'); console.error(err); }
+      // High-quality for preview (shown in the slot and used in preview link)
+      var previewB64 = await compress(e.target.result, 1200, 0.92);
+      // Compressed for paid (uploaded to storage)
+      var paidB64 = await compress(e.target.result, 700, 0.65);
+
+      balloons[idx].photoB64Preview = previewB64;
+      balloons[idx].photoB64Paid = paidB64;
+      balloons[idx].photoUrl = null; // will be set on pay
+
+      // Show preview quality in the slot
+      document.getElementById('pi' + idx).src = previewB64;
+      slot.classList.remove('uploading');
+      slot.classList.add('filled');
+    } catch(err) {
+      slot.classList.remove('uploading');
+      showErr('Photo processing failed. Try a smaller image.');
+      console.error(err);
+    }
   };
   r.readAsDataURL(inp.files[0]);
 }
 
 function removePic(idx, e) {
-  e.stopPropagation(); balloons[idx].photoUrl = null;
+  e.stopPropagation();
+  balloons[idx].photoUrl = null;
+  balloons[idx].photoB64Preview = null;
+  balloons[idx].photoB64Paid = null;
   document.getElementById('pi' + idx).src = '';
   document.getElementById('ps' + idx).classList.remove('filled');
-  var inp = document.querySelector('#ps' + idx + ' input[type=file]'); if(inp) inp.value = '';
+  var inp = document.querySelector('#ps' + idx + ' input[type=file]');
+  if(inp) inp.value = '';
 }
 
 function updateMsg(idx, val) { if(balloons[idx]) balloons[idx].msg = val; }
 
 addBalloon(); addBalloon(); addBalloon();
 
-function gatherData() {
+// ─── Data gathering ───────────────────────────────────────────────────────────
+function gatherData(forPreview) {
   var herName = document.getElementById('herName').value.trim();
   var yourName = document.getElementById('yourName').value.trim();
   var msg = document.getElementById('msg').value.trim();
   if(!herName) { showErr('Please enter his name 🔥'); return null; }
   var active = balloons.filter(function(b){ return b && b.msg.trim(); });
   if(!active.length) { showErr('Add at least one balloon message 🎈'); return null; }
-  var uploading = document.querySelectorAll('.photo-slot.uploading');
-  if(uploading.length) { showErr('Please wait for photos to finish uploading 📸'); return null; }
-  return { n: herName, f: yourName, m: msg, b: active };
+
+  if(forPreview) {
+    // For preview: embed high-quality base64, no upload needed
+    return {
+      n: herName, f: yourName, m: msg,
+      b: active.map(function(b) {
+        return {
+          msg: b.msg,
+          photoB64: b.photoB64Preview || null  // full quality, inline
+        };
+      })
+    };
+  } else {
+    // For paid: we'll upload compressed versions separately
+    return { n: herName, f: yourName, m: msg, _rawBalloons: active };
+  }
 }
 
-async function saveToSupabase(payload) {
-  var res = await fetch(SUPA_URL + '/rest/v1/mday', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Prefer': 'return=representation' },
-    body: JSON.stringify({ data: JSON.stringify(payload) })
-  });
-  if(!res.ok) throw new Error(await res.text());
-  var j = await res.json(); return j[0].id;
-}
-
-function viewURL(id) { return SITE_URL + 'view.html?id=' + id; }
-
+// ─── Preview (FREE, no Supabase save, high-quality photos) ───────────────────
 async function doPreview() {
-  var d = gatherData(); if(!d) return;
+  var d = gatherData(true); if(!d) return;
   d.isPreview = true;
+
+  // Check for any still-processing slots
+  var processing = document.querySelectorAll('.photo-slot.uploading');
+  if(processing.length) { showErr('Please wait for photos to finish processing 📸'); return; }
+
   try {
     var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(d))));
     var url = SITE_URL + 'view.html?preview=' + encoded;
     var a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  } catch(e) { showErr('Failed: ' + e.message); }
+  } catch(e) {
+    showErr('Failed to generate preview: ' + e.message);
+  }
 }
 
+// ─── Save to Supabase (paid flow) ─────────────────────────────────────────────
+async function saveToSupabase(payload) {
+  var res = await fetch(SUPA_URL + '/rest/v1/mday', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify({ data: JSON.stringify(payload), paid: false })
+  });
+  if(!res.ok) throw new Error(await res.text());
+  var j = await res.json(); return j[0].id;
+}
+
+async function markPaid(id) {
+  await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY
+    },
+    body: JSON.stringify({ paid: true })
+  });
+}
+
+function viewURL(id) { return SITE_URL + 'view.html?id=' + id; }
+
+// ─── Pay flow ────────────────────────────────────────────────────────────────
+var _pendingId = null;
+
 async function doPay() {
-  var d = gatherData(); if (!d) return;
+  var processing = document.querySelectorAll('.photo-slot.uploading');
+  if(processing.length) { showErr('Please wait for photos to finish processing 📸'); return; }
+
+  var raw = gatherData(false); if(!raw) return;
   showLoading('Saving your surprise…', 'Almost there 🔥');
+
   try {
-    var id = await saveToSupabase(d); hideLoading();
+    // 1. Upload compressed photos to Supabase storage
+    var uploadedBalloons = [];
+    for(var i = 0; i < raw._rawBalloons.length; i++) {
+      var b = raw._rawBalloons[i];
+      var photoUrl = null;
+      if(b.photoB64Paid) {
+        document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + raw._rawBalloons.length + '…';
+        photoUrl = await uploadToStorage(b.photoB64Paid, i);
+      }
+      uploadedBalloons.push({ msg: b.msg, photoUrl: photoUrl });
+    }
+
+    // 2. Save record to Supabase (paid: false initially)
+    var payload = { n: raw.n, f: raw.f, m: raw.m, b: uploadedBalloons };
+    document.getElementById('loadingSub').textContent = 'Saving your surprise…';
+    var id = await saveToSupabase(payload);
+    _pendingId = id;
+    hideLoading();
+
+    // 3. Open Razorpay
     var options = {
-      key: RZP_KEY, amount: 5900, currency: 'INR', name: 'Lumina',
-      description: "Brothers Day Surprise Link 🔥",
+      key: RZP_KEY,
+      amount: 5900,
+      currency: 'INR',
+      name: 'Lumina',
+      description: 'Brothers Day Surprise Link 🔥',
       image: 'https://luminaa-f37.pages.dev/favicon.ico',
-      handler: function (response) {
+      notes: { supabase_id: id },  // ← sent to webhook
+      handler: async function(response) {
+        // Payment success callback — also mark paid client-side
+        try { await markPaid(id); } catch(e) { console.warn('markPaid failed, webhook will handle it', e); }
         document.getElementById('paidBanner').classList.add('show');
         showResult(id);
         document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
       },
       prefill: { name: '', email: '', contact: '' },
       theme: { color: '#d47c2a' },
-      modal: { ondismiss: function () {} }
+      modal: {
+        ondismiss: function() {
+          // Show webhook fallback note — if they paid but dismissed modal
+          document.getElementById('webhookNote').classList.add('show');
+        }
+      }
     };
     var rzp = new Razorpay(options);
-    rzp.on('payment.failed', function (response) { showErr('Payment failed: ' + response.error.description); });
+    rzp.on('payment.failed', function(response) {
+      showErr('Payment failed: ' + response.error.description);
+    });
     rzp.open();
-  } catch (e) { hideLoading(); showErr('Failed to save: ' + e.message); }
+  } catch(e) {
+    hideLoading();
+    showErr('Failed to save: ' + e.message);
+  }
+}
+
+// ─── Webhook polling fallback ─────────────────────────────────────────────────
+// If payment went through but handler didn't fire (user closed app etc),
+// poll Supabase for paid status using the pending ID
+async function pollForLink(evt) {
+  if(evt) evt.preventDefault();
+  if(!_pendingId) { showErr('No pending payment found. Please contact support.'); return; }
+  document.getElementById('webhookNote').innerHTML = '⏳ Checking payment status…';
+  try {
+    var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + _pendingId + '&select=id,paid', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+    });
+    var j = await res.json();
+    if(j && j[0] && j[0].paid) {
+      document.getElementById('paidBanner').classList.add('show');
+      showResult(_pendingId);
+      document.getElementById('webhookNote').classList.remove('show');
+    } else {
+      document.getElementById('webhookNote').innerHTML =
+        '⚠️ Payment not confirmed yet. Wait a few seconds and ' +
+        '<a href="#" onclick="pollForLink(event)" style="color:var(--amber);">try again</a>, or ' +
+        'email us with your order ID.';
+    }
+  } catch(e) {
+    document.getElementById('webhookNote').innerHTML = '⚠️ Could not check — please try again in a moment.';
+  }
 }
 
 function showResult(id) {
   var url = viewURL(id); window._url = url;
-  document.getElementById('openLinkInline').href = url; document.getElementById('openLinkInline').textContent = url;
+  document.getElementById('openLinkInline').href = url;
+  document.getElementById('openLinkInline').textContent = url;
   document.getElementById('openLink').href = url;
-  document.getElementById('waLink').href = 'https://wa.me/?text=' + encodeURIComponent("🔥 Happy Brothers Day! Open your surprise 🤜🤛 " + url);
+  document.getElementById('waLink').href = 'https://wa.me/?text=' + encodeURIComponent('🔥 Happy Brothers Day! Open your surprise 🤜🤛 ' + url);
   var box = document.getElementById('resultBox'); box.style.display = 'block';
   box.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-function showLoading(t, s) { document.getElementById('loadingTitle').textContent = t; document.getElementById('loadingSub').textContent = s; document.getElementById('loadingOverlay').classList.add('show'); }
+function showLoading(t, s) {
+  document.getElementById('loadingTitle').textContent = t;
+  document.getElementById('loadingSub').textContent = s;
+  document.getElementById('loadingOverlay').classList.add('show');
+}
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
-function showErr(m) { var b = document.getElementById('errBox'); b.textContent = '⚠️ ' + m; b.style.display = 'block'; setTimeout(function(){ b.style.display = 'none'; }, 9000); }
+function showErr(m) {
+  var b = document.getElementById('errBox'); b.textContent = '⚠️ ' + m; b.style.display = 'block';
+  setTimeout(function(){ b.style.display = 'none'; }, 9000);
+}
 
 function copyIt() {
   var url = window._url || document.getElementById('openLink').href;
   var btn = document.getElementById('copyBtn');
   if(navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(url).then(function(){ btn.textContent = 'Copied ✓'; setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2500); });
+    navigator.clipboard.writeText(url).then(function(){
+      btn.textContent = 'Copied ✓';
+      setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2500);
+    });
   } else {
-    var ta = document.createElement('textarea'); ta.value = url; ta.style.cssText = 'position:fixed;opacity:0;'; document.body.appendChild(ta);
-    ta.focus(); ta.select();
+    var ta = document.createElement('textarea'); ta.value = url; ta.style.cssText = 'position:fixed;opacity:0;';
+    document.body.appendChild(ta); ta.focus(); ta.select();
     try { document.execCommand('copy'); btn.textContent = 'Copied ✓'; setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2500); } catch(e){}
     document.body.removeChild(ta);
   }
 }
 
 function resetAll() {
-  document.getElementById('herName').value = ''; document.getElementById('yourName').value = ''; document.getElementById('msg').value = '';
-  document.getElementById('balloonList').innerHTML = ''; document.getElementById('resultBox').style.display = 'none';
+  document.getElementById('herName').value = '';
+  document.getElementById('yourName').value = '';
+  document.getElementById('msg').value = '';
+  document.getElementById('balloonList').innerHTML = '';
+  document.getElementById('resultBox').style.display = 'none';
   document.getElementById('paidBanner').classList.remove('show');
-  balloons = []; bCount = 0; addBalloon(); addBalloon(); addBalloon();
+  document.getElementById('webhookNote').classList.remove('show');
+  balloons = []; bCount = 0; _pendingId = null;
+  addBalloon(); addBalloon(); addBalloon();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ─── Petals ───────────────────────────────────────────────────────────────────
+(function(){
+  var e = ['🔥','⚡','🏆','🎯','💪'], w = document.getElementById('petals');
+  for(var i = 0; i < 14; i++){
+    var d = document.createElement('div'); d.className = 'petal';
+    d.textContent = e[i%e.length];
+    d.style.cssText = 'left:'+Math.random()*100+'%;animation-delay:'+Math.random()*18+'s;animation-duration:'+(10+Math.random()*12)+'s;font-size:'+(13+Math.random()*12)+'px;position:fixed;z-index:0;';
+    w.appendChild(d);
+  }
+})();
+
+// ─── Prefill from previous order ─────────────────────────────────────────────
 window.addEventListener('load', function() {
   var prefillId = new URLSearchParams(window.location.search).get('prefill');
   if(prefillId) { window.history.replaceState({}, '', window.location.pathname); prefillForm(prefillId); }
@@ -402,7 +579,9 @@ window.addEventListener('load', function() {
 
 async function prefillForm(id) {
   try {
-    var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id + '&select=data', { headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY } });
+    var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id + '&select=data', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+    });
     var j = await res.json(); if(!j || !j[0] || !j[0].data) return;
     var d = JSON.parse(j[0].data);
     if(d.n) document.getElementById('herName').value = d.n;
@@ -413,7 +592,12 @@ async function prefillForm(id) {
       d.b.forEach(function(b, i) {
         addBalloon();
         if(b.msg) { balloons[i].msg = b.msg; var ta = document.getElementById('bm'+i); if(ta) ta.value = b.msg; }
-        if(b.photoUrl) { balloons[i].photoUrl = b.photoUrl; document.getElementById('pi'+i).src = b.photoUrl; document.getElementById('ps'+i).classList.add('filled'); }
+        if(b.photoUrl) {
+          balloons[i].photoUrl = b.photoUrl;
+          balloons[i].photoB64Preview = b.photoUrl; // use stored URL as preview too
+          document.getElementById('pi'+i).src = b.photoUrl;
+          document.getElementById('ps'+i).classList.add('filled');
+        }
       });
     }
   } catch(e) { console.error('prefill failed', e); }
