@@ -658,6 +658,7 @@ async function prefillForm(id) {
         if(b.photoUrl) {
           balloons[i].photoUrl = b.photoUrl;
           balloons[i].photoB64Preview = b.photoUrl;
+          balloons[i].photoB64Paid    = b.photoUrl;
           document.getElementById('pi'+i).src = b.photoUrl;
           document.getElementById('ps'+i).classList.add('filled');
         }
