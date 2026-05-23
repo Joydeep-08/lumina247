@@ -236,29 +236,21 @@ var RZP_KEY = 'rzp_live_SmizRaPApu81ZS';
 var SITE_URL = 'https://lumina247.pages.dev/';
 var BUCKET = 'photos';
 
-// ─── Coupon system ────────────────────────────────────────────────────────────
-// Add / remove coupons here freely. amount = paise (100 = ₹1).
 var COUPONS = {
   'BRO1':     { amount: 100,  desc: '₹1 — test mode 🔧' },
   'LAUNCH50': { amount: 2950, desc: '₹29 — 50% off 🔥'  },
   'BRO50':    { amount: 2950, desc: '₹29 — 50% off 🔥'  },
   'BROFREE':  { amount: 100,  desc: '₹1 — 100% off 🎁'  },
 };
-var _couponAmount = 5900; // paise; default full price
+var _couponAmount = 5900;
 
 function applyCoupon() {
   var code = (document.getElementById('couponInput').value || '').trim().toUpperCase();
-  var fb   = document.getElementById('couponFeedback');
+  var fb = document.getElementById('couponFeedback');
   fb.className = 'coupon-feedback'; fb.textContent = '';
-
-  if (!code) {
-    fb.className = 'coupon-feedback err'; fb.textContent = 'Please enter a coupon code.'; return;
-  }
+  if (!code) { fb.className = 'coupon-feedback err'; fb.textContent = 'Please enter a coupon code.'; return; }
   var c = COUPONS[code];
-  if (!c) {
-    _couponAmount = 5900; updatePayLabel(5900);
-    fb.className = 'coupon-feedback err'; fb.textContent = '❌ "' + code + '" is not a valid coupon.'; return;
-  }
+  if (!c) { _couponAmount = 5900; updatePayLabel(5900); fb.className = 'coupon-feedback err'; fb.textContent = '❌ "' + code + '" is not a valid coupon.'; return; }
   _couponAmount = c.amount;
   updatePayLabel(c.amount);
   fb.className = 'coupon-feedback ok';
@@ -288,16 +280,19 @@ function compress(dataURL, maxPx, quality) {
   });
 }
 
-async function uploadToStorage(dataURL, idx) {
-  // Convert base64 dataURL to blob without fetch()
+// ─── dataURL → blob WITHOUT fetch() ──────────────────────────────────────────
+function dataURLtoBlob(dataURL) {
   var parts = dataURL.split(',');
   var mime = parts[0].match(/:(.*?);/)[1];
   var binary = atob(parts[1]);
   var arr = new Uint8Array(binary.length);
   for (var i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
-  var blob = new Blob([arr], { type: mime });
+  return new Blob([arr], { type: mime });
+}
 
-  var fileName = 'balloon-' + Date.now() + '-' + idx + '.webp';
+async function uploadToStorage(dataURL, idx) {
+  var blob = dataURLtoBlob(dataURL);
+  var fileName = 'balloon-' + Date.now() + '-' + Math.random().toString(36).slice(2) + '-' + idx + '.webp';
   var uploadRes = await fetch(SUPA_URL + '/storage/v1/object/' + BUCKET + '/' + fileName, {
     method: 'POST',
     headers: {
@@ -308,10 +303,7 @@ async function uploadToStorage(dataURL, idx) {
     },
     body: blob
   });
-  if (!uploadRes.ok) {
-    var err = await uploadRes.text();
-    throw new Error('Photo upload failed: ' + err);
-  }
+  if (!uploadRes.ok) throw new Error('Upload failed: ' + await uploadRes.text());
   return SUPA_URL + '/storage/v1/object/public/' + BUCKET + '/' + fileName;
 }
 
@@ -321,7 +313,7 @@ var colors = ['🔴','🟠','🟡','🟣','🔵','🟢','🟤'];
 
 function addBalloon() {
   var idx = bCount++;
-  balloons.push({ msg: '', photoUrl: null, photoB64Preview: null, photoB64Paid: null });
+  balloons.push({ msg: '', photoB64Preview: null, photoB64Paid: null, photoUrl: null });
   var item = document.createElement('div'); item.className = 'b-item'; item.id = 'bi' + idx;
   item.innerHTML =
     '<div class="b-item-header">' +
@@ -342,10 +334,14 @@ function addBalloon() {
       '</div>' +
       '<div style="display:flex;flex-direction:column;">' +
         '<label class="lbl">Message *</label>' +
-        '<textarea id="bm' + idx + '" placeholder="e.g. Always got your back bro 💪" style="flex:1;min-height:80px;" oninput="updateMsg(' + idx + ',this.value)"></textarea>' +
+        '<textarea id="bm' + idx + '" placeholder="e.g. Always got your back bro 💪" style="flex:1;min-height:80px;"></textarea>' +
       '</div>' +
     '</div>';
   document.getElementById('balloonList').appendChild(item);
+  // attach listener properly — no oninput in HTML string
+  document.getElementById('bm' + idx).addEventListener('input', function(e) {
+    if (balloons[idx]) balloons[idx].msg = e.target.value;
+  });
 }
 
 function removeBalloon(idx) {
@@ -359,11 +355,11 @@ function loadPic(idx, inp) {
   var r = new FileReader();
   r.onload = async function(e) {
     try {
-      var previewB64 = await compress(e.target.result, 1200, 0.92);
-      var paidB64 = await compress(e.target.result, 700, 0.65);
+      var previewB64 = await compress(e.target.result, 1200, 0.88);
+      var paidB64    = await compress(e.target.result, 700,  0.75);
       balloons[idx].photoB64Preview = previewB64;
-      balloons[idx].photoB64Paid = paidB64;
-      balloons[idx].photoUrl = null;
+      balloons[idx].photoB64Paid    = paidB64;
+      balloons[idx].photoUrl        = null;
       document.getElementById('pi' + idx).src = previewB64;
       slot.classList.remove('uploading');
       slot.classList.add('filled');
@@ -387,76 +383,73 @@ function removePic(idx, e) {
   if(inp) inp.value = '';
 }
 
-function updateMsg(idx, val) { if(balloons[idx]) balloons[idx].msg = val; }
-
 addBalloon(); addBalloon(); addBalloon();
 
-// ─── Data gathering ───────────────────────────────────────────────────────────
-function gatherData(forPreview) {
-  var herName = document.getElementById('herName').value.trim();
-  var yourName = document.getElementById('yourName').value.trim();
-  var msg = document.getElementById('msg').value.trim();
-  if(!herName) { showErr('Please enter his name 🔥'); return null; }
-  var active = balloons.filter(function(b){ return b && b.msg.trim(); });
-  if(!active.length) { showErr('Add at least one balloon message 🎈'); return null; }
-
-  if(forPreview) {
-    return {
-      n: herName, f: yourName, m: msg,
-      b: active.map(function(b) {
-        return { msg: b.msg, photoB64: b.photoB64Preview || null };
-      })
-    };
-  } else {
-    return { n: herName, f: yourName, m: msg, _rawBalloons: active };
+// ─── Read ALL balloon data fresh from DOM at submit time ──────────────────────
+function getActiveBalloons() {
+  var active = [];
+  for (var i = 0; i < bCount; i++) {
+    if (!balloons[i]) continue; // removed
+    var ta = document.getElementById('bm' + i);
+    var msg = ta ? ta.value.trim() : balloons[i].msg.trim();
+    // sync back
+    if (balloons[i]) balloons[i].msg = msg;
+    // include if has message OR photo
+    if (msg || balloons[i].photoB64Preview) {
+      active.push({ idx: i, msg: msg, photoB64Preview: balloons[i].photoB64Preview, photoB64Paid: balloons[i].photoB64Paid });
+    }
   }
+  return active;
 }
 
-// ─── Preview (FREE) ───────────────────────────────────────────────────────────
+// ─── Preview ──────────────────────────────────────────────────────────────────
 async function doPreview() {
   var processing = document.querySelectorAll('.photo-slot.uploading');
   if(processing.length) { showErr('Please wait for photos to finish processing 📸'); return; }
 
-  var herName = document.getElementById('herName').value.trim();
+  var herName  = document.getElementById('herName').value.trim();
   var yourName = document.getElementById('yourName').value.trim();
-  var msg = document.getElementById('msg').value.trim();
+  var msg      = document.getElementById('msg').value.trim();
   if(!herName) { showErr('Please enter his name 🔥'); return; }
 
-  // Include all balloons that have EITHER a message OR a photo
-  var active = balloons.filter(function(b){ return b && (b.msg.trim() || b.photoB64Preview); });
+  var active = getActiveBalloons();
+  console.log('Active balloons for preview:', active.length, active);
   if(!active.length) { showErr('Add at least one balloon message 🎈'); return; }
 
-  showLoading('Building your preview…', 'Saving data 🔥');
+  showLoading('Building your preview…', 'Saving data…');
   try {
-    var placeholderBalloons = active.map(function(b){ return { msg: b.msg, photoUrl: null }; });
-    var payload = { n: herName, f: yourName, m: msg, b: placeholderBalloons };
+    // Save with empty photoUrls first
+    var balloonPayload = active.map(function(b){ return { msg: b.msg, photoUrl: null }; });
+    var payload = { n: herName, f: yourName, m: msg, b: balloonPayload };
     var id = await saveToSupabase(payload);
+    console.log('Saved to Supabase, id:', id);
 
-    // Upload photos one by one
+    // Upload photos
     for(var i = 0; i < active.length; i++) {
-      var b = active[i];
-      if(b.photoB64Preview) {
+      if(active[i].photoB64Preview) {
         document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + active.length + '…';
+        console.log('Uploading photo', i+1, 'size:', active[i].photoB64Preview.length);
         try {
-          payload.b[i].photoUrl = await uploadToStorage(b.photoB64Preview, i);
-        } catch(uploadErr) {
-          console.error('Photo ' + i + ' upload failed:', uploadErr);
-          // continue — balloon just won't have a photo
+          payload.b[i].photoUrl = await uploadToStorage(active[i].photoB64Preview, i);
+          console.log('Uploaded photo', i+1, '→', payload.b[i].photoUrl);
+        } catch(ue) {
+          console.error('Photo', i+1, 'upload failed:', ue);
         }
       }
     }
 
-    // Update row with photo URLs
-    await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
+    // Patch with photo URLs
+    var patchRes = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY },
       body: JSON.stringify({ data: JSON.stringify(payload) })
     });
+    console.log('Patch status:', patchRes.status);
 
     hideLoading();
     var url = SITE_URL + 'view.html?id=' + id + '&preview=true';
-    var a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    console.log('Opening preview:', url);
+    window.open(url, '_blank');
   } catch(e) {
     hideLoading();
     showErr('Preview failed: ' + e.message);
@@ -477,73 +470,68 @@ async function saveToSupabase(payload) {
     body: JSON.stringify({ data: JSON.stringify(payload), paid: false })
   });
   if(!res.ok) throw new Error(await res.text());
-  var j = await res.json(); return j[0].id;
+  var j = await res.json();
+  console.log('saveToSupabase response:', j);
+  return j[0].id;
 }
 
 async function markPaid(id) {
   await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPA_KEY,
-      'Authorization': 'Bearer ' + SUPA_KEY
-    },
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY },
     body: JSON.stringify({ paid: true })
   });
 }
 
 function viewURL(id) { return SITE_URL + 'view.html?id=' + id; }
 
-// ─── Pay flow ────────────────────────────────────────────────────────────────
+// ─── Pay flow ─────────────────────────────────────────────────────────────────
 var _pendingId = null;
 
 async function doPay() {
   var processing = document.querySelectorAll('.photo-slot.uploading');
   if(processing.length) { showErr('Please wait for photos to finish processing 📸'); return; }
 
-  var raw = gatherData(false); if(!raw) return;
-  showLoading('Saving your surprise…', 'Almost there 🔥');
+  var herName  = document.getElementById('herName').value.trim();
+  var yourName = document.getElementById('yourName').value.trim();
+  var msg      = document.getElementById('msg').value.trim();
+  if(!herName) { showErr('Please enter his name 🔥'); return; }
 
+  var active = getActiveBalloons();
+  if(!active.length) { showErr('Add at least one balloon message 🎈'); return; }
+
+  showLoading('Saving your surprise…', 'Almost there 🔥');
   try {
-    // Save placeholder record (no photos yet) so we have an ID before opening Razorpay
-    var placeholderBalloons = raw._rawBalloons.map(function(b){ return { msg: b.msg, photoUrl: null }; });
-    var payload = { n: raw.n, f: raw.f, m: raw.m, b: placeholderBalloons };
+    var placeholderBalloons = active.map(function(b){ return { msg: b.msg, photoUrl: null }; });
+    var payload = { n: herName, f: yourName, m: msg, b: placeholderBalloons };
     var id = await saveToSupabase(payload);
     _pendingId = id;
     hideLoading();
 
-    var finalAmount = parseInt(_couponAmount, 10);
     var options = {
       key: RZP_KEY,
-      amount: finalAmount,
+      amount: parseInt(_couponAmount, 10),
       currency: 'INR',
       name: 'Lumina',
       description: 'Brothers Day Surprise Link 🔥',
       image: 'https://lumina247.pages.dev/favicon.ico',
       notes: { supabase_id: id },
       handler: async function(response) {
-        // Payment done — now upload photos and update record
         showLoading('Payment received! Uploading photos…', 'Hang on 🔥');
         try {
-          var uploadedBalloons = [];
-          for(var i = 0; i < raw._rawBalloons.length; i++) {
-            var b = raw._rawBalloons[i];
-            var photoUrl = null;
-            if(b.photoB64Paid) {
-              document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + raw._rawBalloons.length + '…';
-              photoUrl = await uploadToStorage(b.photoB64Paid, i);
+          for(var i = 0; i < active.length; i++) {
+            if(active[i].photoB64Paid) {
+              document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + active.length + '…';
+              payload.b[i].photoUrl = await uploadToStorage(active[i].photoB64Paid, i);
             }
-            uploadedBalloons.push({ msg: b.msg, photoUrl: photoUrl });
           }
-          // Update record with real photos + mark paid
-          var finalPayload = { n: raw.n, f: raw.f, m: raw.m, b: uploadedBalloons };
           await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY },
-            body: JSON.stringify({ data: JSON.stringify(finalPayload), paid: true })
+            body: JSON.stringify({ data: JSON.stringify(payload), paid: true })
           });
         } catch(e) {
-          console.warn('Photo upload / markPaid failed, webhook will handle it', e);
+          console.warn('Upload failed, marking paid only:', e);
           try { await markPaid(id); } catch(e2) {}
         }
         hideLoading();
@@ -553,17 +541,10 @@ async function doPay() {
       },
       prefill: { name: '', email: '', contact: '' },
       theme: { color: '#d47c2a' },
-      modal: {
-        ondismiss: function() {
-          document.getElementById('webhookNote').classList.add('show');
-        }
-      }
+      modal: { ondismiss: function() { document.getElementById('webhookNote').classList.add('show'); } }
     };
     var rzp = new Razorpay(options);
-    rzp.on('payment.failed', function(response) {
-      showErr('Payment failed: ' + response.error.description);
-    });
-    // Small delay so browser settles before opening modal
+    rzp.on('payment.failed', function(r){ showErr('Payment failed: ' + r.error.description); });
     setTimeout(function(){ rzp.open(); }, 300);
   } catch(e) {
     hideLoading();
@@ -571,10 +552,10 @@ async function doPay() {
   }
 }
 
-// ─── Webhook polling fallback ─────────────────────────────────────────────────
+// ─── Polling fallback ─────────────────────────────────────────────────────────
 async function pollForLink(evt) {
   if(evt) evt.preventDefault();
-  if(!_pendingId) { showErr('No pending payment found. Please contact support.'); return; }
+  if(!_pendingId) { showErr('No pending payment found.'); return; }
   document.getElementById('webhookNote').innerHTML = '⏳ Checking payment status…';
   try {
     var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + _pendingId + '&select=id,paid', {
@@ -586,14 +567,9 @@ async function pollForLink(evt) {
       showResult(_pendingId);
       document.getElementById('webhookNote').classList.remove('show');
     } else {
-      document.getElementById('webhookNote').innerHTML =
-        '⚠️ Payment not confirmed yet. Wait a few seconds and ' +
-        '<a href="#" onclick="pollForLink(event)" style="color:var(--amber);">try again</a>, or ' +
-        'email us with your order ID.';
+      document.getElementById('webhookNote').innerHTML = '⚠️ Not confirmed yet. <a href="#" onclick="pollForLink(event)" style="color:var(--amber);">Try again</a>.';
     }
-  } catch(e) {
-    document.getElementById('webhookNote').innerHTML = '⚠️ Could not check — please try again in a moment.';
-  }
+  } catch(e) { document.getElementById('webhookNote').innerHTML = '⚠️ Could not check — try again in a moment.'; }
 }
 
 function showResult(id) {
@@ -621,10 +597,7 @@ function copyIt() {
   var url = window._url || document.getElementById('openLink').href;
   var btn = document.getElementById('copyBtn');
   if(navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(url).then(function(){
-      btn.textContent = 'Copied ✓';
-      setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2500);
-    });
+    navigator.clipboard.writeText(url).then(function(){ btn.textContent = 'Copied ✓'; setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2500); });
   } else {
     var ta = document.createElement('textarea'); ta.value = url; ta.style.cssText = 'position:fixed;opacity:0;';
     document.body.appendChild(ta); ta.focus(); ta.select();
@@ -661,7 +634,7 @@ function resetAll() {
   }
 })();
 
-// ─── Prefill from previous order ─────────────────────────────────────────────
+// ─── Prefill ──────────────────────────────────────────────────────────────────
 window.addEventListener('load', function() {
   var prefillId = new URLSearchParams(window.location.search).get('prefill');
   if(prefillId) { window.history.replaceState({}, '', window.location.pathname); prefillForm(prefillId); }
