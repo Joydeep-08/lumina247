@@ -175,7 +175,7 @@ textarea{height:90px;line-height:1.6;}
   <div class="price-badge">
     <div class="price-left">
       <div class="price-label">One-time payment</div>
-      <div class="price-amount"><span>₹</span>59</div>
+      <div class="price-amount"><span>₹</span>39</div>
     </div>
     <div class="price-features">
       <div class="price-feat">Permanent shareable link</div>
@@ -198,7 +198,7 @@ textarea{height:90px;line-height:1.6;}
 
   <div class="err" id="errBox"></div>
   <button class="free-prev-btn" onclick="doPreview()">👁 Preview First (Free · 30s)</button>
-  <button class="pay-btn" id="payBtn" onclick="doPay()">🔥 &nbsp; Get His Surprise Link — <span id="payPriceLabel">₹59</span></button>
+  <button class="pay-btn" id="payBtn" onclick="doPay()">🔥 &nbsp; Get His Surprise Link — <span id="payPriceLabel">₹39</span></button>
   <div class="webhook-note" id="webhookNote">
     ⏳ Payment received — generating your link. If it doesn't appear in 10 seconds, <a href="#" onclick="pollForLink(event)" style="color:var(--amber);">click here to check</a>.
   </div>
@@ -226,11 +226,11 @@ var BUCKET = 'photos';
 
 var COUPONS = {
   'BRO1':     { amount: 100,  desc: '₹1 — test mode 🔧' },
-  'LAUNCH50': { amount: 2950, desc: '₹29 — 50% off 🔥'  },
-  'BRO50':    { amount: 2950, desc: '₹29 — 50% off 🔥'  },
+  'LAUNCH50': { amount: 1950, desc: '₹19 — 50% off 🔥'  },
+  'BRO50':    { amount: 1950, desc: '₹19 — 50% off 🔥'  },
   'BROFREE':  { amount: 100,  desc: '₹1 — 100% off 🎁'  },
 };
-var _couponAmount = 5900;
+var _couponAmount = 3900;
 
 function applyCoupon() {
   var code = (document.getElementById('couponInput').value || '').trim().toUpperCase();
@@ -238,7 +238,7 @@ function applyCoupon() {
   fb.className = 'coupon-feedback'; fb.textContent = '';
   if (!code) { fb.className = 'coupon-feedback err'; fb.textContent = 'Please enter a coupon code.'; return; }
   var c = COUPONS[code];
-  if (!c) { _couponAmount = 5900; updatePayLabel(5900); fb.className = 'coupon-feedback err'; fb.textContent = '❌ "' + code + '" is not a valid coupon.'; return; }
+  if (!c) { _couponAmount = 3900; updatePayLabel(3900); fb.className = 'coupon-feedback err'; fb.textContent = '❌ "' + code + '" is not a valid coupon.'; return; }
   _couponAmount = c.amount;
   updatePayLabel(c.amount);
   fb.className = 'coupon-feedback ok';
@@ -279,7 +279,6 @@ function dataURLtoBlob(dataURL) {
 }
 
 async function uploadToStorage(dataURL, idx) {
-  // Safety check — never try to upload a plain URL
   if (dataURL.startsWith('http')) return dataURL;
   var blob = dataURLtoBlob(dataURL);
   var fileName = 'balloon-' + Date.now() + '-' + Math.random().toString(36).slice(2) + '-' + idx + '.webp';
@@ -505,8 +504,6 @@ async function doPay() {
             if(!pd) continue;
             document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + active.length + '…';
             try {
-              // KEY FIX: if it's already a hosted URL (came back from prefill), reuse it directly
-              // instead of trying to atob() it which would silently blow up
               if(pd.startsWith('http')) {
                 payload.b[i].photoUrl = pd;
               } else {
@@ -514,7 +511,6 @@ async function doPay() {
               }
             } catch(ue) {
               console.error('Photo ' + (i+1) + ' upload failed:', ue);
-              // fallback: if preview URL is a hosted URL, use that
               var pv = active[i].photoB64Preview;
               if(pv && pv.startsWith('http')) {
                 payload.b[i].photoUrl = pv;
@@ -610,7 +606,7 @@ function resetAll() {
   document.getElementById('couponInput').value = '';
   document.getElementById('couponFeedback').className = 'coupon-feedback';
   document.getElementById('couponFeedback').textContent = '';
-  _couponAmount = 5900; updatePayLabel(5900);
+  _couponAmount = 3900; updatePayLabel(3900);
   document.getElementById('balloonList').innerHTML = '';
   document.getElementById('resultBox').style.display = 'none';
   document.getElementById('paidBanner').classList.remove('show');
@@ -653,8 +649,6 @@ async function prefillForm(id) {
         addBalloon();
         if(b.msg) { balloons[i].msg = b.msg; var ta = document.getElementById('bm'+i); if(ta) ta.value = b.msg; }
         if(b.photoUrl) {
-          // Store the hosted URL in all three fields.
-          // uploadToStorage() has a guard: if it starts with 'http' it returns it as-is.
           balloons[i].photoUrl        = b.photoUrl;
           balloons[i].photoB64Preview = b.photoUrl;
           balloons[i].photoB64Paid    = b.photoUrl;
