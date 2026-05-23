@@ -289,8 +289,14 @@ function compress(dataURL, maxPx, quality) {
 }
 
 async function uploadToStorage(dataURL, idx) {
-  var res = await fetch(dataURL);
-  var blob = await res.blob();
+  // Convert base64 dataURL to blob without fetch()
+  var parts = dataURL.split(',');
+  var mime = parts[0].match(/:(.*?);/)[1];
+  var binary = atob(parts[1]);
+  var arr = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+  var blob = new Blob([arr], { type: mime });
+
   var fileName = 'balloon-' + Date.now() + '-' + idx + '.webp';
   var uploadRes = await fetch(SUPA_URL + '/storage/v1/object/' + BUCKET + '/' + fileName, {
     method: 'POST',
@@ -410,27 +416,43 @@ function gatherData(forPreview) {
 async function doPreview() {
   var processing = document.querySelectorAll('.photo-slot.uploading');
   if(processing.length) { showErr('Please wait for photos to finish processing 📸'); return; }
-  var raw = gatherData(false); if(!raw) return;
-  showLoading('Building your preview…', 'Almost there 🔥');
+
+  var herName = document.getElementById('herName').value.trim();
+  var yourName = document.getElementById('yourName').value.trim();
+  var msg = document.getElementById('msg').value.trim();
+  if(!herName) { showErr('Please enter his name 🔥'); return; }
+
+  // Include all balloons that have EITHER a message OR a photo
+  var active = balloons.filter(function(b){ return b && (b.msg.trim() || b.photoB64Preview); });
+  if(!active.length) { showErr('Add at least one balloon message 🎈'); return; }
+
+  showLoading('Building your preview…', 'Saving data 🔥');
   try {
-    var placeholderBalloons = raw._rawBalloons.map(function(b){ return { msg: b.msg, photoUrl: null }; });
-    var payload = { n: raw.n, f: raw.f, m: raw.m, b: placeholderBalloons };
+    var placeholderBalloons = active.map(function(b){ return { msg: b.msg, photoUrl: null }; });
+    var payload = { n: herName, f: yourName, m: msg, b: placeholderBalloons };
     var id = await saveToSupabase(payload);
-    // Upload photos
-    for(var i = 0; i < raw._rawBalloons.length; i++) {
-      var b = raw._rawBalloons[i];
+
+    // Upload photos one by one
+    for(var i = 0; i < active.length; i++) {
+      var b = active[i];
       if(b.photoB64Preview) {
-        document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + raw._rawBalloons.length + '…';
-        var photoUrl = await uploadToStorage(b.photoB64Preview, i);
-        payload.b[i].photoUrl = photoUrl;
+        document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + active.length + '…';
+        try {
+          payload.b[i].photoUrl = await uploadToStorage(b.photoB64Preview, i);
+        } catch(uploadErr) {
+          console.error('Photo ' + i + ' upload failed:', uploadErr);
+          // continue — balloon just won't have a photo
+        }
       }
     }
-    // Update row with real photo URLs
+
+    // Update row with photo URLs
     await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY },
       body: JSON.stringify({ data: JSON.stringify(payload) })
     });
+
     hideLoading();
     var url = SITE_URL + 'view.html?id=' + id + '&preview=true';
     var a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
@@ -438,6 +460,7 @@ async function doPreview() {
   } catch(e) {
     hideLoading();
     showErr('Preview failed: ' + e.message);
+    console.error(e);
   }
 }
 
