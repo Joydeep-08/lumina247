@@ -18,8 +18,6 @@
 #previewOverlay.show{display:flex;}
 #previewOverlay a{color:#d47c2a;font-weight:600;text-decoration:none;}
 #previewOverlay .timer{font-weight:700;color:#f97316;}
-
-/* ── Redirect overlay (after preview expires) ── */
 #redirectOverlay{
   display:none;position:fixed;inset:0;z-index:99999;
   background:rgba(18,8,2,.84);backdrop-filter:blur(16px);
@@ -33,12 +31,8 @@
 .ro-btn{margin-top:8px;padding:16px 40px;background:linear-gradient(135deg,#d47c2a,#9e4a0e);color:#fff;border:none;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 28px rgba(212,124,42,.5);}
 .ro-progress{width:220px;height:3px;background:rgba(255,255,255,.15);border-radius:10px;overflow:hidden;}
 .ro-bar{height:100%;background:linear-gradient(90deg,#d47c2a,#e8b07a);border-radius:10px;width:0%;transition:width linear;}
-
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --ink:#1a0f05;--amber:#d47c2a;--rust:#b84a2e;
-  --cream:#faf4eb;--warm:#f3e8d2;--muted:#6b4a2a;--sand:#e8d5b0;
-}
+:root{--ink:#1a0f05;--amber:#d47c2a;--rust:#b84a2e;--cream:#faf4eb;--warm:#f3e8d2;--muted:#6b4a2a;--sand:#e8d5b0;}
 html,body{height:100%;overflow:hidden;}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);display:flex;flex-direction:column;}
 #loadScreen{position:fixed;inset:0;z-index:900;background:linear-gradient(160deg,#faf4eb,#f3e8d2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .8s ease;}
@@ -169,13 +163,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);d
 </head>
 <body>
 
-<!-- Preview pill — subtle, bottom-center, non-intrusive -->
 <div id="previewOverlay">
   <span>👁 Preview · <span class="timer" id="pvTimer">30</span>s</span>
   <a id="pvLink" href="#">Create yours →</a>
 </div>
-
-<!-- Redirect after preview expires -->
 <div id="redirectOverlay">
   <div class="ro-emoji">🔥</div>
   <div class="ro-title">Loved what you saw?</div>
@@ -183,7 +174,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);d
   <div class="ro-progress"><div class="ro-bar" id="roBar"></div></div>
   <button class="ro-btn" onclick="goHome()">Create Mine Now →</button>
 </div>
-
 <div id="loadScreen">
   <div class="ls-orb">🔥</div>
   <div class="ls-text">Loading your surprise…</div>
@@ -285,13 +275,35 @@ function goHome() {
 }
 
 async function loadData() {
-  var previewParam = new URLSearchParams(window.location.search).get('preview');
-  if (previewParam) {
+  var params = new URLSearchParams(window.location.search);
+  var previewKey   = params.get('preview_key');   // ← NEW: sessionStorage key
+  var previewParam = params.get('preview');        // ← OLD: base64 URL param (fallback)
+
+  if (previewKey) {
+    // ── New approach: read from sessionStorage (no URL length limit) ──────────
+    try {
+      var stored = sessionStorage.getItem(previewKey);
+      if (stored) {
+        data = JSON.parse(stored);
+        isPreview = true;
+        // Clean up after reading so storage doesn't fill up
+        sessionStorage.removeItem(previewKey);
+      } else {
+        // Key expired or different browser tab — show fallback
+        data = null; isPreview = true;
+        console.warn('Preview key not found in sessionStorage (different tab/browser?)');
+      }
+    } catch(e) { console.error('Preview sessionStorage read failed:', e); data = null; isPreview = false; }
+
+  } else if (previewParam) {
+    // ── Old approach: base64 in URL (still works for no-photo previews) ───────
     try {
       data = JSON.parse(decodeURIComponent(escape(atob(previewParam))));
       isPreview = true;
     } catch(e) { console.error('Preview decode failed:', e); data = null; isPreview = false; }
+
   } else if (_pageId) {
+    // ── Paid link: fetch from Supabase ────────────────────────────────────────
     try {
       var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + _pageId + '&select=data', {
         headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
@@ -300,7 +312,9 @@ async function loadData() {
       if (j && j[0] && j[0].data) { data = JSON.parse(j[0].data); }
       isPreview = false;
     } catch(e) { console.error('Supabase load failed:', e); data = null; }
+
   } else {
+    // ── Demo / direct visit ───────────────────────────────────────────────────
     data = { n: 'Bro', f: '', m: '', b: [
       { msg: 'Always got your back 💪', photoUrl: null },
       { msg: 'Best bro ever 🔥', photoUrl: null },
@@ -308,9 +322,12 @@ async function loadData() {
     ]};
     isPreview = false;
   }
-  if (!data) { data = { n: 'Bro', f: '', m: '', b: [
-    { msg: 'Always got your back 💪' }, { msg: 'Best bro ever 🔥' }, { msg: 'Ride or die forever 🤜🤛' }
-  ]}; }
+
+  if (!data) {
+    data = { n: 'Bro', f: '', m: '', b: [
+      { msg: 'Always got your back 💪' }, { msg: 'Best bro ever 🔥' }, { msg: 'Ride or die forever 🤜🤛' }
+    ]};
+  }
 
   var ls = document.getElementById('loadScreen');
   ls.classList.add('out');
@@ -320,7 +337,6 @@ async function loadData() {
 
 function init() {
   if(isPreview) {
-    // Subtle pill at the bottom, non-intrusive — same experience otherwise
     var pvLink = document.getElementById('pvLink');
     pvLink.href = HOME_URL;
     document.getElementById('previewOverlay').classList.add('show');
@@ -331,7 +347,6 @@ function init() {
   document.getElementById('iname').textContent = data.n || 'Bro';
   if(data.f) document.getElementById('isub').textContent = data.f + ' made this especially for you 🔥';
 
-  // Portrait: prefer photoUrl (paid, from Supabase), then photoB64 (preview, high-res base64)
   var fp = data.b && data.b.find(function(b){ return b && (b.photoUrl || b.photoB64); });
   if(fp) {
     var pno = document.getElementById('pno'); if(pno) pno.remove();
@@ -425,8 +440,6 @@ function popBalloon(i, b, el) {
   var polPhoto = document.getElementById('polPhoto'), polCard = document.getElementById('polCard');
   polCard.style.setProperty('--tilt', tilts[i%tilts.length]+'deg');
   document.getElementById('polMsg').textContent = b.msg || '';
-
-  // Support both paid (photoUrl from Supabase) and preview (photoB64 inline base64)
   var photoSrc = b.photoUrl || b.photoB64 || null;
   if(photoSrc) {
     document.getElementById('polImg').src = photoSrc;
@@ -503,6 +516,4 @@ function openSurprise() {
 loadData();
 </script>
 </body>
-
-
 </html>

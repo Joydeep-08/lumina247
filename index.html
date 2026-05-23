@@ -413,8 +413,9 @@ async function doPreview() {
   var processing = document.querySelectorAll('.photo-slot.uploading');
   if(processing.length) { showErr('Please wait for photos to finish processing 📸'); return; }
   try {
-    var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(d))));
-    var url = SITE_URL + 'view.html?preview=' + encoded;
+    var key = 'preview_' + Date.now();
+    sessionStorage.setItem(key, JSON.stringify(d));
+    var url = SITE_URL + 'view.html?preview_key=' + key;
     var a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   } catch(e) {
@@ -463,24 +464,14 @@ async function doPay() {
   showLoading('Saving your surprise…', 'Almost there 🔥');
 
   try {
-    var uploadedBalloons = [];
-    for(var i = 0; i < raw._rawBalloons.length; i++) {
-      var b = raw._rawBalloons[i];
-      var photoUrl = null;
-      if(b.photoB64Paid) {
-        document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + raw._rawBalloons.length + '…';
-        photoUrl = await uploadToStorage(b.photoB64Paid, i);
-      }
-      uploadedBalloons.push({ msg: b.msg, photoUrl: photoUrl });
-    }
-
-    var payload = { n: raw.n, f: raw.f, m: raw.m, b: uploadedBalloons };
-    document.getElementById('loadingSub').textContent = 'Saving your surprise…';
+    // Save placeholder record (no photos yet) so we have an ID before opening Razorpay
+    var placeholderBalloons = raw._rawBalloons.map(function(b){ return { msg: b.msg, photoUrl: null }; });
+    var payload = { n: raw.n, f: raw.f, m: raw.m, b: placeholderBalloons };
     var id = await saveToSupabase(payload);
     _pendingId = id;
     hideLoading();
 
-    var finalAmount = _couponAmount; // ← uses coupon amount if applied
+    var finalAmount = parseInt(_couponAmount, 10);
     var options = {
       key: RZP_KEY,
       amount: finalAmount,
@@ -490,7 +481,31 @@ async function doPay() {
       image: 'https://luminaa-f37.pages.dev/favicon.ico',
       notes: { supabase_id: id },
       handler: async function(response) {
-        try { await markPaid(id); } catch(e) { console.warn('markPaid failed, webhook will handle it', e); }
+        // Payment done — now upload photos and update record
+        showLoading('Payment received! Uploading photos…', 'Hang on 🔥');
+        try {
+          var uploadedBalloons = [];
+          for(var i = 0; i < raw._rawBalloons.length; i++) {
+            var b = raw._rawBalloons[i];
+            var photoUrl = null;
+            if(b.photoB64Paid) {
+              document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + raw._rawBalloons.length + '…';
+              photoUrl = await uploadToStorage(b.photoB64Paid, i);
+            }
+            uploadedBalloons.push({ msg: b.msg, photoUrl: photoUrl });
+          }
+          // Update record with real photos + mark paid
+          var finalPayload = { n: raw.n, f: raw.f, m: raw.m, b: uploadedBalloons };
+          await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY },
+            body: JSON.stringify({ data: JSON.stringify(finalPayload), paid: true })
+          });
+        } catch(e) {
+          console.warn('Photo upload / markPaid failed, webhook will handle it', e);
+          try { await markPaid(id); } catch(e2) {}
+        }
+        hideLoading();
         document.getElementById('paidBanner').classList.add('show');
         showResult(id);
         document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -507,7 +522,8 @@ async function doPay() {
     rzp.on('payment.failed', function(response) {
       showErr('Payment failed: ' + response.error.description);
     });
-    rzp.open();
+    // Small delay so browser settles before opening modal
+    setTimeout(function(){ rzp.open(); }, 300);
   } catch(e) {
     hideLoading();
     showErr('Failed to save: ' + e.message);
