@@ -408,18 +408,36 @@ function gatherData(forPreview) {
 
 // ─── Preview (FREE) ───────────────────────────────────────────────────────────
 async function doPreview() {
-  var d = gatherData(true); if(!d) return;
-  d.isPreview = true;
   var processing = document.querySelectorAll('.photo-slot.uploading');
   if(processing.length) { showErr('Please wait for photos to finish processing 📸'); return; }
+  var raw = gatherData(false); if(!raw) return;
+  showLoading('Building your preview…', 'Almost there 🔥');
   try {
-    var key = 'preview_' + Date.now();
-    sessionStorage.setItem(key, JSON.stringify(d));
-    var url = SITE_URL + 'view.html?preview_key=' + key;
+    var placeholderBalloons = raw._rawBalloons.map(function(b){ return { msg: b.msg, photoUrl: null }; });
+    var payload = { n: raw.n, f: raw.f, m: raw.m, b: placeholderBalloons };
+    var id = await saveToSupabase(payload);
+    // Upload photos
+    for(var i = 0; i < raw._rawBalloons.length; i++) {
+      var b = raw._rawBalloons[i];
+      if(b.photoB64Preview) {
+        document.getElementById('loadingSub').textContent = 'Uploading photo ' + (i+1) + ' of ' + raw._rawBalloons.length + '…';
+        var photoUrl = await uploadToStorage(b.photoB64Preview, i);
+        payload.b[i].photoUrl = photoUrl;
+      }
+    }
+    // Update row with real photo URLs
+    await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY },
+      body: JSON.stringify({ data: JSON.stringify(payload) })
+    });
+    hideLoading();
+    var url = SITE_URL + 'view.html?id=' + id + '&preview=true';
     var a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   } catch(e) {
-    showErr('Failed to generate preview: ' + e.message);
+    hideLoading();
+    showErr('Preview failed: ' + e.message);
   }
 }
 

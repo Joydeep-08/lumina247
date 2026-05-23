@@ -554,8 +554,8 @@ async function loadData() {
       });
       var j = await res.json();
       if (j && j[0] && j[0].data) { data = JSON.parse(j[0].data); }
-      isPreview = false;
-    } catch(e) { data = null; }
+      isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+    } catch(e) { data = null; isPreview = false; }
   } else {
     data = { n: 'Bro', f: '', m: '', b: [
       { msg: 'Always got your back 💪', photoUrl: null },
