@@ -449,7 +449,7 @@ async function doPreview() {
     hideLoading();
     var url = SITE_URL + 'view.html?id=' + id + '&preview=true';
     console.log('Opening preview:', url);
-    window.open(url, '_blank');
+    window.location.href = url;
   } catch(e) {
     hideLoading();
     showErr('Preview failed: ' + e.message);

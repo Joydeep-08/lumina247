@@ -528,9 +528,7 @@ var cfC = ['#c8721a','#e8b07a','#9e3a1e','#f5e8d0','#ffd6a0','#fffdf6','#d4a855'
 var _pageId = new URLSearchParams(window.location.search).get('id');
 
 function goHome() {
-  var url = 'https://lumina247.pages.dev/create.html' + (_pageId ? '?prefill=' + _pageId : '');
-  try { window.close(); } catch(e) {}
-  setTimeout(function(){ window.location.href = url; }, 500);
+  window.location.href = 'https://lumina247.pages.dev/create.html' + (_pageId ? '?prefill=' + _pageId : '');
 }
 
 async function loadData() {
