@@ -117,6 +117,16 @@ textarea{height:90px;line-height:1.6;}
 /* Webhook pending notice */
 .webhook-note{background:rgba(212,124,42,0.06);border:1px solid rgba(212,124,42,0.18);border-radius:12px;padding:12px 16px;margin-top:12px;font-size:12px;color:var(--muted);text-align:center;line-height:1.6;display:none;}
 .webhook-note.show{display:block;}
+
+/* ── Coupon system ── */
+.coupon-wrap{margin-bottom:16px;}
+.coupon-row{display:flex;gap:8px;}
+.coupon-row input[type=text]{flex:1;padding:13px 16px;font-size:13px;}
+.apply-coupon-btn{padding:0 22px;background:var(--amber);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s,transform .15s;}
+.apply-coupon-btn:hover{background:#c8691a;transform:translateY(-1px);}
+.coupon-feedback{margin-top:8px;border-radius:10px;padding:9px 14px;font-size:12px;display:none;}
+.coupon-feedback.ok{display:flex;align-items:center;gap:7px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);color:#166534;}
+.coupon-feedback.err{display:block;background:rgba(255,80,80,0.07);border:1.5px solid rgba(255,80,80,0.18);color:#c0392b;}
 </style>
 </head>
 <body>
@@ -191,9 +201,21 @@ textarea{height:90px;line-height:1.6;}
     </div>
   </div>
 
+  <!-- ── Coupon ── -->
+  <div class="coupon-wrap">
+    <label class="lbl">Have a coupon?</label>
+    <div class="coupon-row">
+      <input type="text" id="couponInput" placeholder="Enter coupon code"
+             oninput="this.value=this.value.toUpperCase()"
+             onkeydown="if(event.key==='Enter')applyCoupon()"/>
+      <button class="apply-coupon-btn" onclick="applyCoupon()">Apply</button>
+    </div>
+    <div class="coupon-feedback" id="couponFeedback"></div>
+  </div>
+
   <div class="err" id="errBox"></div>
   <button class="free-prev-btn" onclick="doPreview()">👁 Preview First (Free · 30s)</button>
-  <button class="pay-btn" id="payBtn" onclick="doPay()">🔥 &nbsp; Get His Surprise Link — ₹59</button>
+  <button class="pay-btn" id="payBtn" onclick="doPay()">🔥 &nbsp; Get His Surprise Link — <span id="payPriceLabel">₹59</span></button>
   <div class="webhook-note" id="webhookNote">
     ⏳ Payment received — generating your link. If it doesn't appear in 10 seconds, <a href="#" onclick="pollForLink(event)" style="color:var(--amber);">click here to check</a>.
   </div>
@@ -219,9 +241,41 @@ var RZP_KEY = 'rzp_live_SmizRaPApu81ZS';
 var SITE_URL = 'https://luminaa-f37.pages.dev/';
 var BUCKET = 'photos';
 
+// ─── Coupon system ────────────────────────────────────────────────────────────
+// Add / remove coupons here freely. amount = paise (100 = ₹1).
+var COUPONS = {
+  'BRO1':     { amount: 100,  desc: '₹1 — test mode 🔧' },
+  'LAUNCH50': { amount: 2950, desc: '₹29 — 50% off 🔥'  },
+  'BRO50':    { amount: 2950, desc: '₹29 — 50% off 🔥'  },
+  'BROFREE':  { amount: 100,  desc: '₹1 — 100% off 🎁'  },
+};
+var _couponAmount = 5900; // paise; default full price
+
+function applyCoupon() {
+  var code = (document.getElementById('couponInput').value || '').trim().toUpperCase();
+  var fb   = document.getElementById('couponFeedback');
+  fb.className = 'coupon-feedback'; fb.textContent = '';
+
+  if (!code) {
+    fb.className = 'coupon-feedback err'; fb.textContent = 'Please enter a coupon code.'; return;
+  }
+  var c = COUPONS[code];
+  if (!c) {
+    _couponAmount = 5900; updatePayLabel(5900);
+    fb.className = 'coupon-feedback err'; fb.textContent = '❌ "' + code + '" is not a valid coupon.'; return;
+  }
+  _couponAmount = c.amount;
+  updatePayLabel(c.amount);
+  fb.className = 'coupon-feedback ok';
+  fb.innerHTML = '🎉 <strong>' + code + '</strong> applied — ' + c.desc;
+}
+
+function updatePayLabel(paise) {
+  var el = document.getElementById('payPriceLabel');
+  if (el) el.textContent = '₹' + (paise / 100);
+}
+
 // ─── Compression ──────────────────────────────────────────────────────────────
-// PREVIEW: high quality, inline base64 (never hits server)
-// PAID VIEW: compressed ~120KB, uploaded to Supabase storage
 function compress(dataURL, maxPx, quality) {
   return new Promise(function(resolve) {
     var img = new Image();
@@ -266,7 +320,6 @@ var colors = ['🔴','🟠','🟡','🟣','🔵','🟢','🟤'];
 
 function addBalloon() {
   var idx = bCount++;
-  // Store both a preview-quality base64 AND a flag for the paid URL
   balloons.push({ msg: '', photoUrl: null, photoB64Preview: null, photoB64Paid: null });
   var item = document.createElement('div'); item.className = 'b-item'; item.id = 'bi' + idx;
   item.innerHTML =
@@ -305,16 +358,11 @@ function loadPic(idx, inp) {
   var r = new FileReader();
   r.onload = async function(e) {
     try {
-      // High-quality for preview (shown in the slot and used in preview link)
       var previewB64 = await compress(e.target.result, 1200, 0.92);
-      // Compressed for paid (uploaded to storage)
       var paidB64 = await compress(e.target.result, 700, 0.65);
-
       balloons[idx].photoB64Preview = previewB64;
       balloons[idx].photoB64Paid = paidB64;
-      balloons[idx].photoUrl = null; // will be set on pay
-
-      // Show preview quality in the slot
+      balloons[idx].photoUrl = null;
       document.getElementById('pi' + idx).src = previewB64;
       slot.classList.remove('uploading');
       slot.classList.add('filled');
@@ -352,31 +400,23 @@ function gatherData(forPreview) {
   if(!active.length) { showErr('Add at least one balloon message 🎈'); return null; }
 
   if(forPreview) {
-    // For preview: embed high-quality base64, no upload needed
     return {
       n: herName, f: yourName, m: msg,
       b: active.map(function(b) {
-        return {
-          msg: b.msg,
-          photoB64: b.photoB64Preview || null  // full quality, inline
-        };
+        return { msg: b.msg, photoB64: b.photoB64Preview || null };
       })
     };
   } else {
-    // For paid: we'll upload compressed versions separately
     return { n: herName, f: yourName, m: msg, _rawBalloons: active };
   }
 }
 
-// ─── Preview (FREE, no Supabase save, high-quality photos) ───────────────────
+// ─── Preview (FREE) ───────────────────────────────────────────────────────────
 async function doPreview() {
   var d = gatherData(true); if(!d) return;
   d.isPreview = true;
-
-  // Check for any still-processing slots
   var processing = document.querySelectorAll('.photo-slot.uploading');
   if(processing.length) { showErr('Please wait for photos to finish processing 📸'); return; }
-
   try {
     var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(d))));
     var url = SITE_URL + 'view.html?preview=' + encoded;
@@ -387,7 +427,7 @@ async function doPreview() {
   }
 }
 
-// ─── Save to Supabase (paid flow) ─────────────────────────────────────────────
+// ─── Save to Supabase ─────────────────────────────────────────────────────────
 async function saveToSupabase(payload) {
   var res = await fetch(SUPA_URL + '/rest/v1/mday', {
     method: 'POST',
@@ -428,7 +468,6 @@ async function doPay() {
   showLoading('Saving your surprise…', 'Almost there 🔥');
 
   try {
-    // 1. Upload compressed photos to Supabase storage
     var uploadedBalloons = [];
     for(var i = 0; i < raw._rawBalloons.length; i++) {
       var b = raw._rawBalloons[i];
@@ -440,24 +479,22 @@ async function doPay() {
       uploadedBalloons.push({ msg: b.msg, photoUrl: photoUrl });
     }
 
-    // 2. Save record to Supabase (paid: false initially)
     var payload = { n: raw.n, f: raw.f, m: raw.m, b: uploadedBalloons };
     document.getElementById('loadingSub').textContent = 'Saving your surprise…';
     var id = await saveToSupabase(payload);
     _pendingId = id;
     hideLoading();
 
-    // 3. Open Razorpay
+    var finalAmount = _couponAmount; // ← uses coupon amount if applied
     var options = {
       key: RZP_KEY,
-      amount: 5900,
+      amount: finalAmount,
       currency: 'INR',
       name: 'Lumina',
       description: 'Brothers Day Surprise Link 🔥',
       image: 'https://luminaa-f37.pages.dev/favicon.ico',
-      notes: { supabase_id: id },  // ← sent to webhook
+      notes: { supabase_id: id },
       handler: async function(response) {
-        // Payment success callback — also mark paid client-side
         try { await markPaid(id); } catch(e) { console.warn('markPaid failed, webhook will handle it', e); }
         document.getElementById('paidBanner').classList.add('show');
         showResult(id);
@@ -467,7 +504,6 @@ async function doPay() {
       theme: { color: '#d47c2a' },
       modal: {
         ondismiss: function() {
-          // Show webhook fallback note — if they paid but dismissed modal
           document.getElementById('webhookNote').classList.add('show');
         }
       }
@@ -484,8 +520,6 @@ async function doPay() {
 }
 
 // ─── Webhook polling fallback ─────────────────────────────────────────────────
-// If payment went through but handler didn't fire (user closed app etc),
-// poll Supabase for paid status using the pending ID
 async function pollForLink(evt) {
   if(evt) evt.preventDefault();
   if(!_pendingId) { showErr('No pending payment found. Please contact support.'); return; }
@@ -551,6 +585,10 @@ function resetAll() {
   document.getElementById('herName').value = '';
   document.getElementById('yourName').value = '';
   document.getElementById('msg').value = '';
+  document.getElementById('couponInput').value = '';
+  document.getElementById('couponFeedback').className = 'coupon-feedback';
+  document.getElementById('couponFeedback').textContent = '';
+  _couponAmount = 5900; updatePayLabel(5900);
   document.getElementById('balloonList').innerHTML = '';
   document.getElementById('resultBox').style.display = 'none';
   document.getElementById('paidBanner').classList.remove('show');
@@ -594,7 +632,7 @@ async function prefillForm(id) {
         if(b.msg) { balloons[i].msg = b.msg; var ta = document.getElementById('bm'+i); if(ta) ta.value = b.msg; }
         if(b.photoUrl) {
           balloons[i].photoUrl = b.photoUrl;
-          balloons[i].photoB64Preview = b.photoUrl; // use stored URL as preview too
+          balloons[i].photoB64Preview = b.photoUrl;
           document.getElementById('pi'+i).src = b.photoUrl;
           document.getElementById('ps'+i).classList.add('filled');
         }
