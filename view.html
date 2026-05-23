@@ -700,9 +700,13 @@ function popBalloon(i, b, el) {
   document.getElementById('polMsg').textContent = b.msg || '';
   var photoSrc = b.photoUrl || b.photoB64 || null;
   if (photoSrc) {
-    document.getElementById('polImg').src = photoSrc;
+    var img = document.getElementById('polImg');
+    img.style.opacity = '0';
+    img.src = '';
     polPhoto.classList.add('hasimg'); polPhoto.style.background = 'none';
-  } else {
+    img.onload = function() { img.style.opacity = '1'; };
+    img.src = photoSrc;
+} else {
     document.getElementById('polImg').src = '';
     polPhoto.classList.remove('hasimg'); polPhoto.style.background = gradients[i%gradients.length];
     document.getElementById('balInside').innerHTML = '<svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="72">'+bsvg(pals[i%pals.length])+'</svg><div class="balthread"></div>';
