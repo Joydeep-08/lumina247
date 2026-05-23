@@ -535,27 +535,38 @@ function goHome() {
 
 async function loadData() {
   var params = new URLSearchParams(window.location.search);
-  var previewKey = params.get('preview_key');
   var previewParam = params.get('preview');
+  // Only treat as base64 encoded data if it looks like base64 (long string)
+  // 'true' is just a flag, not data
+  var isBase64Preview = previewParam && previewParam !== 'true' && previewParam.length > 20;
 
-  if (previewKey) {
+  if (isBase64Preview) {
     try {
-      var stored = sessionStorage.getItem(previewKey);
-      if (stored) { data = JSON.parse(stored); isPreview = true; sessionStorage.removeItem(previewKey); }
-      else { data = null; isPreview = true; }
-    } catch(e) { data = null; isPreview = false; }
-  } else if (previewParam) {
-    try { data = JSON.parse(decodeURIComponent(escape(atob(previewParam)))); isPreview = true; }
-    catch(e) { data = null; isPreview = false; }
+      data = JSON.parse(decodeURIComponent(escape(atob(previewParam))));
+      isPreview = true;
+    } catch(e) {
+      data = null;
+      isPreview = false;
+    }
   } else if (_pageId) {
     try {
       var res = await fetch(SUPA_URL + '/rest/v1/mday?id=eq.' + _pageId + '&select=data', {
         headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
       });
       var j = await res.json();
-      if (j && j[0] && j[0].data) { data = JSON.parse(j[0].data); }
-      isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
-    } catch(e) { data = null; isPreview = false; }
+      console.log('Supabase response:', JSON.stringify(j));
+      if (j && j[0] && j[0].data) {
+        data = JSON.parse(j[0].data);
+        console.log('Parsed data:', JSON.stringify(data));
+      } else {
+        console.log('No data found in Supabase for id:', _pageId);
+      }
+      isPreview = previewParam === 'true';
+    } catch(e) {
+      console.error('loadData error:', e);
+      data = null;
+      isPreview = false;
+    }
   } else {
     data = { n: 'Bro', f: '', m: '', b: [
       { msg: 'Always got your back 💪', photoUrl: null },
@@ -566,8 +577,11 @@ async function loadData() {
   }
 
   if (!data) {
+    console.log('data is null, using default');
     data = { n: 'Bro', f: '', m: '', b: [
-      { msg: 'Always got your back 💪' }, { msg: 'Best bro ever 🔥' }, { msg: 'Ride or die forever 🤜🤛' }
+      { msg: 'Always got your back 💪' },
+      { msg: 'Best bro ever 🔥' },
+      { msg: 'Ride or die forever 🤜🤛' }
     ]};
   }
 
