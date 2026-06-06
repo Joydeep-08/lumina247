@@ -768,8 +768,14 @@
 // ─── DATA ─────────────────────────────────────────────────
 let D = {};
 try {
+  let D = {};
+try {
   const raw = new URLSearchParams(location.search).get('data');
-  if (raw) D = JSON.parse(decodeURIComponent(escape(atob(raw))));
+  if (raw) D = JSON.parse(decodeURIComponent(atob(raw)));  // ← remove escape()
+} catch(e) {
+  console.error('Data parse error:', e);
+  D = {};  // fallback to empty, don't crash
+}
 } catch(e) {
   D = {
     recipientName: 'Priya',
