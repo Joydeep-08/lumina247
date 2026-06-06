@@ -767,16 +767,16 @@
 <script>
 // ─── DATA ─────────────────────────────────────────────────
 let D = {};
-try {
-  let D = {};
+
 try {
   const raw = new URLSearchParams(location.search).get('data');
-  if (raw) D = JSON.parse(decodeURIComponent(atob(raw)));  // ← remove escape()
-} catch(e) {
+
+  if (raw) {
+    D = JSON.parse(decodeURIComponent(atob(raw)));
+  }
+} catch (e) {
   console.error('Data parse error:', e);
-  D = {};  // fallback to empty, don't crash
-}
-} catch(e) {
+
   D = {
     recipientName: 'Priya',
     recipientGender: 'female',
@@ -788,9 +788,11 @@ try {
     friendshipDuration: '5 Years',
     groq: {
       heroTagline: 'A Bond That Defies Time',
-      heroDescription: 'From late-night calls to forever memories — a story of two souls that found each other and never let go.',
+      heroDescription:
+        'From late-night calls to forever memories — a story of two souls that found each other and never let go.',
       photoCaptions: [],
-      finalMessage: 'You are not just my best friend — you are the chapter I will always return to.'
+      finalMessage:
+        'You are not just my best friend — you are the chapter I will always return to.'
     }
   };
 }
