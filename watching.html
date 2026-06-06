@@ -213,9 +213,22 @@
 <script>
   // ── DATA ──
   let D = {};
-  try {
-    D = JSON.parse(decodeURIComponent(escape(atob(new URLSearchParams(location.search).get('data')))));
-  } catch(e) {}
+
+async function loadData() {
+  const id = new URLSearchParams(location.search).get('id');
+
+  if (id) {
+    const resp = await fetch('/api/page?id=' + id);
+
+    if (resp.ok) {
+      D = await resp.json();
+    }
+  }
+
+  initPage();
+}
+
+loadData();
 
   // ── AVATAR ──
   function getAvatar(gender) {

@@ -1090,11 +1090,21 @@ function handlePay() {
   }
 }
 
-function onPaymentSuccess() {
+async function onPaymentSuccess() {
   D.paid = true;
-  const encode = btoa(unescape(encodeURIComponent(JSON.stringify(D))));
-  const shareUrl = window.location.origin + '/watching.html?data=' + encode;
+  
+  const btn = document.getElementById('pay-btn');
+  btn.textContent = 'Generating link…';
+  btn.disabled = true;
 
+  const resp = await fetch('/api/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(D)
+  });
+  const { id } = await resp.json();
+
+  const shareUrl = window.location.origin + '/watching?id=' + id;
   document.getElementById('share-url-box').textContent = shareUrl;
   document.getElementById('share-result').style.display = 'block';
   document.getElementById('pay-btn').style.display = 'none';
