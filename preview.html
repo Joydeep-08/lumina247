@@ -842,28 +842,35 @@ function goToPhase3() {
 (function initIntro() {
   const vid = document.getElementById('intro-video');
   vid.src = 'your_cloudinary_url.mp4';
-  vid.muted = false;
-  vid.volume = 1;
+  vid.muted = true;
 
-  // Create tap screen
-  const tapScreen = document.createElement('div');
-  tapScreen.style.cssText = `
+  const wall = document.createElement('div');
+  wall.style.cssText = `
     position:fixed; inset:0; z-index:200;
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
-    background:#000; cursor:pointer;
+    background:#000;
+    display:flex; align-items:center; justify-content:center;
   `;
-  tapScreen.innerHTML = `
-    <div style="font-family:'Bebas Neue',sans-serif; font-size:5rem; color:#E50914; letter-spacing:4px;">NATFLIX</div>
-    <div style="color:#fff; font-size:1rem; margin-top:20px; opacity:0.6; letter-spacing:0.2em;">TAP TO BEGIN</div>
+  wall.innerHTML = `
+    <button style="
+      background:#E50914;
+      border:none;
+      color:#fff;
+      font-family:'Bebas Neue',sans-serif;
+      font-size:1.8rem;
+      letter-spacing:0.3em;
+      padding:20px 60px;
+      border-radius:6px;
+      cursor:pointer;
+    ">START</button>
   `;
+  document.body.appendChild(wall);
 
-  document.body.appendChild(tapScreen);
-
-  tapScreen.addEventListener('click', () => {
-    tapScreen.remove();
+  wall.querySelector('button').addEventListener('click', () => {
+    wall.remove();
+    vid.muted = false;
+    vid.volume = 1;
     vid.play();
-  }, { once: true });
+  });
 
   vid.addEventListener('ended', goToPhase2);
   vid.addEventListener('error', () => {
