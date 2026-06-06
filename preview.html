@@ -635,7 +635,7 @@
 
 <!-- Phase 1: Intro -->
 <div id="phase-intro">
-  <video id="intro-video" autoplay muted playsinline></video>
+  <video id="intro-video" playsinline></video>
 </div>
 <div id="intro-fade"></div>
 
@@ -843,7 +843,7 @@ function goToPhase3() {
 (function initIntro() {
   const vid = document.getElementById('intro-video');
   vid.src = 'intro.mp4';
-  vid.muted = true;
+  // DO NOT set autoplay or muted — we control it manually
 
   const wall = document.createElement('div');
   wall.style.cssText = `
@@ -862,7 +862,7 @@ function goToPhase3() {
       padding:20px 60px;
       border-radius:6px;
       cursor:pointer;
-    ">START</button>
+    ">▶ START</button>
   `;
   document.body.appendChild(wall);
 
@@ -870,6 +870,7 @@ function goToPhase3() {
     wall.remove();
     vid.muted = false;
     vid.volume = 1;
+    vid.currentTime = 0; // ← ensure starts from beginning
     vid.play();
   });
 
