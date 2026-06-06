@@ -793,7 +793,9 @@
       if (senderGender === 'female' && recipientGender === 'female') tone = 'warm, expressive, emotional, celebratory bestie energy';
       else if (senderGender === 'male' && recipientGender === 'male') tone = 'chill, genuine, funny but heartfelt bro energy';
 
-      const photoCount = uploadedPhotos.length; = `You are writing copy for a friendship tribute video called "NATFLIX".
+      const photoCount = uploadedPhotos.length;
+
+      const groqPrompt = `You are writing copy for a friendship tribute video called "NATFLIX".
 Tone: ${tone}.
 Sender: ${senderName} (${senderGender}).
 Recipient: ${recipientName} (${recipientGender}).
