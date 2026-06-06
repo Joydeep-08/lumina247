@@ -666,10 +666,10 @@
       video: null,  // { localUrl, cloudUrl, uploading }
     };
 
-    const CLOUDINARY_CLOUD = 'dbwcpxzou';
-    const PHOTO_PRESET    = 'netflix';
-    const VIDEO_PRESET    = 'netflix';
-
+   // ✅ Read from config.js
+const CLOUDINARY_CLOUD = window.NATFLIX_CONFIG?.CLOUD_NAME || 'dbwcpxzou';
+const PHOTO_PRESET     = window.NATFLIX_CONFIG?.UPLOAD_PRESET || 'netflix_uploads';
+const VIDEO_PRESET     = window.NATFLIX_CONFIG?.UPLOAD_PRESET || 'netflix_uploads';
     /* ─────────────────────────────────────────
        Toast
     ───────────────────────────────────────── */
