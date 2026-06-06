@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NATFLIX</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#000; overflow:hidden; font-family:'DM Sans',sans-serif; color:#fff; }
+
+  /* INTRO VIDEO */
+  #introScreen {
+    position:fixed; inset:0; z-index:100;
+    background:#000;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #introVideo {
+    width:100%; height:100%;
+    object-fit:cover;
+  }
+  /* Fallback logo animation if no video */
+  #introLogo {
+    display:none;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(4rem,15vw,12rem);
+    color:#E50914;
+    letter-spacing:8px;
+    animation: logoReveal 2.5s forwards;
+  }
+  @keyframes logoReveal {
+    0% { opacity:0; transform:scale(0.6); filter:blur(20px); }
+    40% { opacity:1; transform:scale(1.05); filter:blur(0); }
+    80% { opacity:1; transform:scale(1); }
+    100% { opacity:0; transform:scale(1.1); }
+  }
+
+  /* WHO'S WATCHING */
+  #watchingScreen {
+    display:none;
+    position:fixed; inset:0;
+    background:#000;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    animation: fadeIn 0.8s ease;
+  }
+  #watchingScreen.visible { display:flex; }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(20px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  h1 {
+    font-size:clamp(1.8rem,5vw,3.2rem);
+    font-weight:500;
+    margin-bottom:52px;
+    letter-spacing:-0.5px;
+  }
+
+  .profiles {
+    display:flex;
+    gap:clamp(24px,5vw,60px);
+    flex-wrap:wrap;
+    justify-content:center;
+    padding:0 24px;
+  }
+
+  .profile {
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+    cursor:pointer;
+    animation: profileIn 0.6s ease both;
+  }
+  .profile:nth-child(1) { animation-delay:0.1s; }
+  .profile:nth-child(2) { animation-delay:0.25s; }
+  @keyframes profileIn {
+    from { opacity:0; transform:translateY(30px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .avatar-box {
+    width:clamp(100px,18vw,160px);
+    height:clamp(100px,18vw,160px);
+    border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:clamp(3rem,8vw,6rem);
+    border:3px solid transparent;
+    transition:border-color 0.25s, transform 0.25s;
+  }
+  .profile:hover .avatar-box {
+    border-color:#E50914;
+    transform:scale(1.06);
+  }
+  .profile-name {
+    font-size:clamp(0.9rem,2vw,1.1rem);
+    color:#808080;
+    transition:color 0.25s;
+    letter-spacing:0.5px;
+  }
+  .profile:hover .profile-name { color:#e5e5e5; }
+
+  /* Manage profiles */
+  .manage-btn {
+    margin-top:52px;
+    padding:10px 24px;
+    border:1px solid #808080;
+    background:none;
+    color:#808080;
+    font-family:'DM Sans',sans-serif;
+    font-size:0.85rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:color 0.2s, border-color 0.2s;
+    border-radius:2px;
+  }
+  .manage-btn:hover { color:#e5e5e5; border-color:#e5e5e5; }
+
+  /* Click ripple transition */
+  .transition-overlay {
+    position:fixed; inset:0; z-index:999;
+    background:#000;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.5s;
+  }
+  .transition-overlay.active { opacity:1; pointer-events:all; }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="introScreen">
+  <video id="introVideo" playsinline autoplay muted>
+    <source src="intro.mp4" type="video/mp4">
+  </video>
+  <div id="introLogo">NATFLIX</div>
+</div>
+
+<!-- WHO'S WATCHING -->
+<div id="watchingScreen">
+  <h1>Who's watching?</h1>
+  <div class="profiles" id="profilesContainer"></div>
+  <button class="manage-btn">MANAGE PROFILES</button>
+</div>
+
+<!-- TRANSITION -->
+<div class="transition-overlay" id="transitionOverlay"></div>
+
+<script>
+const AVATAR_MAP = {
+  ninja:'🥷', alien:'👽', robot:'🤖', vampire:'🧛',
+  wizard:'🧙', mermaid:'🧜', fairy:'🧚', zombie:'🧟',
+  pirate:'🏴‍☠️', astronaut:'👨‍🚀'
+};
+const AVATAR_BG = {
+  ninja:'#1a1a2e', alien:'#0d2b0d', robot:'#1a0d2b', vampire:'#2b0d0d',
+  wizard:'#1a1500', mermaid:'#001a1a', fairy:'#1a001a', zombie:'#0a1a00',
+  pirate:'#1a0d00', astronaut:'#000d1a'
+};
+
+// Parse data
+const params = new URLSearchParams(window.location.search);
+let D = {};
+try {
+  D = JSON.parse(decodeURIComponent(escape(atob(params.get('data') || ''))));
+} catch(e) {}
+
+// Build profiles
+function buildProfiles() {
+  const container = document.getElementById('profilesContainer');
+  const profiles = [
+    { name: D.recipientName || 'You', avatar: D.recipientAvatar || 'fairy', isRecipient: true },
+    { name: D.senderName || 'Your Bestie', avatar: D.senderAvatar || 'ninja', isRecipient: false }
+  ];
+  profiles.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'profile';
+    div.innerHTML = `
+      <div class="avatar-box" style="background:${AVATAR_BG[p.avatar]||'#222'}">
+        ${AVATAR_MAP[p.avatar]||'😊'}
+      </div>
+      <div class="profile-name">${p.name}</div>`;
+    div.addEventListener('click', () => goToHome(p.isRecipient));
+    container.appendChild(div);
+  });
+}
+
+// Intro video logic
+const introVideo = document.getElementById('introVideo');
+const introLogo = document.getElementById('introLogo');
+
+introVideo.addEventListener('error', () => {
+  // No video found — show logo animation
+  introVideo.style.display = 'none';
+  introLogo.style.display = 'block';
+  setTimeout(showWatching, 2800);
+});
+
+introVideo.addEventListener('ended', showWatching);
+
+// Auto-end after 8s in case video is long
+setTimeout(() => {
+  if(document.getElementById('introScreen').style.display !== 'none') {
+    showWatching();
+  }
+}, 8000);
+
+// If video can't load within 3s, show logo
+setTimeout(() => {
+  if(introVideo.readyState === 0) {
+    introVideo.style.display = 'none';
+    introLogo.style.display = 'block';
+    setTimeout(showWatching, 2800);
+  }
+}, 3000);
+
+function showWatching() {
+  const intro = document.getElementById('introScreen');
+  intro.style.transition = 'opacity 0.6s';
+  intro.style.opacity = '0';
+  setTimeout(() => {
+    intro.style.display = 'none';
+    buildProfiles();
+    document.getElementById('watchingScreen').classList.add('visible');
+  }, 600);
+}
+
+function goToHome(isRecipient) {
+  const overlay = document.getElementById('transitionOverlay');
+  overlay.classList.add('active');
+  setTimeout(() => {
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(D))));
+    window.location.href = `home.html?data=${encoded}`;
+  }, 600);
+}
+</script>
+</body>
+</html>

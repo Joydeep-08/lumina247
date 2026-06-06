@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NATFLIX Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E50914;
+    --dark: #0a0a0a;
+    --card: #141414;
+    --border: #2a2a2a;
+    --text: #e5e5e5;
+    --muted: #777;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; }
+
+  /* WATERMARK */
+  .watermark {
+    position: fixed; inset: 0; z-index: 9999;
+    pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .watermark-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    color: rgba(229,9,20,0.18);
+    transform: rotate(-30deg);
+    user-select: none;
+    text-align: center;
+    line-height: 1.4;
+    letter-spacing: 4px;
+    white-space: nowrap;
+  }
+  /* Tiled watermark */
+  .wm-tiles {
+    position: fixed; inset: 0; z-index: 9999;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .wm-tile {
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: rgba(229,9,20,0.12);
+    transform: rotate(-30deg);
+    white-space: nowrap;
+    letter-spacing: 3px;
+  }
+
+  /* PREVIEW BANNER */
+  .preview-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 9998;
+    background: linear-gradient(90deg, var(--red), #8b0000);
+    padding: 10px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 1px;
+  }
+  .preview-banner span { opacity: 0.9; }
+  .pay-btn {
+    background: #fff;
+    color: var(--red);
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .pay-btn:hover { opacity: 0.9; }
+
+  /* SPACER for banner */
+  .top-spacer { height: 44px; }
+
+  /* NAV */
+  nav {
+    padding: 20px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--red); letter-spacing: 2px; }
+
+  /* WHO'S WATCHING mini */
+  .watching-section {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: #000;
+  }
+  .watching-section h1 {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    margin-bottom: 48px;
+    font-weight: 700;
+  }
+  .profiles {
+    display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;
+  }
+  .profile {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    cursor: pointer;
+  }
+  .profile-avatar {
+    width: 120px; height: 120px;
+    border-radius: 10px;
+    font-size: 4rem;
+    display: flex; align-items: center; justify-content: center;
+    border: 3px solid transparent;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .profile:hover .profile-avatar { border-color: var(--red); transform: scale(1.05); }
+  .profile-name { font-size: 1rem; color: var(--muted); }
+
+  /* HOMEPAGE PREVIEW */
+  .homepage-section { padding-bottom: 60px; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    height: 70vh;
+    min-height: 400px;
+    overflow: hidden;
+    display: flex; align-items: flex-end;
+  }
+  .hero video, .hero .hero-bg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .hero-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, transparent 60%),
+                linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 50%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 40px 48px;
+    max-width: 550px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--red); margin-bottom: 12px;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .hero-desc {
+    font-size: 0.95rem;
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .hero-btns { display: flex; gap: 12px; }
+  .btn-play {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; color: #000;
+    padding: 12px 28px; border-radius: 6px;
+    font-weight: 700; font-size: 1rem;
+    border: none; cursor: pointer;
+  }
+  .btn-info {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(109,109,110,0.7); color: #fff;
+    padding: 12px 28px; border-radius: 6px;
+    font-weight: 600; font-size: 1rem;
+    border: none; cursor: pointer;
+  }
+
+  /* ROW */
+  .row-section { padding: 0 48px; margin-bottom: 40px; }
+  .row-section h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
+  .photo-row {
+    display: flex; gap: 8px; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .photo-row::-webkit-scrollbar { display: none; }
+  .photo-card {
+    flex: 0 0 200px;
+    height: 140px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    background: #222;
+  }
+  .photo-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+  .photo-card:hover img { transform: scale(1.05); }
+  .photo-caption {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    padding: 20px 10px 8px;
+    font-size: 0.72rem; color: #ddd;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .photo-card:hover .photo-caption { opacity: 1; }
+
+  /* FINAL MESSAGE */
+  .final-msg-section {
+    margin: 60px 48px;
+    padding: 40px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .final-msg-section::before {
+    content: '❤️';
+    position: absolute; top: -20px; right: -10px;
+    font-size: 8rem; opacity: 0.05;
+  }
+  .final-msg-section .from { font-size: 0.75rem; color: var(--red); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+  .final-msg-section p { font-size: 1.15rem; line-height: 1.8; color: #ddd; font-style: italic; }
+  .final-msg-section .sig { margin-top: 20px; font-weight: 600; color: var(--text); }
+
+  /* PAYMENT MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.85);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    width: 90%; max-width: 440px;
+    text-align: center;
+  }
+  .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 8px; }
+  .modal p { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
+  .price-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+  .price-display span { font-size: 1.5rem; }
+  .coupon-row {
+    display: flex; gap: 10px; margin-bottom: 24px;
+  }
+  .coupon-row input {
+    flex: 1;
+    background: #1c1c1c;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    outline: none;
+    text-transform: uppercase;
+  }
+  .coupon-row input:focus { border-color: var(--red); }
+  .apply-btn {
+    background: var(--border);
+    color: var(--text);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  .apply-btn:hover { background: #333; }
+  .coupon-msg { font-size: 0.8rem; color: #4caf50; margin-bottom: 16px; min-height: 18px; }
+  .coupon-msg.error { color: #ff6b6b; }
+  .razorpay-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-bottom: 12px;
+  }
+  .razorpay-btn:hover { opacity: 0.9; }
+  .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.85rem; }
+
+  /* SUCCESS */
+  .share-section {
+    display: none;
+    text-align: center;
+    padding: 20px;
+  }
+  .share-link-box {
+    background: #1c1c1c;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    word-break: break-all;
+    margin: 16px 0;
+    text-align: left;
+  }
+  .copy-btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+
+  @media(max-width:600px){
+    nav { padding: 16px 20px; }
+    .hero-content { padding: 24px 20px; }
+    .row-section, .final-msg-section { margin-left: 20px; margin-right: 20px; padding-left: 0; padding-right: 0; }
+    .row-section { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- WATERMARK TILES -->
+<div class="wm-tiles" id="wmTiles"></div>
+
+<!-- PREVIEW BANNER -->
+<div class="preview-banner">
+  <span>⚠️ PREVIEW MODE — Unlock to share with your bestie</span>
+  <button class="pay-btn" onclick="openModal()">Unlock ₹149</button>
+</div>
+<div class="top-spacer"></div>
+
+<!-- WHO'S WATCHING -->
+<section class="watching-section" id="watchingSection">
+  <h1>Who's watching?</h1>
+  <div class="profiles" id="profilesContainer"></div>
+</section>
+
+<!-- HOMEPAGE -->
+<div class="homepage-section" id="homepageSection" style="display:none">
+  <nav>
+    <div class="logo">NATFLIX</div>
+    <div style="display:flex;gap:24px;font-size:0.9rem;color:var(--muted)">
+      <span>Home</span><span>Memories</span><span>My List</span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero" id="heroSection">
+    <video id="heroVideo" autoplay muted loop playsinline></video>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span style="color:var(--red);font-weight:900">N</span> FRIENDSHIP SPECIAL
+      </div>
+      <div class="hero-title" id="heroTitle">Best Friends Forever</div>
+      <div class="hero-desc" id="heroDesc">A friendship like no other.</div>
+      <div class="hero-btns">
+        <button class="btn-play">▶ Play</button>
+        <button class="btn-info">ⓘ More Info</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHOTO ROW -->
+  <div class="row-section" style="margin-top:40px">
+    <h2 id="rowTitle">Our Memories</h2>
+    <div class="photo-row" id="photoRow"></div>
+  </div>
+
+  <!-- FINAL MESSAGE -->
+  <div class="final-msg-section" id="finalMsgSection">
+    <div class="from">A message for you</div>
+    <p id="finalMsgText">Loading...</p>
+    <div class="sig" id="finalMsgSig">— Your Bestie</div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>Unlock Your <span style="color:var(--red)">NATFLIX</span></h2>
+    <p>Generate a shareable link your bestie can open anytime 🎬</p>
+    <div class="price-display"><span>₹</span><span id="priceDisplay">149</span></div>
+    <div class="coupon-row">
+      <input type="text" id="couponInput" placeholder="COUPON CODE">
+      <button class="apply-btn" onclick="applyCoupon()">Apply</button>
+    </div>
+    <div class="coupon-msg" id="couponMsg"></div>
+    <button class="razorpay-btn" id="payNowBtn" onclick="initiatePayment()">Pay & Get Link →</button>
+    <button class="modal-close" onclick="closeModal()">Cancel</button>
+
+    <!-- Post payment share -->
+    <div class="share-section" id="shareSection">
+      <p style="color:#4caf50;font-weight:600;margin-bottom:8px">✅ Payment Successful!</p>
+      <p style="font-size:0.85rem;color:var(--muted)">Share this link with your bestie:</p>
+      <div class="share-link-box" id="shareLinkBox">—</div>
+      <button class="copy-btn" onclick="copyLink()">Copy Link</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+const RAZORPAY_KEY = 'rzp_live_SmizRaPApu81ZS';
+
+// ── AVATAR MAP ─────────────────────────────────────────
+const AVATAR_MAP = {
+  ninja:'🥷', alien:'👽', robot:'🤖', vampire:'🧛',
+  wizard:'🧙', mermaid:'🧜', fairy:'🧚', zombie:'🧟',
+  pirate:'🏴‍☠️', astronaut:'👨‍🚀'
+};
+const AVATAR_BG = {
+  ninja:'#1a1a2e', alien:'#0d2b0d', robot:'#1a0d2b', vampire:'#2b0d0d',
+  wizard:'#1a1500', mermaid:'#001a1a', fairy:'#1a001a', zombie:'#0a1a00',
+  pirate:'#1a0d00', astronaut:'#000d1a'
+};
+
+// ── LOAD DATA ──────────────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+let D = {};
+try {
+  D = JSON.parse(decodeURIComponent(escape(atob(params.get('data') || ''))));
+} catch(e) { console.error('Data parse error', e); }
+
+// ── WATERMARK ──────────────────────────────────────────
+function buildWatermark() {
+  if(D.paid) return;
+  const container = document.getElementById('wmTiles');
+  for(let row=0; row<6; row++) {
+    for(let col=0; col<4; col++) {
+      const el = document.createElement('div');
+      el.className = 'wm-tile';
+      el.textContent = 'NATFLIX PREVIEW';
+      el.style.top = (row * 200 - 50) + 'px';
+      el.style.left = (col * 320 - 80) + 'px';
+      container.appendChild(el);
+    }
+  }
+}
+buildWatermark();
+
+// ── WHO'S WATCHING ─────────────────────────────────────
+function buildProfiles() {
+  const container = document.getElementById('profilesContainer');
+  const profiles = [
+    { name: D.recipientName || 'You', avatar: D.recipientAvatar || 'fairy' },
+    { name: D.senderName || 'Me', avatar: D.senderAvatar || 'ninja' }
+  ];
+  profiles.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'profile';
+    div.innerHTML = `
+      <div class="profile-avatar" style="background:${AVATAR_BG[p.avatar]||'#222'}">
+        ${AVATAR_MAP[p.avatar]||'😊'}
+      </div>
+      <div class="profile-name">${p.name}</div>`;
+    div.addEventListener('click', () => showHomepage());
+    container.appendChild(div);
+  });
+}
+buildProfiles();
+
+// ── SHOW HOMEPAGE ───────────────────────────────────────
+function showHomepage() {
+  document.getElementById('watchingSection').style.display = 'none';
+  document.getElementById('homepageSection').style.display = 'block';
+
+  // Hero video
+  const video = document.getElementById('heroVideo');
+  if(D.video) { video.src = D.video; video.play(); }
+
+  // Hero text
+  const groq = D.groq || {};
+  document.getElementById('heroTitle').textContent = groq.heroTagline || `${D.senderName} & ${D.recipientName}`;
+  document.getElementById('heroDesc').textContent = groq.heroDescription || 'A friendship worth celebrating.';
+
+  // Row title
+  document.getElementById('rowTitle').textContent = `${D.senderName} & ${D.recipientName}'s Memories`;
+
+  // Photo row
+  const row = document.getElementById('photoRow');
+  (D.photos || []).forEach((url, i) => {
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+    const caption = (groq.photoCaptions || [])[i] || `Memory #${i+1}`;
+    card.innerHTML = `<img src="${url}" loading="lazy"><div class="photo-caption">${caption}</div>`;
+    row.appendChild(card);
+  });
+
+  // Final message
+  document.getElementById('finalMsgText').textContent = groq.finalMessage || D.finalMessage || '❤️';
+  document.getElementById('finalMsgSig').textContent = `— ${D.senderName}`;
+}
+
+// ── PAYMENT ────────────────────────────────────────────
+const COUPONS = {
+  'NATFREE': 0,
+  'BESTIE1': 1,
+  'NATFLIX79': 79,
+  'NATFLIX129': 129,
+};
+let finalPrice = 149;
+
+function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+
+function applyCoupon() {
+  const code = document.getElementById('couponInput').value.trim().toUpperCase();
+  const msgEl = document.getElementById('couponMsg');
+  if(COUPONS.hasOwnProperty(code)) {
+    finalPrice = COUPONS[code];
+    document.getElementById('priceDisplay').textContent = finalPrice;
+    msgEl.className = 'coupon-msg';
+    msgEl.textContent = finalPrice === 0 ? '🎉 Free! Click below to get your link.' : `✅ Coupon applied! ₹${finalPrice}`;
+    if(finalPrice === 0) {
+      document.getElementById('payNowBtn').textContent = 'Get Free Link →';
+    }
+  } else {
+    msgEl.className = 'coupon-msg error';
+    msgEl.textContent = '❌ Invalid coupon code.';
+  }
+}
+
+function initiatePayment() {
+  if(finalPrice === 0) {
+    onPaymentSuccess();
+    return;
+  }
+  const options = {
+    key: RAZORPAY_KEY,
+    amount: finalPrice * 100,
+    currency: 'INR',
+    name: 'NATFLIX',
+    description: 'Best Friends Day Experience',
+    theme: { color: '#E50914' },
+    handler: function(response) { onPaymentSuccess(); },
+    modal: { ondismiss: function() {} }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+function onPaymentSuccess() {
+  // Remove paid=false, set paid=true
+  const paidData = { ...D, paid: true };
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(paidData))));
+  const shareUrl = `${window.location.origin}/watching.html?data=${encoded}`;
+
+  document.getElementById('payNowBtn').style.display = 'none';
+  document.getElementById('couponRow')?.remove();
+  const shareSection = document.getElementById('shareSection');
+  shareSection.style.display = 'block';
+  document.getElementById('shareLinkBox').textContent = shareUrl;
+
+  // Remove watermark for this session
+  document.getElementById('wmTiles').innerHTML = '';
+  document.querySelector('.preview-banner').style.display = 'none';
+  document.querySelector('.top-spacer').style.display = 'none';
+}
+
+function copyLink() {
+  const link = document.getElementById('shareLinkBox').textContent;
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied! ✅';
+    setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
