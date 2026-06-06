@@ -198,6 +198,12 @@
     overflow: hidden;
   }
 
+  /* Hero background when no video — dark gradient fallback */
+  .hero-bg-fallback {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%);
+  }
+
   .hero-video {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
@@ -231,13 +237,13 @@
   }
   .hero-label::before {
     content: 'N';
-    display: inline-block;
+    display: inline-flex;
     background: var(--red);
     color: #fff;
     font-family: 'Bebas Neue', cursive;
     font-size: 0.95rem;
     width: 20px; height: 20px;
-    display: flex; align-items: center; justify-content: center;
+    align-items: center; justify-content: center;
     border-radius: 3px;
   }
 
@@ -583,7 +589,6 @@
   #pay-btn:hover { background: #c0060f; }
   #pay-btn:active { transform: scale(0.99); }
 
-  /* Share result */
   #share-result {
     display: none;
     margin-top: 20px;
@@ -653,16 +658,13 @@
 <!-- Phase 3: Main -->
 <div id="phase-main">
 
-  <!-- Watermark -->
   <div id="watermark"></div>
 
-  <!-- Preview Banner -->
   <div id="preview-banner">
     <div class="banner-text">⚠️ <span>PREVIEW MODE — Unlock to share with your bestie</span></div>
     <button id="unlock-btn" onclick="openModal()">✦ Generate Shareable Link</button>
   </div>
 
-  <!-- Nav -->
   <nav id="nav">
     <a href="#" class="nav-logo">NATFLIX</a>
     <ul class="nav-links">
@@ -672,9 +674,9 @@
     </ul>
   </nav>
 
-  <!-- Hero -->
-  <section class="hero">
-    <video id="hero-video" class="hero-video" autoplay muted loop playsinline></video>
+  <!-- Hero — video injected by JS if available, fallback bg otherwise -->
+  <section class="hero" id="hero-section">
+    <div class="hero-bg-fallback" id="hero-fallback"></div>
     <div class="hero-overlay-lr"></div>
     <div class="hero-overlay-bt"></div>
     <div class="hero-content">
@@ -731,7 +733,7 @@
     </div>
   </section>
 
-</div><!-- /phase-main -->
+</div>
 
 <!-- Lightbox -->
 <div id="lightbox">
@@ -769,14 +771,13 @@ try {
   const raw = new URLSearchParams(location.search).get('data');
   if (raw) D = JSON.parse(decodeURIComponent(escape(atob(raw))));
 } catch(e) {
-  // demo fallback
   D = {
     recipientName: 'Priya',
     recipientGender: 'female',
     senderName: 'Arjun',
     senderGender: 'male',
     paid: false,
-    video: '',
+    video: null,
     photos: [],
     friendshipDuration: '5 Years',
     groq: {
@@ -900,21 +901,30 @@ function goToPhase3() {
 
 // ─── PHASE 3 INIT ──────────────────────────────────────────
 function initMain() {
-  // Watermark
-  if (D.paid === false || D.paid === 'false' || D.paid === undefined) {
-    buildWatermark();
-  } else {
+  // Watermark / banner
+  const isPaid = D.paid === true || D.paid === 'true';
+  if (isPaid) {
     document.getElementById('watermark').style.display = 'none';
     document.getElementById('preview-banner').style.display = 'none';
+  } else {
+    buildWatermark();
   }
 
-  // Hero video
-  const hv = document.getElementById('hero-video');
+  // Hero video — optional. If D.video is set, inject it; otherwise show fallback bg.
+  const heroSection = document.getElementById('hero-section');
   if (D.video) {
+    const hv = document.createElement('video');
+    hv.className = 'hero-video';
     hv.src = D.video;
-  } else {
-    hv.remove();
+    hv.autoplay = true;
+    hv.muted = true;
+    hv.loop = true;          // ← looping!
+    hv.setAttribute('playsinline', '');
+    // Insert before the fallback div so it sits behind overlays
+    heroSection.insertBefore(hv, heroSection.firstChild);
+    document.getElementById('hero-fallback').style.display = 'none';
   }
+  // If no video, hero-fallback gradient is already visible — nothing to do.
 
   // Hero content
   document.getElementById('hero-tagline').textContent = groq.heroTagline || '';
@@ -923,7 +933,7 @@ function initMain() {
   document.getElementById('hero-desc').textContent = groq.heroDescription || '';
 
   // Stats
-  document.getElementById('stat-photos').textContent = (D.photos && D.photos.length) ? D.photos.length : '0';
+  document.getElementById('stat-photos').textContent = (D.photos && D.photos.length) || '0';
   document.getElementById('stat-duration').textContent = D.friendshipDuration || '—';
 
   // Memories
@@ -939,7 +949,7 @@ function initMain() {
   });
 
   // Banner nav offset
-  if (D.paid === false || D.paid === 'false' || D.paid === undefined) {
+  if (!isPaid) {
     document.getElementById('nav').style.top = '44px';
   }
 }
@@ -1050,10 +1060,7 @@ function applyCoupon() {
 }
 
 function handlePay() {
-  if (currentPrice === 0) {
-    onPaymentSuccess();
-    return;
-  }
+  if (currentPrice === 0) { onPaymentSuccess(); return; }
 
   const key = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.RAZORPAY_KEY) || '';
   if (!key) { alert('Payment config not found.'); return; }
@@ -1085,15 +1092,10 @@ function onPaymentSuccess() {
   document.getElementById('share-result').style.display = 'block';
   document.getElementById('pay-btn').style.display = 'none';
 
-  // Remove watermark
   const wm = document.getElementById('watermark');
   if (wm) wm.remove();
-
-  // Hide banner
   const banner = document.getElementById('preview-banner');
   if (banner) banner.style.display = 'none';
-
-  // Remove nav offset
   document.getElementById('nav').style.top = '';
 }
 

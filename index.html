@@ -150,6 +150,13 @@
       line-height: 1.05;
     }
 
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      font-style: italic;
+    }
+
     .field { margin-bottom: 24px; position: relative; z-index: 1; }
     .field:last-child { margin-bottom: 0; }
 
@@ -278,6 +285,13 @@
       animation: spin 0.7s linear infinite;
     }
 
+    .thumb-compress-badge {
+      position: absolute; bottom: 4px; left: 4px;
+      background: rgba(229,9,20,0.85);
+      color: #fff; font-size: 9px; padding: 1px 5px;
+      border-radius: 3px; letter-spacing: 0.04em;
+    }
+
     .photo-counter { font-size: 12px; color: var(--muted); margin-top: 10px; position: relative; z-index: 1; }
     .photo-counter span { color: var(--red); font-weight: 500; }
 
@@ -341,7 +355,6 @@
 </head>
 <body>
 
-  <!-- Hidden file inputs — outside zones for reliable triggering -->
   <input type="file" id="photo-input" accept="image/*" multiple style="display:none" />
   <input type="file" id="video-input" accept="video/*" style="display:none" />
 
@@ -422,11 +435,12 @@
       <div class="card-header">
         <div class="step-label">Step 04</div>
         <div class="card-title">Your Memories Together</div>
+        <div class="card-subtitle">Photos over 1MB are auto-compressed before upload 🗜️</div>
       </div>
       <div class="upload-zone" id="photo-zone">
         <span class="upload-icon">🖼</span>
         <div class="upload-title">Drag & Drop Photos Here</div>
-        <div class="upload-sub">Or tap to browse — up to 10 photos</div>
+        <div class="upload-sub">Or tap to browse — up to 10 photos · max 1MB each (auto-compressed) · optional if uploading a video</div>
       </div>
       <div class="progress-wrap" id="photo-progress-wrap">
         <div class="progress-bar" id="photo-progress-bar"></div>
@@ -441,12 +455,13 @@
       <div class="card-step-bg">05</div>
       <div class="card-header">
         <div class="step-label">Step 05</div>
-        <div class="card-title">Your Friendship Video</div>
+        <div class="card-title">Your Friendship Video <span class="optional-tag" style="font-family:'DM Sans',sans-serif;font-size:14px;color:#555;text-transform:none;letter-spacing:0;">— optional</span></div>
+        <div class="card-subtitle">Max 5MB · plays on loop in your final film 🎬</div>
       </div>
       <div class="upload-zone" id="video-zone">
         <span class="upload-icon">🎬</span>
         <div class="upload-title">Drag & Drop Your Video Here</div>
-        <div class="upload-sub">Or tap to browse — 1 video</div>
+        <div class="upload-sub">Or tap to browse — 1 video · max 5MB · skip if you don't have one</div>
       </div>
       <div class="progress-wrap" id="video-progress-wrap">
         <div class="progress-bar" id="video-progress-bar"></div>
@@ -464,16 +479,16 @@
   <div id="toast"></div>
 
   <script>
-    const state = {
-      photos: [],
-      video: null,
-    };
+    const state = { photos: [], video: null };
 
     const CLOUDINARY_CLOUD = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.CLOUD_NAME) || 'dbwcpxzou';
     const PHOTO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || 'netflix_uploads';
     const VIDEO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || 'netflix_uploads';
 
-    // Toast
+    const MAX_PHOTO_BYTES = 1 * 1024 * 1024;  // 1 MB
+    const MAX_VIDEO_BYTES = 5 * 1024 * 1024;  // 5 MB
+
+    // ─── TOAST ──────────────────────────────────────────────
     let toastTimer;
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -483,7 +498,66 @@
       toastTimer = setTimeout(() => t.classList.remove('show'), 3800);
     }
 
-    // Upload zones — inputs are outside zones, triggered via .click()
+    // ─── IMAGE COMPRESSION ──────────────────────────────────
+    // Uses <canvas> to re-draw and re-encode as JPEG under maxBytes.
+    // Iterates quality 0.85 → 0.35, then scales resolution if still over.
+    function compressImage(file, maxBytes) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const blobUrl = URL.createObjectURL(file);
+
+        img.onload = () => {
+          URL.revokeObjectURL(blobUrl);
+
+          const canvas = document.createElement('canvas');
+          let w = img.naturalWidth;
+          let h = img.naturalHeight;
+
+          // Never exceed 1920px on longest edge
+          const maxDim = 1920;
+          if (w > maxDim || h > maxDim) {
+            const ratio = Math.min(maxDim / w, maxDim / h);
+            w = Math.round(w * ratio);
+            h = Math.round(h * ratio);
+          }
+
+          canvas.width  = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          const tryQuality = (q) => {
+            canvas.toBlob(blob => {
+              if (!blob) { reject(new Error('Canvas export failed')); return; }
+
+              if (blob.size <= maxBytes || q <= 0.35) {
+                // Still over at lowest quality — scale resolution down further
+                if (blob.size > maxBytes) {
+                  const scale = Math.sqrt(maxBytes / blob.size) * 0.9;
+                  w = Math.max(80, Math.round(w * scale));
+                  h = Math.max(80, Math.round(h * scale));
+                  canvas.width  = w;
+                  canvas.height = h;
+                  ctx.drawImage(img, 0, 0, w, h);
+                  canvas.toBlob(b2 => resolve(b2 || blob), 'image/jpeg', 0.7);
+                } else {
+                  resolve(blob);
+                }
+              } else {
+                tryQuality(parseFloat((q - 0.1).toFixed(2)));
+              }
+            }, 'image/jpeg', q);
+          };
+
+          tryQuality(0.85);
+        };
+
+        img.onerror = () => { URL.revokeObjectURL(blobUrl); reject(new Error('Image load error')); };
+        img.src = blobUrl;
+      });
+    }
+
+    // ─── UPLOAD ZONES ───────────────────────────────────────
     const photoInput = document.getElementById('photo-input');
     const videoInput = document.getElementById('video-input');
     const photoZone  = document.getElementById('photo-zone');
@@ -491,7 +565,6 @@
 
     function wireZone(zone, input, onFiles) {
       zone.addEventListener('click', () => input.click());
-
       zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
       zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
       zone.addEventListener('drop', e => {
@@ -499,7 +572,6 @@
         zone.classList.remove('drag-over');
         onFiles([...e.dataTransfer.files]);
       });
-
       input.addEventListener('change', () => {
         if (input.files.length) onFiles([...input.files]);
         input.value = '';
@@ -509,37 +581,58 @@
     wireZone(photoZone, photoInput, handlePhotoFiles);
     wireZone(videoZone, videoInput, handleVideoFile);
 
-    // Photos
-    function handlePhotoFiles(files) {
+    // ─── PHOTOS ─────────────────────────────────────────────
+    async function handlePhotoFiles(files) {
       const allowed = 10 - state.photos.length;
       if (allowed <= 0) { showToast('Maximum 10 photos allowed.'); return; }
       files = files.filter(f => f.type.startsWith('image/')).slice(0, allowed);
       if (!files.length) return;
 
-      files.forEach(file => {
-        const localUrl = URL.createObjectURL(file);
+      // Process one at a time to keep progress bar meaningful
+      for (const file of files) {
         const idx = state.photos.length;
-        state.photos.push({ localUrl, cloudUrl: null, uploading: true });
+        const localUrl = URL.createObjectURL(file);
+        state.photos.push({ localUrl, cloudUrl: null, uploading: true, compressed: false });
         renderThumbs();
-        uploadPhoto(file, idx);
-      });
+        await processAndUploadPhoto(file, idx);
+      }
     }
 
-    async function uploadPhoto(file, idx) {
+    async function processAndUploadPhoto(file, idx) {
       const wrap = document.getElementById('photo-progress-wrap');
       const bar  = document.getElementById('photo-progress-bar');
       wrap.classList.add('active');
-      bar.style.width = '0%';
+      bar.style.width = '5%';
+
+      let uploadFile = file;
+
+      if (file.size > MAX_PHOTO_BYTES) {
+        try {
+          const blob = await compressImage(file, MAX_PHOTO_BYTES);
+          uploadFile = new File([blob], file.name.replace(/\.[^.]+$/, '') + '_compressed.jpg', { type: 'image/jpeg' });
+          // Update preview to compressed version
+          const newUrl = URL.createObjectURL(uploadFile);
+          URL.revokeObjectURL(state.photos[idx].localUrl);
+          state.photos[idx].localUrl = newUrl;
+          state.photos[idx].compressed = true;
+          renderThumbs();
+        } catch (e) {
+          console.warn('Compression error, using original:', e);
+        }
+      }
+
+      bar.style.width = '25%';
 
       const fd = new FormData();
-      fd.append('file', file);
+      fd.append('file', uploadFile);
       fd.append('upload_preset', PHOTO_PRESET);
 
       try {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
         xhr.upload.addEventListener('progress', e => {
-          if (e.lengthComputable) bar.style.width = Math.round((e.loaded / e.total) * 100) + '%';
+          if (e.lengthComputable)
+            bar.style.width = (25 + Math.round((e.loaded / e.total) * 70)) + '%';
         });
         const result = await new Promise((res, rej) => {
           xhr.onload = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error('Upload failed'));
@@ -549,6 +642,7 @@
         state.photos[idx].cloudUrl = result.secure_url;
       } catch (err) {
         showToast('Photo upload failed. Please try again.');
+        URL.revokeObjectURL(state.photos[idx] && state.photos[idx].localUrl);
         state.photos.splice(idx, 1);
       } finally {
         if (state.photos[idx]) state.photos[idx].uploading = false;
@@ -573,7 +667,7 @@
       state.photos.forEach((p, i) => {
         const item = document.createElement('div');
         item.className = 'thumb-item';
-        item.innerHTML = `<img src="${p.localUrl}" alt="Photo ${i+1}" />`;
+        item.innerHTML = `<img src="${p.localUrl}" alt="Photo ${i + 1}" />`;
 
         if (p.uploading) {
           const ov = document.createElement('div');
@@ -586,6 +680,13 @@
           btn.innerHTML = '✕';
           btn.onclick = (e) => { e.stopPropagation(); removePhoto(i); };
           item.appendChild(btn);
+
+          if (p.compressed) {
+            const badge = document.createElement('div');
+            badge.className = 'thumb-compress-badge';
+            badge.textContent = 'compressed';
+            item.appendChild(badge);
+          }
         }
         grid.appendChild(item);
       });
@@ -595,14 +696,24 @@
       count.textContent = uploaded;
     }
 
-    // Video
+    // ─── VIDEO ──────────────────────────────────────────────
     function handleVideoFile(files) {
       const file = files.find(f => f.type.startsWith('video/'));
       if (!file) { showToast('Please select a valid video file.'); return; }
 
+      const status = document.getElementById('video-status');
+
+      if (file.size > MAX_VIDEO_BYTES) {
+        const mb = (file.size / 1024 / 1024).toFixed(1);
+        status.className = 'video-status error';
+        status.textContent = `✕ Video is ${mb}MB — max allowed is 5MB. Please trim or compress it before uploading.`;
+        showToast(`Video too large (${mb}MB). Max is 5MB.`);
+        return;
+      }
+
       const localUrl = URL.createObjectURL(file);
       const preview  = document.getElementById('video-preview');
-      preview.src    = localUrl;
+      preview.src = localUrl;
       preview.style.display = 'block';
 
       state.video = { localUrl, cloudUrl: null, uploading: true };
@@ -636,7 +747,7 @@
         state.video.cloudUrl = result.secure_url;
         state.video.uploading = false;
         status.className = 'video-status success';
-        status.textContent = '✓ Video uploaded successfully';
+        status.textContent = '✓ Video uploaded — it will loop in your final film 🔁';
       } catch (err) {
         showToast('Video upload failed. Please try again.');
         state.video = null;
@@ -648,7 +759,7 @@
       }
     }
 
-    // Submit
+    // ─── SUBMIT ─────────────────────────────────────────────
     document.getElementById('submit-btn').addEventListener('click', handleSubmit);
 
     async function handleSubmit() {
@@ -666,12 +777,13 @@
       if (!friendshipDur)   { showToast("Please share how long you've been friends."); return; }
 
       const uploadedPhotos = state.photos.filter(p => p.cloudUrl);
-      if (uploadedPhotos.length < 1) { showToast('Please upload at least 1 photo.'); return; }
+      const hasVideo = state.video && state.video.cloudUrl;
+      if (uploadedPhotos.length < 1 && !hasVideo) {
+        showToast('Please upload at least 1 photo or a video.'); return;
+      }
 
       const stillUploading = state.photos.some(p => p.uploading) || (state.video && state.video.uploading);
       if (stillUploading) { showToast('Please wait for uploads to finish.'); return; }
-
-      if (!state.video || !state.video.cloudUrl) { showToast('Please upload your friendship video.'); return; }
 
       const btn = document.getElementById('submit-btn');
       btn.disabled = true;
@@ -681,22 +793,20 @@
       if (senderGender === 'female' && recipientGender === 'female') tone = 'warm, expressive, emotional, celebratory bestie energy';
       else if (senderGender === 'male' && recipientGender === 'male') tone = 'chill, genuine, funny but heartfelt bro energy';
 
-      const photoCount = uploadedPhotos.length;
-
-      const groqPrompt = `You are writing copy for a friendship tribute video called "NATFLIX".
+      const photoCount = uploadedPhotos.length; = `You are writing copy for a friendship tribute video called "NATFLIX".
 Tone: ${tone}.
 Sender: ${senderName} (${senderGender}).
 Recipient: ${recipientName} (${recipientGender}).
 Friendship duration: ${friendshipDur}.
 ${finalMsg ? `Personal message from sender: "${finalMsg}"` : ''}
-Number of photos: ${photoCount}.
+${photoCount > 0 ? `Number of photos: ${photoCount}.` : 'No photos — video only tribute.'}
 
 Return ONLY valid JSON (no markdown, no backticks, no preamble):
 {
   "heroTagline": "4-6 word punchy friendship tagline",
   "heroDescription": "2 sentences, warm and specific to these people",
   "finalMessage": "2-3 sentences, humanised heartfelt message from ${senderName} to ${recipientName}",
-  "photoCaptions": [${photoCount} short captions, one per photo]
+  "photoCaptions": [${photoCount > 0 ? `${photoCount} short captions, one per photo` : ''}]
 }`;
 
       let groqData = {
@@ -730,9 +840,9 @@ Return ONLY valid JSON (no markdown, no backticks, no preamble):
         const clean = text.replace(/```json|```/g, '').trim();
         const parsed = JSON.parse(clean);
 
-        if (parsed.heroTagline)    groqData.heroTagline    = parsed.heroTagline;
+        if (parsed.heroTagline)     groqData.heroTagline     = parsed.heroTagline;
         if (parsed.heroDescription) groqData.heroDescription = parsed.heroDescription;
-        if (parsed.finalMessage)   groqData.finalMessage   = parsed.finalMessage;
+        if (parsed.finalMessage)    groqData.finalMessage    = parsed.finalMessage;
         if (Array.isArray(parsed.photoCaptions)) groqData.photoCaptions = parsed.photoCaptions;
       } catch (err) {
         console.warn('Groq fallback:', err.message);
@@ -742,7 +852,7 @@ Return ONLY valid JSON (no markdown, no backticks, no preamble):
         senderName, senderGender, recipientName, recipientGender,
         friendshipDuration: friendshipDur, finalMessage: finalMsg,
         photos: uploadedPhotos.map(p => p.cloudUrl),
-        video: state.video.cloudUrl,
+        video: state.video ? state.video.cloudUrl : null,   // null if skipped
         groq: groqData,
         paid: false,
       };
