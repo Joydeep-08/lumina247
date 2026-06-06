@@ -4,544 +4,719 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NATFLIX</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
-    --red:#E50914;
-    --dark:#000;
-    --card:#141414;
-    --text:#e5e5e5;
-    --muted:#808080;
+    --red: #E50914;
+    --bg: #000;
+    --card: #141414;
+    --border: #2a2a2a;
+    --grey: #808080;
+    --text: #ddd;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--dark); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
 
   /* NAV */
   nav {
-    position:fixed; top:0; left:0; right:0; z-index:100;
-    padding:0 48px;
-    height:68px;
-    display:flex; align-items:center; justify-content:space-between;
-    background:linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-    transition:background 0.4s;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 68px;
+    padding: 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+    transition: background 0.3s;
   }
-  nav.solid { background:rgba(0,0,0,0.95); }
-  .logo { font-family:'Bebas Neue',sans-serif; font-size:2.2rem; color:var(--red); letter-spacing:2px; }
-  .nav-links { display:flex; gap:24px; font-size:0.9rem; color:var(--muted); }
-  .nav-links span { cursor:pointer; transition:color 0.2s; }
-  .nav-links span:hover, .nav-links span.active { color:var(--text); }
-  .nav-right { display:flex; align-items:center; gap:20px; }
+  nav.scrolled { background: rgba(0,0,0,0.95); }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--red);
+    letter-spacing: 2px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .nav-links a {
+    color: var(--grey);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #fff; }
+
   .nav-avatar {
-    width:36px; height:36px; border-radius:6px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:1.4rem; cursor:pointer;
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    flex-shrink: 0;
   }
 
   /* HERO */
   .hero {
-    position:relative;
-    height:100vh;
-    min-height:500px;
-    display:flex; align-items:flex-end;
-    overflow:hidden;
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
   }
-  #heroVideo {
-    position:absolute; inset:0;
-    width:100%; height:100%;
-    object-fit:cover;
+
+  .hero video {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
   }
+
   .hero-overlay {
-    position:absolute; inset:0;
+    position: absolute;
+    inset: 0;
     background:
       linear-gradient(77deg, rgba(0,0,0,0.92) 0%, transparent 55%),
       linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.3) 30%, transparent 60%),
       linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 20%);
   }
+
   .hero-content {
-    position:relative; z-index:2;
-    padding:0 48px 80px;
-    max-width:600px;
-    animation: heroIn 1s ease both;
+    position: absolute;
+    bottom: 0; left: 0;
+    z-index: 2;
+    padding: 0 48px 80px;
+    max-width: 600px;
   }
-  @keyframes heroIn {
-    from { opacity:0; transform:translateY(30px); }
-    to { opacity:1; transform:translateY(0); }
-  }
+
   .hero-label {
-    display:flex; align-items:center; gap:8px;
-    font-size:0.72rem; letter-spacing:3px; text-transform:uppercase;
-    color:var(--text); margin-bottom:16px;
-    animation: heroIn 1s 0.2s ease both;
+    font-size: 0.78rem;
+    color: var(--grey);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-variant: small-caps;
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.6s 0.1s forwards;
   }
-  .hero-label .n-badge {
-    font-family:'Bebas Neue',sans-serif;
-    font-size:1.1rem; color:var(--red); letter-spacing:0;
-  }
+  .hero-label span { font-family: 'Bebas Neue', sans-serif; color: var(--red); font-size: 1rem; }
+
   .hero-title {
-    font-family:'Bebas Neue',sans-serif;
-    font-size:clamp(3rem,7vw,6rem);
-    line-height:0.95;
-    margin-bottom:20px;
-    animation: heroIn 1s 0.3s ease both;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.6s 0.2s forwards;
   }
+
   .hero-meta {
-    display:flex; align-items:center; gap:16px;
-    font-size:0.8rem; margin-bottom:16px;
-    color:#aaa;
-    animation: heroIn 1s 0.4s ease both;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.88rem;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.6s 0.3s forwards;
   }
+  .meta-match { color: #46d369; font-weight: 700; }
   .meta-badge {
-    border:1px solid #aaa;
-    padding:2px 6px;
-    font-size:0.7rem;
-    border-radius:2px;
+    border: 1px solid rgba(255,255,255,0.5);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.8);
   }
+  .meta-dot { color: var(--grey); }
+
   .hero-desc {
-    font-size:1rem; line-height:1.65;
-    color:#ddd;
-    margin-bottom:28px;
-    animation: heroIn 1s 0.5s ease both;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.65;
+    margin-bottom: 28px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.6s 0.4s forwards;
   }
+
   .hero-btns {
-    display:flex; gap:12px;
-    animation: heroIn 1s 0.6s ease both;
-  }
-  .btn-play {
-    display:flex; align-items:center; gap:10px;
-    background:#fff; color:#000;
-    padding:14px 32px; border-radius:5px;
-    font-weight:700; font-size:1rem;
-    border:none; cursor:pointer;
-    transition:background 0.2s;
-  }
-  .btn-play:hover { background:#e0e0e0; }
-  .btn-info {
-    display:flex; align-items:center; gap:10px;
-    background:rgba(109,109,110,0.7); color:#fff;
-    padding:14px 28px; border-radius:5px;
-    font-weight:600; font-size:1rem;
-    border:none; cursor:pointer;
-    transition:background 0.2s;
-  }
-  .btn-info:hover { background:rgba(109,109,110,0.5); }
-
-  /* CONTENT ROWS */
-  .content-area {
-    position:relative; z-index:10;
-    background:var(--dark);
-    padding-bottom:80px;
-    margin-top:-120px;
+    display: flex;
+    gap: 12px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.6s 0.5s forwards;
+    flex-wrap: wrap;
   }
 
-  .row-section {
-    padding:0 48px;
-    margin-bottom:48px;
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.2s, transform 0.2s;
+    text-decoration: none;
   }
-  .row-title {
-    font-size:1.2rem; font-weight:600;
-    margin-bottom:14px;
-    display:flex; align-items:center; gap:12px;
-  }
-  .row-title .explore {
-    font-size:0.85rem; color:#54b9c5;
-    cursor:pointer; display:none;
-    align-items:center; gap:4px;
-  }
-  .row-section:hover .row-title .explore { display:flex; }
+  .btn:hover { opacity: 0.85; transform: scale(1.02); }
+  .btn-white { background: #fff; color: #000; }
+  .btn-grey { background: rgba(109,109,110,0.7); color: #fff; }
 
-  /* PHOTO SCROLLER */
-  .photo-scroller {
-    display:flex; gap:8px;
-    overflow-x:auto; padding-bottom:8px;
-    scrollbar-width:none; -ms-overflow-style:none;
-    scroll-behavior:smooth;
-  }
-  .photo-scroller::-webkit-scrollbar { display:none; }
-
-  .photo-card {
-    flex:0 0 220px;
-    height:150px;
-    border-radius:5px;
-    overflow:hidden;
-    position:relative;
-    cursor:pointer;
-    background:#222;
-    transition:transform 0.3s, z-index 0s;
-  }
-  .photo-card:hover {
-    transform:scale(1.08);
-    z-index:10;
-  }
-  .photo-card img {
-    width:100%; height:100%;
-    object-fit:cover;
-    transition:transform 0.3s;
-  }
-  .photo-card:hover img { transform:scale(1.04); }
-  .photo-overlay {
-    position:absolute; inset:0;
-    background:linear-gradient(transparent 40%, rgba(0,0,0,0.85));
-    opacity:0; transition:opacity 0.3s;
-  }
-  .photo-card:hover .photo-overlay { opacity:1; }
-  .photo-caption-text {
-    position:absolute; bottom:0; left:0; right:0;
-    padding:16px 10px 10px;
-    font-size:0.75rem; color:#ddd; line-height:1.3;
-    opacity:0; transform:translateY(6px);
-    transition:opacity 0.3s, transform 0.3s;
-  }
-  .photo-card:hover .photo-caption-text { opacity:1; transform:translateY(0); }
-  .photo-num {
-    position:absolute; top:8px; left:10px;
-    font-family:'Bebas Neue',sans-serif;
-    font-size:3rem; color:rgba(255,255,255,0.12);
-    line-height:1;
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  /* FRIENDSHIP STATS */
+  /* CONTENT */
+  .content {
+    position: relative;
+    z-index: 10;
+    background: var(--bg);
+    margin-top: -120px;
+    padding-bottom: 80px;
+  }
+
+  /* STATS */
   .stats-row {
-    display:flex; gap:20px; flex-wrap:wrap;
-    padding:0 48px;
-    margin-bottom:48px;
+    display: flex;
+    gap: 20px;
+    padding: 0 48px;
+    margin-bottom: 48px;
   }
   .stat-card {
-    flex:1 1 140px;
-    background:var(--card);
-    border:1px solid #2a2a2a;
-    border-radius:10px;
-    padding:24px 20px;
-    text-align:center;
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    min-width: 0;
   }
   .stat-number {
-    font-family:'Bebas Neue',sans-serif;
-    font-size:3rem; color:var(--red);
-    line-height:1; margin-bottom:6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 8px;
   }
-  .stat-label { font-size:0.75rem; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+  .stat-label {
+    color: var(--grey);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+  }
+
+  /* ROW */
+  .row-section {
+    padding: 0 48px;
+    margin-bottom: 48px;
+  }
+  .row-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #fff;
+  }
+  .photos-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+  }
+  .photos-scroll::-webkit-scrollbar { display: none; }
+
+  .photo-card {
+    flex-shrink: 0;
+    width: 220px;
+    height: 150px;
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #222;
+    position: relative;
+  }
+  .photo-card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .photo-card:hover img { transform: scale(1.08); }
+
+  .photo-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    padding: 24px 10px 8px;
+    font-size: 0.78rem;
+    color: #fff;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    line-height: 1.3;
+  }
+  .photo-card:hover .photo-caption { transform: translateY(0); }
 
   /* FINAL MESSAGE */
-  .final-section {
-    margin:20px 48px 0;
-    padding:52px 40px;
-    background:linear-gradient(135deg, #141414, #1a0000);
-    border:1px solid #2a2a2a;
-    border-radius:16px;
-    position:relative;
-    overflow:hidden;
-    text-align:center;
+  .final-message {
+    margin: 20px 48px;
+    padding: 52px 40px;
+    background: linear-gradient(135deg, #141414, #1a0000);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
   }
-  .final-section::before {
-    content:'❤️';
-    position:absolute; bottom:-30px; right:-20px;
-    font-size:12rem; opacity:0.04; pointer-events:none;
+  .final-message .deco-heart {
+    position: absolute;
+    bottom: -2rem; right: 1rem;
+    font-size: 12rem;
+    opacity: 0.04;
+    user-select: none;
+    line-height: 1;
   }
-  .final-section::after {
-    content:'🎬';
-    position:absolute; top:-20px; left:-10px;
-    font-size:8rem; opacity:0.04; pointer-events:none;
+  .final-message .deco-clap {
+    position: absolute;
+    top: -1rem; left: 1rem;
+    font-size: 8rem;
+    opacity: 0.04;
+    user-select: none;
+    line-height: 1;
   }
-  .final-label {
-    font-size:0.7rem; letter-spacing:4px; text-transform:uppercase;
-    color:var(--red); margin-bottom:20px;
+  .msg-label {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 20px;
+    font-weight: 700;
   }
-  .final-message-text {
-    font-size:clamp(1rem,2.5vw,1.3rem);
-    line-height:1.8;
-    color:#ddd;
-    font-style:italic;
-    max-width:600px;
-    margin:0 auto 24px;
+  .msg-text {
+    font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    line-height: 1.8;
+    color: var(--text);
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
   }
-  .final-sig {
-    font-size:1.1rem; font-weight:600;
-    color:var(--text);
+  .msg-sender {
+    color: #fff;
+    font-weight: 700;
+    margin-top: 24px;
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
   }
-  .final-date {
-    font-size:0.75rem; color:var(--muted); margin-top:6px;
+  .msg-date {
+    color: var(--grey);
+    font-size: 0.82rem;
+    margin-top: 6px;
+    position: relative;
+    z-index: 1;
   }
 
   /* LIGHTBOX */
   .lightbox {
-    display:none;
-    position:fixed; inset:0; z-index:1000;
-    background:rgba(0,0,0,0.94);
-    align-items:center; justify-content:center;
-    flex-direction:column;
-    gap:20px;
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.94);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
   }
-  .lightbox.open { display:flex; }
-  .lightbox img {
-    max-width:90vw; max-height:75vh;
-    object-fit:contain; border-radius:8px;
+  .lightbox.open { display: flex; }
+
+  .lightbox-img-wrap {
+    position: relative;
+    max-width: 90vw;
+    max-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox-img-wrap img {
+    max-width: 90vw;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: 8px;
+    display: block;
   }
   .lightbox-caption {
-    font-size:1rem; color:#ccc; text-align:center;
-    max-width:600px; padding:0 24px;
+    color: var(--grey);
+    font-size: 0.9rem;
+    margin-top: 16px;
+    text-align: center;
+    max-width: 80vw;
   }
-  .lightbox-close {
-    position:absolute; top:24px; right:32px;
-    font-size:2rem; cursor:pointer; color:#fff;
-    background:none; border:none; line-height:1;
+  .lb-close {
+    position: fixed;
+    top: 20px; right: 24px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #fff;
+    background: none;
+    border: none;
+    line-height: 1;
+    z-index: 1001;
   }
-  .lightbox-nav {
-    position:absolute; top:50%; transform:translateY(-50%);
-    display:flex; justify-content:space-between;
-    width:100%; padding:0 16px; pointer-events:none;
+  .lb-arrow {
+    position: fixed;
+    top: 50%; transform: translateY(-50%);
+    font-size: 2.5rem;
+    cursor: pointer;
+    color: rgba(255,255,255,0.7);
+    background: rgba(0,0,0,0.4);
+    border: none;
+    width: 52px; height: 72px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 0 36px 36px 0;
+    transition: background 0.2s, color 0.2s;
+    z-index: 1001;
+    padding: 0;
   }
-  .lightbox-nav button {
-    pointer-events:all;
-    background:rgba(255,255,255,0.1);
-    border:none; color:#fff;
-    width:44px; height:44px; border-radius:50%;
-    font-size:1.2rem; cursor:pointer;
-    transition:background 0.2s;
-  }
-  .lightbox-nav button:hover { background:rgba(255,255,255,0.25); }
+  .lb-arrow:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .lb-arrow.right { left: auto; right: 0; border-radius: 36px 0 0 36px; }
+  .lb-arrow.left { left: 0; }
 
-  /* RESPONSIVE */
-  @media(max-width:640px){
-    nav { padding:0 20px; }
-    .hero-content { padding:0 20px 60px; }
-    .row-section, .stats-row, .final-section { padding-left:20px; padding-right:20px; margin-left:0; margin-right:0; }
-    .final-section { margin:20px 16px 0; }
-    .photo-card { flex:0 0 160px; height:115px; }
-  }
-
-  /* Fade in on scroll */
+  /* FADE IN */
   .fade-in {
-    opacity:0; transform:translateY(30px);
-    transition:opacity 0.7s ease, transform 0.7s ease;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
   }
-  .fade-in.visible { opacity:1; transform:translateY(0); }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px 48px;
+    color: #555;
+    font-size: 0.82rem;
+    border-top: 1px solid #111;
+  }
+  footer span { color: var(--red); }
+
+  /* MOBILE */
+  @media (max-width: 640px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+
+    .hero-content { padding: 0 20px 60px; }
+
+    .content { margin-top: -80px; }
+
+    .stats-row {
+      padding: 0 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .stat-card { min-width: calc(50% - 6px); flex: none; }
+
+    .row-section { padding: 0 20px; }
+
+    .photo-card { width: 160px; height: 115px; }
+
+    .final-message {
+      margin: 20px 20px;
+      padding: 36px 24px;
+    }
+  }
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav id="mainNav">
-  <div class="logo">NATFLIX</div>
-  <div class="nav-links">
-    <span class="active">Home</span>
-    <span>Memories</span>
-    <span>Our Story</span>
-  </div>
-  <div class="nav-right">
-    <div class="nav-avatar" id="navAvatar">😊</div>
-  </div>
+  <a class="nav-logo" href="#">NATFLIX</a>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#memories">Memories</a></li>
+    <li><a href="#final">Our Story</a></li>
+  </ul>
+  <div class="nav-avatar" id="navAvatar"></div>
 </nav>
 
 <!-- HERO -->
-<div class="hero">
+<section class="hero" id="hero">
   <video id="heroVideo" autoplay muted loop playsinline></video>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-label"><span class="n-badge">N</span> FRIENDSHIP SPECIAL</div>
-    <div class="hero-title" id="heroTitle">Best Friends</div>
+    <div class="hero-label"><span>N</span> &nbsp;Friendship Special</div>
+    <div class="hero-title" id="heroTagline">A Story Worth Watching</div>
     <div class="hero-meta">
-      <span style="color:#46d369;font-weight:600">98% Match</span>
-      <span id="heroYear">2024</span>
+      <span class="meta-match">98% Match</span>
+      <span class="meta-dot" id="heroYear"></span>
       <span class="meta-badge">BFF</span>
-      <span id="heroDuration">5 Years</span>
+      <span class="meta-dot" id="heroDuration"></span>
     </div>
-    <div class="hero-desc" id="heroDesc">A friendship worth celebrating.</div>
+    <div class="hero-desc" id="heroDesc">A beautiful friendship, crafted with care and curated just for you.</div>
     <div class="hero-btns">
-      <button class="btn-play" onclick="scrollToMemories()">▶ Play Memories</button>
-      <button class="btn-info" onclick="scrollToMessage()">ⓘ Our Story</button>
+      <button class="btn btn-white" onclick="document.getElementById('memories').scrollIntoView({behavior:'smooth'})">▶ &nbsp;Play Memories</button>
+      <button class="btn btn-grey" onclick="document.getElementById('final').scrollIntoView({behavior:'smooth'})">ⓘ &nbsp;Our Story</button>
     </div>
   </div>
-</div>
+</section>
 
 <!-- CONTENT -->
-<div class="content-area">
+<div class="content">
 
   <!-- STATS -->
   <div class="stats-row fade-in" id="statsRow">
-    <!-- filled by JS -->
-  </div>
-
-  <!-- PHOTO ROW -->
-  <div class="row-section fade-in" id="memoriesSection">
-    <div class="row-title">
-      📸 Our Memories
-      <span class="explore">Explore All ›</span>
+    <div class="stat-card">
+      <div class="stat-number" id="statPhotos">0</div>
+      <div class="stat-label">Memories Captured</div>
     </div>
-    <div class="photo-scroller" id="photoScroller"></div>
+    <div class="stat-card">
+      <div class="stat-number" id="statDuration">—</div>
+      <div class="stat-label">Years of Friendship</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Ride or Die</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">∞</div>
+      <div class="stat-label">Memories Left to Make</div>
+    </div>
   </div>
 
-  <!-- SECOND ROW: Favourites -->
-  <div class="row-section fade-in" id="favSection" style="display:none">
+  <!-- MEMORIES ROW 1 -->
+  <div class="row-section fade-in" id="memories">
+    <div class="row-title">📸 Our Memories</div>
+    <div class="photos-scroll" id="photosRow1"></div>
+  </div>
+
+  <!-- MEMORIES ROW 2 -->
+  <div class="row-section fade-in" id="row2Section" style="display:none">
     <div class="row-title">⭐ Best Moments</div>
-    <div class="photo-scroller" id="favScroller"></div>
+    <div class="photos-scroll" id="photosRow2"></div>
   </div>
 
   <!-- FINAL MESSAGE -->
-  <div class="final-section fade-in" id="finalSection">
-    <div class="final-label">A Message For You</div>
-    <div class="final-message-text" id="finalMsgText">Loading...</div>
-    <div class="final-sig" id="finalSig">— Your Best Friend</div>
-    <div class="final-date">Best Friends Day · June 8, 2025</div>
+  <div class="final-message fade-in" id="final">
+    <div class="deco-clap">🎬</div>
+    <div class="deco-heart">❤️</div>
+    <div class="msg-label">A Message For You</div>
+    <div class="msg-text" id="finalMsg">Here's to every laugh, every late-night, and every memory we've made together.</div>
+    <div class="msg-sender" id="senderName">— Your Best Friend</div>
+    <div class="msg-date">Best Friends Day · June 8</div>
   </div>
 
 </div>
+
+<!-- FOOTER -->
+<footer>
+  Made with <span>♥</span> on NATFLIX · Streaming Friendship Since Forever
+</footer>
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
-  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-  <img id="lightboxImg" src="" alt="">
-  <div class="lightbox-caption" id="lightboxCaption"></div>
-  <div class="lightbox-nav">
-    <button onclick="lightboxNav(-1)">‹</button>
-    <button onclick="lightboxNav(1)">›</button>
+  <button class="lb-close" id="lbClose">✕</button>
+  <button class="lb-arrow left" id="lbLeft">‹</button>
+  <div class="lightbox-img-wrap">
+    <img id="lbImg" src="" alt="Memory">
   </div>
+  <div class="lightbox-caption" id="lbCaption"></div>
+  <button class="lb-arrow right" id="lbRight">›</button>
 </div>
 
 <script>
-const AVATAR_MAP = {
-  ninja:'🥷', alien:'👽', robot:'🤖', vampire:'🧛',
-  wizard:'🧙', mermaid:'🧜', fairy:'🧚', zombie:'🧟',
-  pirate:'🏴‍☠️', astronaut:'👨‍🚀'
-};
-const AVATAR_BG = {
-  ninja:'#1a1a2e', alien:'#0d2b0d', robot:'#1a0d2b', vampire:'#2b0d0d',
-  wizard:'#1a1500', mermaid:'#001a1a', fairy:'#1a001a', zombie:'#0a1a00',
-  pirate:'#1a0d00', astronaut:'#000d1a'
-};
+(function() {
+  // Parse data from URL
+  let D = {};
+  try {
+    const raw = new URLSearchParams(location.search).get('data');
+    if (raw) D = JSON.parse(decodeURIComponent(escape(atob(raw))));
+  } catch(e) {
+    // Demo fallback
+    D = {
+      recipientGender: 'female',
+      video: '',
+      friendshipDuration: '5 Years',
+      senderName: 'Your Best Friend',
+      photos: [],
+      groq: {
+        heroTagline: 'The Greatest Story\nEver Told',
+        heroDescription: 'A friendship so legendary, even Netflix couldn\'t make it up. This one\'s real, and it\'s all ours.',
+        photoCaptions: [],
+        finalMessage: 'Every memory we\'ve made together is a scene worth replaying. Here\'s to the moments that made us us — and to all the ones still ahead.'
+      }
+    };
+  }
 
-// Parse
-const params = new URLSearchParams(window.location.search);
-let D = {};
-try {
-  D = JSON.parse(decodeURIComponent(escape(atob(params.get('data') || ''))));
-} catch(e) {}
+  const groq = D.groq || {};
 
-const groq = D.groq || {};
+  // Avatar
+  function getAvatar(gender) {
+    if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
+    if (gender === 'male') return { emoji: '🥷', bg: '#1a1a2e' };
+    return { emoji: '👽', bg: '#0d2b0d' };
+  }
 
-// ── NAV ─────────────────────────────────────────────────
-window.addEventListener('scroll', () => {
-  document.getElementById('mainNav').classList.toggle('solid', window.scrollY > 60);
-});
+  const av = getAvatar(D.recipientGender);
+  const navAvatar = document.getElementById('navAvatar');
+  navAvatar.textContent = av.emoji;
+  navAvatar.style.background = av.bg;
 
-// Nav avatar
-const navAv = document.getElementById('navAvatar');
-navAv.textContent = AVATAR_MAP[D.recipientAvatar] || '😊';
-navAv.style.background = AVATAR_BG[D.recipientAvatar] || '#222';
-navAv.style.borderRadius = '6px';
-
-// ── HERO ─────────────────────────────────────────────────
-const heroVideo = document.getElementById('heroVideo');
-if(D.video) { heroVideo.src = D.video; }
-
-document.getElementById('heroTitle').textContent =
-  groq.heroTagline || `${D.senderName || 'Best'} & ${D.recipientName || 'Friends'}`;
-document.getElementById('heroDesc').textContent =
-  groq.heroDescription || 'A friendship worth celebrating.';
-document.getElementById('heroDuration').textContent = D.friendshipDuration || '';
-document.getElementById('heroYear').textContent = new Date().getFullYear();
-
-// ── STATS ────────────────────────────────────────────────
-function buildStats() {
-  const duration = D.friendshipDuration || '';
-  // Extract years if possible
-  const yearMatch = duration.match(/(\d+)/);
-  const years = yearMatch ? parseInt(yearMatch[1]) : null;
-
-  const stats = [
-    { number: D.photos?.length || 0, label: 'Memories Captured' },
-    { number: years ? `${years}+` : duration, label: 'Years of Friendship' },
-    { number: '100%', label: 'Ride or Die' },
-    { number: '∞', label: 'Memories Left to Make' },
-  ];
-
-  const row = document.getElementById('statsRow');
-  stats.forEach(s => {
-    const card = document.createElement('div');
-    card.className = 'stat-card';
-    card.innerHTML = `<div class="stat-number">${s.number}</div><div class="stat-label">${s.label}</div>`;
-    row.appendChild(card);
+  // Nav scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
   });
-}
-buildStats();
 
-// ── PHOTOS ───────────────────────────────────────────────
-const photos = D.photos || [];
-const captions = groq.photoCaptions || [];
+  // Hero video
+  if (D.video) {
+    const vid = document.getElementById('heroVideo');
+    vid.src = D.video;
+  }
 
-function buildPhotoRow(containerId, photoList) {
-  const scroller = document.getElementById(containerId);
-  photoList.forEach((url, i) => {
+  // Hero content
+  const heroTagline = document.getElementById('heroTagline');
+  if (groq.heroTagline) heroTagline.textContent = groq.heroTagline;
+
+  const heroDesc = document.getElementById('heroDesc');
+  if (groq.heroDescription) heroDesc.textContent = groq.heroDescription;
+
+  const heroYear = document.getElementById('heroYear');
+  heroYear.textContent = new Date().getFullYear();
+
+  const heroDuration = document.getElementById('heroDuration');
+  if (D.friendshipDuration) heroDuration.textContent = D.friendshipDuration;
+
+  // Stats
+  const photos = D.photos || [];
+  document.getElementById('statPhotos').textContent = photos.length || '∞';
+  document.getElementById('statDuration').textContent = D.friendshipDuration || '∞';
+
+  // Photo rows
+  const captions = (groq.photoCaptions) || [];
+
+  function makeCard(src, caption, index) {
     const card = document.createElement('div');
     card.className = 'photo-card';
-    const caption = captions[i] || `Memory #${i+1}`;
     card.innerHTML = `
-      <div class="photo-num">${String(i+1).padStart(2,'0')}</div>
-      <img src="${url}" loading="lazy" alt="Memory ${i+1}">
-      <div class="photo-overlay"></div>
-      <div class="photo-caption-text">${caption}</div>`;
-    card.addEventListener('click', () => openLightbox(i));
-    scroller.appendChild(card);
+      <img src="${src}" alt="${caption}" loading="lazy">
+      <div class="photo-caption">${caption}</div>
+    `;
+    card.addEventListener('click', () => openLightbox(index));
+    return card;
+  }
+
+  const row1 = document.getElementById('photosRow1');
+  const row2 = document.getElementById('photosRow2');
+  const row2Section = document.getElementById('row2Section');
+
+  const allPhotos = photos.length ? photos : [];
+  const allCaptions = allPhotos.map((_, i) => captions[i] || `Memory #${i + 1}`);
+
+  allPhotos.forEach((src, i) => {
+    const card = makeCard(src, allCaptions[i], i);
+    if (i < 5) row1.appendChild(card);
+    else row2.appendChild(card);
   });
-}
 
-buildPhotoRow('photoScroller', photos);
+  if (allPhotos.length > 5) row2Section.style.display = 'block';
 
-// If more than 5, show second row with remaining
-if(photos.length > 5) {
-  document.getElementById('favSection').style.display = 'block';
-  buildPhotoRow('favScroller', photos.slice(5));
-}
+  // Final message
+  const finalMsg = document.getElementById('finalMsg');
+  if (groq.finalMessage) finalMsg.textContent = groq.finalMessage;
 
-// ── FINAL MESSAGE ─────────────────────────────────────────
-document.getElementById('finalMsgText').textContent = groq.finalMessage || D.finalMessage || '❤️';
-document.getElementById('finalSig').textContent = `— ${D.senderName || 'Your Bestie'}`;
+  const senderName = document.getElementById('senderName');
+  if (D.senderName) senderName.textContent = `— ${D.senderName}`;
 
-// ── LIGHTBOX ──────────────────────────────────────────────
-let currentLightboxIdx = 0;
+  // Lightbox
+  let currentIndex = 0;
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbCaption = document.getElementById('lbCaption');
 
-function openLightbox(idx) {
-  currentLightboxIdx = idx;
-  updateLightbox();
-  document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function updateLightbox() {
-  document.getElementById('lightboxImg').src = photos[currentLightboxIdx];
-  document.getElementById('lightboxCaption').textContent = captions[currentLightboxIdx] || `Memory #${currentLightboxIdx+1}`;
-}
-function lightboxNav(dir) {
-  currentLightboxIdx = (currentLightboxIdx + dir + photos.length) % photos.length;
-  updateLightbox();
-}
-document.getElementById('lightbox').addEventListener('click', (e) => {
-  if(e.target === document.getElementById('lightbox')) closeLightbox();
-});
-document.addEventListener('keydown', (e) => {
-  if(!document.getElementById('lightbox').classList.contains('open')) return;
-  if(e.key === 'ArrowRight') lightboxNav(1);
-  if(e.key === 'ArrowLeft') lightboxNav(-1);
-  if(e.key === 'Escape') closeLightbox();
-});
+  function openLightbox(index) {
+    currentIndex = index;
+    updateLightbox();
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
 
-// ── SCROLL HELPERS ───────────────────────────────────────
-function scrollToMemories() {
-  document.getElementById('memoriesSection').scrollIntoView({ behavior:'smooth' });
-}
-function scrollToMessage() {
-  document.getElementById('finalSection').scrollIntoView({ behavior:'smooth' });
-}
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
 
-// ── FADE IN ON SCROLL ─────────────────────────────────────
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting) { entry.target.classList.add('visible'); }
+  function updateLightbox() {
+    if (!allPhotos.length) return;
+    lbImg.src = allPhotos[currentIndex];
+    lbCaption.textContent = allCaptions[currentIndex];
+  }
+
+  function prevPhoto() {
+    currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
+    updateLightbox();
+  }
+
+  function nextPhoto() {
+    currentIndex = (currentIndex + 1) % allPhotos.length;
+    updateLightbox();
+  }
+
+  document.getElementById('lbClose').addEventListener('click', closeLightbox);
+  document.getElementById('lbLeft').addEventListener('click', prevPhoto);
+  document.getElementById('lbRight').addEventListener('click', nextPhoto);
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') prevPhoto();
+    if (e.key === 'ArrowRight') nextPhoto();
   });
-}, { threshold: 0.1 });
 
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+})();
 </script>
 </body>
 </html>

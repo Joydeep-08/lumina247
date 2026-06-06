@@ -4,237 +4,305 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NATFLIX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:#000; overflow:hidden; font-family:'DM Sans',sans-serif; color:#fff; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  /* INTRO VIDEO */
-  #introScreen {
-    position:fixed; inset:0; z-index:100;
-    background:#000;
-    display:flex; align-items:center; justify-content:center;
-  }
-  #introVideo {
-    width:100%; height:100%;
-    object-fit:cover;
-  }
-  /* Fallback logo animation if no video */
-  #introLogo {
-    display:none;
-    font-family:'Bebas Neue',sans-serif;
-    font-size:clamp(4rem,15vw,12rem);
-    color:#E50914;
-    letter-spacing:8px;
-    animation: logoReveal 2.5s forwards;
-  }
-  @keyframes logoReveal {
-    0% { opacity:0; transform:scale(0.6); filter:blur(20px); }
-    40% { opacity:1; transform:scale(1.05); filter:blur(0); }
-    80% { opacity:1; transform:scale(1); }
-    100% { opacity:0; transform:scale(1.1); }
+  :root {
+    --red: #E50914;
+    --black: #000000;
+    --grey: #808080;
+    --white: #ffffff;
   }
 
-  /* WHO'S WATCHING */
-  #watchingScreen {
-    display:none;
-    position:fixed; inset:0;
-    background:#000;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    animation: fadeIn 0.8s ease;
-  }
-  #watchingScreen.visible { display:flex; }
-
-  @keyframes fadeIn {
-    from { opacity:0; transform:translateY(20px); }
-    to { opacity:1; transform:translateY(0); }
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--black);
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
   }
 
-  h1 {
-    font-size:clamp(1.8rem,5vw,3.2rem);
-    font-weight:500;
-    margin-bottom:52px;
-    letter-spacing:-0.5px;
+  /* ── PHASE 1: VIDEO ── */
+  #phase1 {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: var(--black);
+  }
+
+  #intro-video {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ── FADE OVERLAY ── */
+  #fade {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+  #fade.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ── PHASE 2: WHO'S WATCHING ── */
+  #phase2 {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 56px;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  #phase2.visible {
+    opacity: 1;
+  }
+
+  .who-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 2.8rem;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    text-align: center;
   }
 
   .profiles {
-    display:flex;
-    gap:clamp(24px,5vw,60px);
-    flex-wrap:wrap;
-    justify-content:center;
-    padding:0 24px;
+    display: flex;
+    gap: 60px;
+    align-items: flex-start;
+    justify-content: center;
   }
 
-  .profile {
-    display:flex; flex-direction:column; align-items:center; gap:14px;
-    cursor:pointer;
-    animation: profileIn 0.6s ease both;
+  .profile-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.45s ease,
+      transform 0.45s ease;
   }
-  .profile:nth-child(1) { animation-delay:0.1s; }
-  .profile:nth-child(2) { animation-delay:0.25s; }
-  @keyframes profileIn {
-    from { opacity:0; transform:translateY(30px); }
-    to { opacity:1; transform:translateY(0); }
+  .profile-card.shown {
+    opacity: 1;
+    transform: translateY(0);
   }
 
-  .avatar-box {
-    width:clamp(100px,18vw,160px);
-    height:clamp(100px,18vw,160px);
-    border-radius:10px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:clamp(3rem,8vw,6rem);
-    border:3px solid transparent;
-    transition:border-color 0.25s, transform 0.25s;
+  .avatar-wrap {
+    width: 160px;
+    height: 160px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 72px;
+    border: 3px solid transparent;
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
   }
-  .profile:hover .avatar-box {
-    border-color:#E50914;
-    transform:scale(1.06);
+  .avatar-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.03);
+    opacity: 0;
+    transition: opacity 0.2s ease;
   }
+
+  .profile-card:hover .avatar-wrap {
+    border-color: var(--red);
+    transform: scale(1.05);
+    box-shadow: 0 0 28px rgba(229, 9, 20, 0.25);
+  }
+  .profile-card:hover .avatar-wrap::after {
+    opacity: 1;
+  }
+
   .profile-name {
-    font-size:clamp(0.9rem,2vw,1.1rem);
-    color:#808080;
-    transition:color 0.25s;
-    letter-spacing:0.5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--grey);
+    letter-spacing: 0.02em;
+    transition: color 0.2s ease;
+    text-align: center;
   }
-  .profile:hover .profile-name { color:#e5e5e5; }
+  .profile-card:hover .profile-name {
+    color: var(--white);
+  }
 
-  /* Manage profiles */
+  /* ── MANAGE PROFILES ── */
   .manage-btn {
-    margin-top:52px;
-    padding:10px 24px;
-    border:1px solid #808080;
-    background:none;
-    color:#808080;
-    font-family:'DM Sans',sans-serif;
-    font-size:0.85rem;
-    letter-spacing:2px;
-    text-transform:uppercase;
-    cursor:pointer;
-    transition:color 0.2s, border-color 0.2s;
-    border-radius:2px;
+    margin-top: 8px;
+    padding: 8px 20px;
+    border: 1px solid var(--grey);
+    background: transparent;
+    color: var(--grey);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
   }
-  .manage-btn:hover { color:#e5e5e5; border-color:#e5e5e5; }
+  .manage-btn:hover {
+    border-color: var(--white);
+    color: var(--white);
+  }
 
-  /* Click ripple transition */
-  .transition-overlay {
-    position:fixed; inset:0; z-index:999;
-    background:#000;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.5s;
+  /* ── CLICK OVERLAY ── */
+  #click-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 30;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
   }
-  .transition-overlay.active { opacity:1; pointer-events:all; }
+  #click-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
 </style>
 </head>
 <body>
 
-<!-- INTRO -->
-<div id="introScreen">
-  <video id="introVideo" playsinline autoplay muted>
+<!-- Fade layer between phases -->
+<div id="fade"></div>
+
+<!-- Click-to-redirect overlay -->
+<div id="click-overlay"></div>
+
+<!-- PHASE 1 -->
+<div id="phase1">
+  <video id="intro-video" autoplay muted playsinline>
     <source src="intro.mp4" type="video/mp4">
   </video>
-  <div id="introLogo">NATFLIX</div>
 </div>
 
-<!-- WHO'S WATCHING -->
-<div id="watchingScreen">
-  <h1>Who's watching?</h1>
-  <div class="profiles" id="profilesContainer"></div>
-  <button class="manage-btn">MANAGE PROFILES</button>
+<!-- PHASE 2 -->
+<div id="phase2">
+  <h1 class="who-title">Who's watching?</h1>
+  <div class="profiles" id="profiles"></div>
+  <button class="manage-btn">Manage Profiles</button>
 </div>
-
-<!-- TRANSITION -->
-<div class="transition-overlay" id="transitionOverlay"></div>
 
 <script>
-const AVATAR_MAP = {
-  ninja:'🥷', alien:'👽', robot:'🤖', vampire:'🧛',
-  wizard:'🧙', mermaid:'🧜', fairy:'🧚', zombie:'🧟',
-  pirate:'🏴‍☠️', astronaut:'👨‍🚀'
-};
-const AVATAR_BG = {
-  ninja:'#1a1a2e', alien:'#0d2b0d', robot:'#1a0d2b', vampire:'#2b0d0d',
-  wizard:'#1a1500', mermaid:'#001a1a', fairy:'#1a001a', zombie:'#0a1a00',
-  pirate:'#1a0d00', astronaut:'#000d1a'
-};
+  // ── DATA ──
+  let D = {};
+  try {
+    D = JSON.parse(decodeURIComponent(escape(atob(new URLSearchParams(location.search).get('data')))));
+  } catch(e) {}
 
-// Parse data
-const params = new URLSearchParams(window.location.search);
-let D = {};
-try {
-  D = JSON.parse(decodeURIComponent(escape(atob(params.get('data') || ''))));
-} catch(e) {}
+  // ── AVATAR ──
+  function getAvatar(gender) {
+    if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
+    if (gender === 'male')   return { emoji: '🥷', bg: '#1a1a2e' };
+    return { emoji: '👽', bg: '#0d2b0d' };
+  }
 
-// Build profiles
-function buildProfiles() {
-  const container = document.getElementById('profilesContainer');
-  const profiles = [
-    { name: D.recipientName || 'You', avatar: D.recipientAvatar || 'fairy', isRecipient: true },
-    { name: D.senderName || 'Your Bestie', avatar: D.senderAvatar || 'ninja', isRecipient: false }
+  // ── BUILD CARDS ──
+  const profilesEl = document.getElementById('profiles');
+  const cards = [
+    { name: D.recipientName || 'You',    gender: D.recipientGender },
+    { name: D.senderName   || 'Sender',  gender: D.senderGender   },
   ];
-  profiles.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'profile';
-    div.innerHTML = `
-      <div class="avatar-box" style="background:${AVATAR_BG[p.avatar]||'#222'}">
-        ${AVATAR_MAP[p.avatar]||'😊'}
-      </div>
-      <div class="profile-name">${p.name}</div>`;
-    div.addEventListener('click', () => goToHome(p.isRecipient));
-    container.appendChild(div);
+
+  cards.forEach((p, i) => {
+    const av = getAvatar(p.gender);
+    const card = document.createElement('div');
+    card.className = 'profile-card';
+    card.innerHTML = `
+      <div class="avatar-wrap" style="background:${av.bg}">${av.emoji}</div>
+      <div class="profile-name">${p.name}</div>
+    `;
+    card.addEventListener('click', () => handleCardClick());
+    profilesEl.appendChild(card);
   });
-}
 
-// Intro video logic
-const introVideo = document.getElementById('introVideo');
-const introLogo = document.getElementById('introLogo');
-
-introVideo.addEventListener('error', () => {
-  // No video found — show logo animation
-  introVideo.style.display = 'none';
-  introLogo.style.display = 'block';
-  setTimeout(showWatching, 2800);
-});
-
-introVideo.addEventListener('ended', showWatching);
-
-// Auto-end after 8s in case video is long
-setTimeout(() => {
-  if(document.getElementById('introScreen').style.display !== 'none') {
-    showWatching();
+  // ── REDIRECT ──
+  function handleCardClick() {
+    const overlay = document.getElementById('click-overlay');
+    overlay.classList.add('active');
+    setTimeout(() => {
+      const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(D))));
+      location.href = 'home.html?data=' + encoded;
+    }, 520);
   }
-}, 8000);
 
-// If video can't load within 3s, show logo
-setTimeout(() => {
-  if(introVideo.readyState === 0) {
-    introVideo.style.display = 'none';
-    introLogo.style.display = 'block';
-    setTimeout(showWatching, 2800);
+  // ── PHASE TRANSITION ──
+  let phase2Triggered = false;
+
+  function goPhase2() {
+    if (phase2Triggered) return;
+    phase2Triggered = true;
+
+    const fade = document.getElementById('fade');
+    const phase1 = document.getElementById('phase1');
+    const phase2 = document.getElementById('phase2');
+
+    // Fade to black
+    fade.classList.add('active');
+
+    setTimeout(() => {
+      // Hide video layer, show phase 2
+      phase1.style.display = 'none';
+      fade.classList.remove('active');
+      phase2.classList.add('visible');
+
+      // Stagger cards in
+      const cardEls = document.querySelectorAll('.profile-card');
+      const delays = [150, 300];
+      cardEls.forEach((c, i) => {
+        setTimeout(() => c.classList.add('shown'), delays[i] || 300);
+      });
+    }, 620); // slightly after fade completes
   }
-}, 3000);
 
-function showWatching() {
-  const intro = document.getElementById('introScreen');
-  intro.style.transition = 'opacity 0.6s';
-  intro.style.opacity = '0';
-  setTimeout(() => {
-    intro.style.display = 'none';
-    buildProfiles();
-    document.getElementById('watchingScreen').classList.add('visible');
-  }, 600);
-}
+  // ── VIDEO EVENTS ──
+  const video = document.getElementById('intro-video');
+  const hardCutoff = setTimeout(goPhase2, 10000);
 
-function goToHome(isRecipient) {
-  const overlay = document.getElementById('transitionOverlay');
-  overlay.classList.add('active');
-  setTimeout(() => {
-    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(D))));
-    window.location.href = `home.html?data=${encoded}`;
-  }, 600);
-}
+  video.addEventListener('ended', () => {
+    clearTimeout(hardCutoff);
+    goPhase2();
+  });
+
+  video.addEventListener('error', () => {
+    clearTimeout(hardCutoff);
+    // Immediate — no animation, no text
+    phase2Triggered = false; // reset so goPhase2 can run
+    const p1 = document.getElementById('phase1');
+    p1.style.display = 'none';
+    document.getElementById('phase2').classList.add('visible');
+    const cardEls = document.querySelectorAll('.profile-card');
+    const delays = [150, 300];
+    cardEls.forEach((c, i) => setTimeout(() => c.classList.add('shown'), delays[i]));
+    phase2Triggered = true;
+  });
 </script>
 </body>
 </html>

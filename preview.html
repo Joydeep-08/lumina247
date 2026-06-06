@@ -3,578 +3,1075 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NATFLIX Preview</title>
+<title>NATFLIX</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <script src="config.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
     --red: #E50914;
-    --dark: #0a0a0a;
-    --card: #141414;
-    --border: #2a2a2a;
-    --text: #e5e5e5;
-    --muted: #777;
+    --black: #000;
+    --dark: #141414;
+    --grey: #808080;
+    --white: #fff;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; }
 
-  /* WATERMARK */
-  .watermark {
-    position: fixed; inset: 0; z-index: 9999;
-    pointer-events: none;
+  html, body {
+    background: #000;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #333 #000;
+  }
+
+  /* ═══════════ PHASE 1 — INTRO VIDEO ═══════════ */
+  #phase-intro {
+    position: fixed; inset: 0; z-index: 100;
+    background: #000;
+  }
+  #phase-intro video {
+    width: 100vw; height: 100vh;
+    object-fit: cover; display: block;
+  }
+  #intro-fade {
+    position: fixed; inset: 0; z-index: 101;
+    background: #000; opacity: 0; pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+
+  /* ═══════════ PHASE 2 — WHO'S WATCHING ═══════════ */
+  #phase-who {
+    display: none;
+    position: fixed; inset: 0; z-index: 90;
+    background: #000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  #phase-who.visible { display: flex; }
+  #phase-who.faded-in { opacity: 1; }
+
+  #phase-who h1 {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 60px;
+    letter-spacing: -0.01em;
+  }
+
+  .profiles-row {
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+  }
+
+  .profile-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .profile-card.show { opacity: 1; transform: none; }
+
+  .profile-avatar {
+    width: 140px; height: 140px;
+    border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
+    font-size: 72px;
+    border: 3px solid transparent;
+    transition: border-color 0.2s ease;
+    position: relative;
   }
-  .watermark-text {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2rem, 6vw, 5rem);
-    color: rgba(229,9,20,0.18);
-    transform: rotate(-30deg);
-    user-select: none;
-    text-align: center;
-    line-height: 1.4;
-    letter-spacing: 4px;
-    white-space: nowrap;
+  .profile-card:hover .profile-avatar { border-color: var(--red); }
+
+  .profile-name {
+    margin-top: 14px;
+    color: var(--grey);
+    font-size: 1.05rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    transition: color 0.2s ease;
   }
-  /* Tiled watermark */
-  .wm-tiles {
+  .profile-card:hover .profile-name { color: #fff; }
+
+  #who-fade {
+    position: fixed; inset: 0; z-index: 95;
+    background: #000; opacity: 0; pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  /* ═══════════ WATERMARK ═══════════ */
+  #watermark {
     position: fixed; inset: 0; z-index: 9999;
     pointer-events: none;
     overflow: hidden;
   }
   .wm-tile {
     position: absolute;
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Bebas Neue', cursive;
     font-size: 1.5rem;
-    color: rgba(229,9,20,0.12);
+    letter-spacing: 0.2em;
+    color: rgba(229, 9, 20, 0.10);
     transform: rotate(-30deg);
     white-space: nowrap;
-    letter-spacing: 3px;
+    user-select: none;
   }
 
-  /* PREVIEW BANNER */
-  .preview-banner {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 9998;
-    background: linear-gradient(90deg, var(--red), #8b0000);
+  /* ═══════════ PREVIEW BANNER ═══════════ */
+  #preview-banner {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 9998;
+    background: linear-gradient(90deg, #b00710 0%, var(--red) 50%, #b00710 100%);
     padding: 10px 24px;
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 0.8rem; font-weight: 600; letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
   }
-  .preview-banner span { opacity: 0.9; }
-  .pay-btn {
+  #preview-banner .banner-text { display: flex; align-items: center; gap: 8px; }
+  #unlock-btn {
     background: #fff;
     color: var(--red);
+    font-family: 'Bebas Neue', cursive;
+    letter-spacing: 2px;
+    font-size: 0.95rem;
+    padding: 10px 28px;
     border: none;
-    padding: 8px 20px;
     border-radius: 6px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1rem;
-    letter-spacing: 1px;
     cursor: pointer;
     transition: opacity 0.2s;
+    white-space: nowrap;
   }
-  .pay-btn:hover { opacity: 0.9; }
+  #unlock-btn:hover { opacity: 0.88; }
 
-  /* SPACER for banner */
-  .top-spacer { height: 44px; }
-
-  /* NAV */
+  /* ═══════════ NAV ═══════════ */
   nav {
-    padding: 20px 48px;
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 200;
+    padding: 0 48px;
+    height: 68px;
     display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+    transition: background 0.3s ease;
   }
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--red); letter-spacing: 2px; }
+  nav.scrolled { background: #000; }
 
-  /* WHO'S WATCHING mini */
-  .watching-section {
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: #000;
+  .nav-logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem;
+    color: var(--red);
+    letter-spacing: 3px;
+    text-decoration: none;
   }
-  .watching-section h1 {
-    font-size: clamp(1.8rem, 5vw, 3rem);
-    margin-bottom: 48px;
-    font-weight: 700;
-  }
-  .profiles {
-    display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;
-  }
-  .profile {
-    display: flex; flex-direction: column; align-items: center; gap: 12px;
-    cursor: pointer;
-  }
-  .profile-avatar {
-    width: 120px; height: 120px;
-    border-radius: 10px;
-    font-size: 4rem;
-    display: flex; align-items: center; justify-content: center;
-    border: 3px solid transparent;
-    transition: border-color 0.2s, transform 0.2s;
-  }
-  .profile:hover .profile-avatar { border-color: var(--red); transform: scale(1.05); }
-  .profile-name { font-size: 1rem; color: var(--muted); }
 
-  /* HOMEPAGE PREVIEW */
-  .homepage-section { padding-bottom: 60px; }
+  .nav-links {
+    display: flex; gap: 28px; list-style: none;
+  }
+  .nav-links a {
+    color: var(--grey);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #fff; }
 
-  /* HERO */
+  /* ═══════════ HERO ═══════════ */
+  #phase-main { display: none; }
+  #phase-main.visible { display: block; }
+
   .hero {
     position: relative;
-    height: 70vh;
-    min-height: 400px;
+    width: 100%;
+    height: 100vh;
     overflow: hidden;
-    display: flex; align-items: flex-end;
   }
-  .hero video, .hero .hero-bg {
+
+  .hero-video {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
   }
-  .hero-gradient {
+
+  .hero-overlay-lr {
     position: absolute; inset: 0;
-    background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, transparent 60%),
-                linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 50%);
+    background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.05) 100%);
   }
+  .hero-overlay-bt {
+    position: absolute; inset: 0;
+    background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, transparent 40%);
+  }
+
   .hero-content {
-    position: relative; z-index: 2;
-    padding: 40px 48px;
-    max-width: 550px;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
-    color: var(--red); margin-bottom: 12px;
-  }
-  .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    line-height: 1;
-    margin-bottom: 16px;
-  }
-  .hero-desc {
-    font-size: 0.95rem;
-    color: #ccc;
-    line-height: 1.6;
-    margin-bottom: 24px;
-  }
-  .hero-btns { display: flex; gap: 12px; }
-  .btn-play {
-    display: flex; align-items: center; gap: 8px;
-    background: #fff; color: #000;
-    padding: 12px 28px; border-radius: 6px;
-    font-weight: 700; font-size: 1rem;
-    border: none; cursor: pointer;
-  }
-  .btn-info {
-    display: flex; align-items: center; gap: 8px;
-    background: rgba(109,109,110,0.7); color: #fff;
-    padding: 12px 28px; border-radius: 6px;
-    font-weight: 600; font-size: 1rem;
-    border: none; cursor: pointer;
+    position: absolute; bottom: 0; left: 0;
+    max-width: 600px;
+    padding: 0 48px 80px;
   }
 
-  /* ROW */
-  .row-section { padding: 0 48px; margin-bottom: 40px; }
-  .row-section h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
-  .photo-row {
-    display: flex; gap: 8px; overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .photo-row::-webkit-scrollbar { display: none; }
-  .photo-card {
-    flex: 0 0 200px;
-    height: 140px;
-    border-radius: 6px;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-    background: #222;
-  }
-  .photo-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-  .photo-card:hover img { transform: scale(1.05); }
-  .photo-caption {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.9));
-    padding: 20px 10px 8px;
-    font-size: 0.72rem; color: #ddd;
-    opacity: 0; transition: opacity 0.3s;
-  }
-  .photo-card:hover .photo-caption { opacity: 1; }
-
-  /* FINAL MESSAGE */
-  .final-msg-section {
-    margin: 60px 48px;
-    padding: 40px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .final-msg-section::before {
-    content: '❤️';
-    position: absolute; top: -20px; right: -10px;
-    font-size: 8rem; opacity: 0.05;
-  }
-  .final-msg-section .from { font-size: 0.75rem; color: var(--red); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
-  .final-msg-section p { font-size: 1.15rem; line-height: 1.8; color: #ddd; font-style: italic; }
-  .final-msg-section .sig { margin-top: 20px; font-weight: 600; color: var(--text); }
-
-  /* PAYMENT MODAL */
-  .modal-overlay {
-    display: none;
-    position: fixed; inset: 0; z-index: 10000;
-    background: rgba(0,0,0,0.85);
-    align-items: center; justify-content: center;
-  }
-  .modal-overlay.active { display: flex; }
-  .modal {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 40px;
-    width: 90%; max-width: 440px;
-    text-align: center;
-  }
-  .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 8px; }
-  .modal p { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
-  .price-display {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 3.5rem;
-    color: var(--red);
-    margin-bottom: 8px;
-  }
-  .price-display span { font-size: 1.5rem; }
-  .coupon-row {
-    display: flex; gap: 10px; margin-bottom: 24px;
-  }
-  .coupon-row input {
-    flex: 1;
-    background: #1c1c1c;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
+  .hero-label {
     font-family: 'DM Sans', sans-serif;
-    padding: 12px 16px;
-    font-size: 0.95rem;
-    outline: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: #aaa;
     text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
   }
-  .coupon-row input:focus { border-color: var(--red); }
-  .apply-btn {
-    background: var(--border);
-    color: var(--text);
+  .hero-label::before {
+    content: 'N';
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 0.95rem;
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 3px;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.95;
+    color: #fff;
+    margin-bottom: 16px;
+    text-shadow: 2px 2px 20px rgba(0,0,0,0.5);
+  }
+
+  .hero-meta {
+    display: flex; align-items: center; gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    font-size: 0.88rem;
+  }
+  .hero-meta .match { color: #46d369; font-weight: 600; }
+  .hero-meta .year { color: #aaa; }
+  .bff-badge {
+    border: 1px solid #aaa;
+    color: #aaa;
+    padding: 1px 7px;
+    font-size: 0.78rem;
+    border-radius: 3px;
+  }
+  .hero-meta .duration { color: #ddd; }
+
+  .hero-desc {
+    color: #b3b3b3;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 28px;
+    font-weight: 300;
+  }
+
+  .hero-btns {
+    display: flex; gap: 12px;
+  }
+
+  .btn-play {
+    background: #fff;
+    color: #000;
     border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
+    padding: 12px 32px;
     font-family: 'DM Sans', sans-serif;
     font-weight: 600;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
     transition: background 0.2s;
   }
-  .apply-btn:hover { background: #333; }
-  .coupon-msg { font-size: 0.8rem; color: #4caf50; margin-bottom: 16px; min-height: 18px; }
-  .coupon-msg.error { color: #ff6b6b; }
-  .razorpay-btn {
-    width: 100%;
-    padding: 16px;
-    background: var(--red);
+  .btn-play:hover { background: rgba(255,255,255,0.85); }
+
+  .btn-info {
+    background: rgba(109,109,110,0.7);
     color: #fff;
     border: none;
-    border-radius: 10px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
-    letter-spacing: 2px;
+    padding: 12px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 6px;
     cursor: pointer;
-    transition: opacity 0.2s;
-    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+    transition: background 0.2s;
   }
-  .razorpay-btn:hover { opacity: 0.9; }
-  .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.85rem; }
+  .btn-info:hover { background: rgba(109,109,110,0.5); }
 
-  /* SUCCESS */
-  .share-section {
+  /* ═══════════ STATS ═══════════ */
+  .stats-section {
+    padding: 48px 48px 40px;
+    background: #000;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 900px;
+  }
+  .stat-card {
+    background: #0d0d0d;
+    border: 1px solid #1a1a1a;
+    border-radius: 10px;
+    padding: 24px 20px;
+  }
+  .stat-number {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.8rem;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    color: var(--grey);
+    font-size: 0.82rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ═══════════ MEMORIES ROW ═══════════ */
+  .memories-section {
+    padding: 8px 48px 56px;
+  }
+  .section-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 1.35rem;
+    color: #e5e5e5;
+    margin-bottom: 20px;
+  }
+  .memories-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .memories-scroll::-webkit-scrollbar { display: none; }
+
+  .memory-card {
+    flex: 0 0 220px;
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+  }
+  .memory-card:hover { transform: scale(1.08); z-index: 10; }
+
+  .memory-card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    background: #1a1a1a;
+  }
+  .memory-caption {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
+    display: flex; align-items: flex-end;
+    padding: 10px 12px;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+  }
+  .memory-card:hover .memory-caption { opacity: 1; }
+  .memory-caption span {
+    font-size: 0.78rem;
+    color: #fff;
+    line-height: 1.3;
+  }
+
+  /* ═══════════ LIGHTBOX ═══════════ */
+  #lightbox {
     display: none;
-    text-align: center;
+    position: fixed; inset: 0; z-index: 5000;
+    background: rgba(0,0,0,0.95);
+    align-items: center; justify-content: center;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img {
+    max-width: 85vw; max-height: 80vh;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+  .lb-close {
+    position: absolute; top: 24px; right: 32px;
+    font-size: 2rem; color: #fff; cursor: pointer;
+    background: none; border: none; line-height: 1;
+    opacity: 0.7; transition: opacity 0.2s;
+  }
+  .lb-close:hover { opacity: 1; }
+  .lb-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: #fff; border: none; border-radius: 50%;
+    width: 48px; height: 48px; font-size: 1.4rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .lb-nav:hover { background: rgba(255,255,255,0.15); }
+  #lb-prev { left: 24px; }
+  #lb-next { right: 24px; }
+  #lb-caption {
+    position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+    color: #ccc; font-size: 0.9rem; text-align: center;
+    max-width: 500px;
+  }
+
+  /* ═══════════ FINAL MESSAGE ═══════════ */
+  .message-section {
+    padding: 8px 48px 80px;
+  }
+  .message-card {
+    background: #0d0d0d;
+    border: 1px solid #1e1e1e;
+    border-radius: 14px;
+    padding: 40px 48px;
+    max-width: 760px;
+    position: relative;
+    overflow: hidden;
+  }
+  .message-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--red);
+  }
+  .message-label {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+    color: var(--red);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .message-text {
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: #d4d4d4;
+    font-style: italic;
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+  .message-sig {
+    color: var(--grey);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  /* ═══════════ PAYMENT MODAL ═══════════ */
+  #modal-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 8000;
+    background: rgba(0,0,0,0.88);
+    align-items: center; justify-content: center;
     padding: 20px;
   }
-  .share-link-box {
-    background: #1c1c1c;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-    font-size: 0.85rem;
-    color: var(--muted);
-    word-break: break-all;
-    margin: 16px 0;
-    text-align: left;
+  #modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 40px 44px;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
   }
-  .copy-btn {
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none; color: var(--grey);
+    font-size: 1.5rem; cursor: pointer; line-height: 1;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: #fff; }
+
+  .modal-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .modal-subtitle {
+    color: var(--grey);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 28px;
+  }
+  .modal-price {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 4rem;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 28px;
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .price-strike {
+    font-size: 1.8rem;
+    color: #555;
+    text-decoration: line-through;
+  }
+
+  .coupon-row {
+    display: flex; gap: 10px;
+    margin-bottom: 20px;
+  }
+  #coupon-input {
+    flex: 1;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 12px 16px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #coupon-input:focus { border-color: var(--red); }
+  #coupon-input::placeholder { text-transform: none; color: #555; letter-spacing: 0; }
+
+  #apply-coupon {
+    background: #222;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #apply-coupon:hover { background: #2a2a2a; }
+
+  #coupon-msg {
+    font-size: 0.82rem;
+    margin-bottom: 16px;
+    min-height: 18px;
+  }
+  #coupon-msg.success { color: #46d369; }
+  #coupon-msg.error { color: var(--red); }
+
+  #pay-btn {
+    width: 100%;
     background: var(--red);
     color: #fff;
     border: none;
-    padding: 12px 28px;
     border-radius: 8px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
+    padding: 16px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
     cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
   }
+  #pay-btn:hover { background: #c0060f; }
+  #pay-btn:active { transform: scale(0.99); }
 
-  @media(max-width:600px){
-    nav { padding: 16px 20px; }
-    .hero-content { padding: 24px 20px; }
-    .row-section, .final-msg-section { margin-left: 20px; margin-right: 20px; padding-left: 0; padding-right: 0; }
-    .row-section { padding: 0 20px; }
+  /* Share result */
+  #share-result {
+    display: none;
+    margin-top: 20px;
+  }
+  #share-url-box {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.78rem;
+    color: #999;
+    word-break: break-all;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  #copy-btn {
+    width: 100%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 13px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #copy-btn:hover { background: #c0060f; }
+
+  /* ═══════════ RESPONSIVE ═══════════ */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .hero-content { padding: 0 20px 60px; }
+    .stats-section { padding: 32px 20px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .memories-section, .message-section { padding-left: 20px; padding-right: 20px; }
+    #preview-banner { font-size: 0.78rem; padding: 8px 12px; }
+    #preview-banner .banner-text span { display: none; }
   }
 </style>
 </head>
 <body>
 
-<!-- WATERMARK TILES -->
-<div class="wm-tiles" id="wmTiles"></div>
-
-<!-- PREVIEW BANNER -->
-<div class="preview-banner">
-  <span>⚠️ PREVIEW MODE — Unlock to share with your bestie</span>
-  <button class="pay-btn" onclick="openModal()">Unlock ₹149</button>
+<!-- Phase 1: Intro -->
+<div id="phase-intro">
+  <video id="intro-video" autoplay muted playsinline></video>
 </div>
-<div class="top-spacer"></div>
+<div id="intro-fade"></div>
 
-<!-- WHO'S WATCHING -->
-<section class="watching-section" id="watchingSection">
+<!-- Phase 2: Who's Watching -->
+<div id="phase-who">
   <h1>Who's watching?</h1>
-  <div class="profiles" id="profilesContainer"></div>
-</section>
-
-<!-- HOMEPAGE -->
-<div class="homepage-section" id="homepageSection" style="display:none">
-  <nav>
-    <div class="logo">NATFLIX</div>
-    <div style="display:flex;gap:24px;font-size:0.9rem;color:var(--muted)">
-      <span>Home</span><span>Memories</span><span>My List</span>
+  <div class="profiles-row">
+    <div class="profile-card" id="card-recipient">
+      <div class="profile-avatar" id="avatar-recipient"></div>
+      <div class="profile-name" id="name-recipient"></div>
     </div>
+    <div class="profile-card" id="card-sender">
+      <div class="profile-avatar" id="avatar-sender"></div>
+      <div class="profile-name" id="name-sender"></div>
+    </div>
+  </div>
+</div>
+<div id="who-fade"></div>
+
+<!-- Phase 3: Main -->
+<div id="phase-main">
+
+  <!-- Watermark -->
+  <div id="watermark"></div>
+
+  <!-- Preview Banner -->
+  <div id="preview-banner">
+    <div class="banner-text">⚠️ <span>PREVIEW MODE — Unlock to share with your bestie</span></div>
+    <button id="unlock-btn" onclick="openModal()">✦ Generate Shareable Link</button>
+  </div>
+
+  <!-- Nav -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">NATFLIX</a>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Memories</a></li>
+      <li><a href="#">My List</a></li>
+    </ul>
   </nav>
 
-  <!-- HERO -->
-  <div class="hero" id="heroSection">
-    <video id="heroVideo" autoplay muted loop playsinline></video>
-    <div class="hero-gradient"></div>
+  <!-- Hero -->
+  <section class="hero">
+    <video id="hero-video" class="hero-video" autoplay muted loop playsinline></video>
+    <div class="hero-overlay-lr"></div>
+    <div class="hero-overlay-bt"></div>
     <div class="hero-content">
-      <div class="hero-badge">
-        <span style="color:var(--red);font-weight:900">N</span> FRIENDSHIP SPECIAL
+      <div class="hero-label">N FRIENDSHIP SPECIAL</div>
+      <h1 class="hero-title" id="hero-tagline"></h1>
+      <div class="hero-meta">
+        <span class="match">98% Match</span>
+        <span class="year" id="hero-year"></span>
+        <span class="bff-badge">BFF</span>
+        <span class="duration" id="hero-duration"></span>
       </div>
-      <div class="hero-title" id="heroTitle">Best Friends Forever</div>
-      <div class="hero-desc" id="heroDesc">A friendship like no other.</div>
+      <p class="hero-desc" id="hero-desc"></p>
       <div class="hero-btns">
         <button class="btn-play">▶ Play</button>
         <button class="btn-info">ⓘ More Info</button>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- PHOTO ROW -->
-  <div class="row-section" style="margin-top:40px">
-    <h2 id="rowTitle">Our Memories</h2>
-    <div class="photo-row" id="photoRow"></div>
-  </div>
+  <!-- Stats -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="stat-photos">0</div>
+        <div class="stat-label">Memories Captured</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-duration"></div>
+        <div class="stat-label">Of Friendship</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Vibe Match</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Love & Support</div>
+      </div>
+    </div>
+  </section>
 
-  <!-- FINAL MESSAGE -->
-  <div class="final-msg-section" id="finalMsgSection">
-    <div class="from">A message for you</div>
-    <p id="finalMsgText">Loading...</p>
-    <div class="sig" id="finalMsgSig">— Your Bestie</div>
-  </div>
+  <!-- Memories -->
+  <section class="memories-section">
+    <div class="section-title">📸 Our Memories</div>
+    <div class="memories-scroll" id="memories-scroll"></div>
+  </section>
+
+  <!-- Final Message -->
+  <section class="message-section">
+    <div class="message-card">
+      <div class="message-label">A Message For You</div>
+      <p class="message-text" id="final-message"></p>
+      <div class="message-sig" id="message-sig"></div>
+    </div>
+  </section>
+
+</div><!-- /phase-main -->
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <button class="lb-nav" id="lb-prev" onclick="lbNav(-1)">‹</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-nav" id="lb-next" onclick="lbNav(1)">›</button>
+  <div id="lb-caption"></div>
 </div>
 
-<!-- PAYMENT MODAL -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <h2>Unlock Your <span style="color:var(--red)">NATFLIX</span></h2>
-    <p>Generate a shareable link your bestie can open anytime 🎬</p>
-    <div class="price-display"><span>₹</span><span id="priceDisplay">149</span></div>
+<!-- Payment Modal -->
+<div id="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Generate Your NATFLIX Link</div>
+    <div class="modal-subtitle">Share it with your bestie — they get the full experience 🎬</div>
+    <div class="modal-price" id="modal-price"><span>₹149</span></div>
     <div class="coupon-row">
-      <input type="text" id="couponInput" placeholder="COUPON CODE">
-      <button class="apply-btn" onclick="applyCoupon()">Apply</button>
+      <input type="text" id="coupon-input" placeholder="Enter coupon code">
+      <button id="apply-coupon" onclick="applyCoupon()">Apply</button>
     </div>
-    <div class="coupon-msg" id="couponMsg"></div>
-    <button class="razorpay-btn" id="payNowBtn" onclick="initiatePayment()">Pay & Get Link →</button>
-    <button class="modal-close" onclick="closeModal()">Cancel</button>
-
-    <!-- Post payment share -->
-    <div class="share-section" id="shareSection">
-      <p style="color:#4caf50;font-weight:600;margin-bottom:8px">✅ Payment Successful!</p>
-      <p style="font-size:0.85rem;color:var(--muted)">Share this link with your bestie:</p>
-      <div class="share-link-box" id="shareLinkBox">—</div>
-      <button class="copy-btn" onclick="copyLink()">Copy Link</button>
+    <div id="coupon-msg"></div>
+    <button id="pay-btn" onclick="handlePay()">✦ Generate My Link →</button>
+    <div id="share-result">
+      <div id="share-url-box"></div>
+      <button id="copy-btn" onclick="copyLink()">Copy Link</button>
     </div>
   </div>
 </div>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-const RAZORPAY_KEY = window.NATFLIX_CONFIG.RAZORPAY_KEY;
-
-// ── AVATAR MAP ─────────────────────────────────────────
-const AVATAR_MAP = {
-  ninja:'🥷', alien:'👽', robot:'🤖', vampire:'🧛',
-  wizard:'🧙', mermaid:'🧜', fairy:'🧚', zombie:'🧟',
-  pirate:'🏴‍☠️', astronaut:'👨‍🚀'
-};
-const AVATAR_BG = {
-  ninja:'#1a1a2e', alien:'#0d2b0d', robot:'#1a0d2b', vampire:'#2b0d0d',
-  wizard:'#1a1500', mermaid:'#001a1a', fairy:'#1a001a', zombie:'#0a1a00',
-  pirate:'#1a0d00', astronaut:'#000d1a'
-};
-
-// ── LOAD DATA ──────────────────────────────────────────
-const params = new URLSearchParams(window.location.search);
+// ─── DATA ─────────────────────────────────────────────────
 let D = {};
 try {
-  D = JSON.parse(decodeURIComponent(escape(atob(params.get('data') || ''))));
-} catch(e) { console.error('Data parse error', e); }
-
-// ── WATERMARK ──────────────────────────────────────────
-function buildWatermark() {
-  if(D.paid) return;
-  const container = document.getElementById('wmTiles');
-  for(let row=0; row<6; row++) {
-    for(let col=0; col<4; col++) {
-      const el = document.createElement('div');
-      el.className = 'wm-tile';
-      el.textContent = 'NATFLIX PREVIEW';
-      el.style.top = (row * 200 - 50) + 'px';
-      el.style.left = (col * 320 - 80) + 'px';
-      container.appendChild(el);
+  const raw = new URLSearchParams(location.search).get('data');
+  if (raw) D = JSON.parse(decodeURIComponent(escape(atob(raw))));
+} catch(e) {
+  // demo fallback
+  D = {
+    recipientName: 'Priya',
+    recipientGender: 'female',
+    senderName: 'Arjun',
+    senderGender: 'male',
+    paid: false,
+    video: '',
+    photos: [],
+    friendshipDuration: '5 Years',
+    groq: {
+      heroTagline: 'A Bond That Defies Time',
+      heroDescription: 'From late-night calls to forever memories — a story of two souls that found each other and never let go.',
+      photoCaptions: [],
+      finalMessage: 'You are not just my best friend — you are the chapter I will always return to.'
     }
-  }
+  };
 }
-buildWatermark();
 
-// ── WHO'S WATCHING ─────────────────────────────────────
-function buildProfiles() {
-  const container = document.getElementById('profilesContainer');
-  const profiles = [
-    { name: D.recipientName || 'You', avatar: D.recipientAvatar || 'fairy' },
-    { name: D.senderName || 'Me', avatar: D.senderAvatar || 'ninja' }
-  ];
-  profiles.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'profile';
-    div.innerHTML = `
-      <div class="profile-avatar" style="background:${AVATAR_BG[p.avatar]||'#222'}">
-        ${AVATAR_MAP[p.avatar]||'😊'}
-      </div>
-      <div class="profile-name">${p.name}</div>`;
-    div.addEventListener('click', () => showHomepage());
-    container.appendChild(div);
+const groq = D.groq || {};
+
+// ─── AVATAR ────────────────────────────────────────────────
+function getAvatar(gender) {
+  if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
+  if (gender === 'male')   return { emoji: '🥷', bg: '#1a1a2e' };
+  return { emoji: '👽', bg: '#0d2b0d' };
+}
+
+// ─── PHASE CONTROL ────────────────────────────────────────
+const phaseIntro = document.getElementById('phase-intro');
+const introFade  = document.getElementById('intro-fade');
+const phaseWho   = document.getElementById('phase-who');
+const whoFade    = document.getElementById('who-fade');
+const phaseMain  = document.getElementById('phase-main');
+
+function showPhase2() {
+  phaseWho.classList.add('visible');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      phaseWho.classList.add('faded-in');
+      setTimeout(() => document.getElementById('card-recipient').classList.add('show'), 100);
+      setTimeout(() => document.getElementById('card-sender').classList.add('show'), 250);
+    });
   });
 }
-buildProfiles();
 
-// ── SHOW HOMEPAGE ───────────────────────────────────────
-function showHomepage() {
-  document.getElementById('watchingSection').style.display = 'none';
-  document.getElementById('homepageSection').style.display = 'block';
+function goToPhase2() {
+  introFade.style.opacity = '1';
+  introFade.style.pointerEvents = 'auto';
+  setTimeout(() => {
+    phaseIntro.style.display = 'none';
+    introFade.style.opacity = '0';
+    introFade.style.pointerEvents = 'none';
+    showPhase2();
+  }, 600);
+}
+
+function goToPhase3() {
+  whoFade.style.opacity = '1';
+  whoFade.style.pointerEvents = 'auto';
+  setTimeout(() => {
+    phaseWho.style.display = 'none';
+    whoFade.style.opacity = '0';
+    whoFade.style.pointerEvents = 'none';
+    phaseMain.classList.add('visible');
+    initMain();
+  }, 500);
+}
+
+// ─── PHASE 1 INIT ──────────────────────────────────────────
+(function initIntro() {
+  const vid = document.getElementById('intro-video');
+  vid.src = 'intro.mp4';
+  vid.addEventListener('ended', goToPhase2);
+  vid.addEventListener('error', () => {
+    phaseIntro.style.display = 'none';
+    showPhase2();
+  });
+})();
+
+// ─── PHASE 2 INIT ──────────────────────────────────────────
+(function initWho() {
+  const ra = getAvatar(D.recipientGender);
+  const sa = getAvatar(D.senderGender);
+
+  const avR = document.getElementById('avatar-recipient');
+  avR.style.background = ra.bg;
+  avR.textContent = ra.emoji;
+  document.getElementById('name-recipient').textContent = D.recipientName || 'Recipient';
+
+  const avS = document.getElementById('avatar-sender');
+  avS.style.background = sa.bg;
+  avS.textContent = sa.emoji;
+  document.getElementById('name-sender').textContent = D.senderName || 'Sender';
+
+  document.getElementById('card-recipient').addEventListener('click', goToPhase3);
+  document.getElementById('card-sender').addEventListener('click', goToPhase3);
+})();
+
+// ─── PHASE 3 INIT ──────────────────────────────────────────
+function initMain() {
+  // Watermark
+  if (D.paid === false || D.paid === 'false' || D.paid === undefined) {
+    buildWatermark();
+  } else {
+    document.getElementById('watermark').style.display = 'none';
+    document.getElementById('preview-banner').style.display = 'none';
+  }
 
   // Hero video
-  const video = document.getElementById('heroVideo');
-  if(D.video) { video.src = D.video; video.play(); }
+  const hv = document.getElementById('hero-video');
+  if (D.video) {
+    hv.src = D.video;
+  } else {
+    hv.remove();
+  }
 
-  // Hero text
-  const groq = D.groq || {};
-  document.getElementById('heroTitle').textContent = groq.heroTagline || `${D.senderName} & ${D.recipientName}`;
-  document.getElementById('heroDesc').textContent = groq.heroDescription || 'A friendship worth celebrating.';
+  // Hero content
+  document.getElementById('hero-tagline').textContent = groq.heroTagline || '';
+  document.getElementById('hero-year').textContent = new Date().getFullYear();
+  document.getElementById('hero-duration').textContent = D.friendshipDuration || '';
+  document.getElementById('hero-desc').textContent = groq.heroDescription || '';
 
-  // Row title
-  document.getElementById('rowTitle').textContent = `${D.senderName} & ${D.recipientName}'s Memories`;
+  // Stats
+  document.getElementById('stat-photos').textContent = (D.photos && D.photos.length) ? D.photos.length : '0';
+  document.getElementById('stat-duration').textContent = D.friendshipDuration || '—';
 
-  // Photo row
-  const row = document.getElementById('photoRow');
-  (D.photos || []).forEach((url, i) => {
-    const card = document.createElement('div');
-    card.className = 'photo-card';
-    const caption = (groq.photoCaptions || [])[i] || `Memory #${i+1}`;
-    card.innerHTML = `<img src="${url}" loading="lazy"><div class="photo-caption">${caption}</div>`;
-    row.appendChild(card);
-  });
+  // Memories
+  buildMemories();
 
   // Final message
-  document.getElementById('finalMsgText').textContent = groq.finalMessage || D.finalMessage || '❤️';
-  document.getElementById('finalMsgSig').textContent = `— ${D.senderName}`;
-}
+  document.getElementById('final-message').textContent = groq.finalMessage || '';
+  document.getElementById('message-sig').textContent = '— ' + (D.senderName || '');
 
-// ── PAYMENT ────────────────────────────────────────────
-const COUPONS = {
-  'NATFREE': 0,
-  'BESTIE1': 1,
-  'NATFLIX79': 79,
-  'NATFLIX129': 129,
-};
-let finalPrice = 149;
+  // Nav scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+  });
 
-function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
-
-function applyCoupon() {
-  const code = document.getElementById('couponInput').value.trim().toUpperCase();
-  const msgEl = document.getElementById('couponMsg');
-  if(COUPONS.hasOwnProperty(code)) {
-    finalPrice = COUPONS[code];
-    document.getElementById('priceDisplay').textContent = finalPrice;
-    msgEl.className = 'coupon-msg';
-    msgEl.textContent = finalPrice === 0 ? '🎉 Free! Click below to get your link.' : `✅ Coupon applied! ₹${finalPrice}`;
-    if(finalPrice === 0) {
-      document.getElementById('payNowBtn').textContent = 'Get Free Link →';
-    }
-  } else {
-    msgEl.className = 'coupon-msg error';
-    msgEl.textContent = '❌ Invalid coupon code.';
+  // Banner nav offset
+  if (D.paid === false || D.paid === 'false' || D.paid === undefined) {
+    document.getElementById('nav').style.top = '44px';
   }
 }
 
-function initiatePayment() {
-  if(finalPrice === 0) {
+// ─── WATERMARK ─────────────────────────────────────────────
+function buildWatermark() {
+  const wm = document.getElementById('watermark');
+  const text = 'NATFLIX PREVIEW';
+  const w = window.innerWidth, h = window.innerHeight;
+  const cols = Math.ceil(w / 200) + 2;
+  const rows = Math.ceil(h / 160) + 6;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const el = document.createElement('div');
+      el.className = 'wm-tile';
+      el.textContent = text;
+      el.style.left = (c * 200 - 100) + 'px';
+      el.style.top  = (r * 120 - 100) + 'px';
+      wm.appendChild(el);
+    }
+  }
+}
+
+// ─── MEMORIES ──────────────────────────────────────────────
+let lbIndex = 0;
+const lbPhotos = [];
+const lbCaptions = [];
+
+function buildMemories() {
+  const scroll = document.getElementById('memories-scroll');
+  const photos = D.photos || [];
+  const captions = groq.photoCaptions || [];
+
+  if (!photos.length) {
+    scroll.parentElement.style.display = 'none';
+    return;
+  }
+
+  photos.forEach((url, i) => {
+    lbPhotos.push(url);
+    lbCaptions.push(captions[i] || '');
+
+    const card = document.createElement('div');
+    card.className = 'memory-card';
+
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'Memory ' + (i + 1);
+    img.loading = 'lazy';
+
+    const cap = document.createElement('div');
+    cap.className = 'memory-caption';
+    const span = document.createElement('span');
+    span.textContent = captions[i] || '';
+    cap.appendChild(span);
+
+    card.appendChild(img);
+    card.appendChild(cap);
+    card.addEventListener('click', () => openLightbox(i));
+    scroll.appendChild(card);
+  });
+}
+
+function openLightbox(i) {
+  lbIndex = i;
+  document.getElementById('lb-img').src = lbPhotos[i];
+  document.getElementById('lb-caption').textContent = lbCaptions[i] || '';
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+function lbNav(dir) {
+  lbIndex = (lbIndex + dir + lbPhotos.length) % lbPhotos.length;
+  openLightbox(lbIndex);
+}
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
+});
+
+// ─── MODAL ─────────────────────────────────────────────────
+let currentPrice = 149;
+const COUPONS = { NATFREE: 0, BESTIE1: 1, NATFLIX79: 79, NATFLIX129: 129 };
+
+function openModal() { document.getElementById('modal-overlay').classList.add('open'); }
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+function applyCoupon() {
+  const code = document.getElementById('coupon-input').value.trim().toUpperCase();
+  const msg  = document.getElementById('coupon-msg');
+  const priceEl = document.getElementById('modal-price');
+
+  if (code in COUPONS) {
+    currentPrice = COUPONS[code];
+    msg.className = 'success';
+    msg.textContent = currentPrice === 0
+      ? '🎉 100% off! This one\'s on us.'
+      : '✓ Coupon applied — ₹' + currentPrice + ' only!';
+    priceEl.innerHTML = '<span>₹' + currentPrice + '</span><span class="price-strike">₹149</span>';
+  } else {
+    msg.className = 'error';
+    msg.textContent = 'Invalid coupon code.';
+  }
+}
+
+function handlePay() {
+  if (currentPrice === 0) {
     onPaymentSuccess();
     return;
   }
+
+  const key = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.RAZORPAY_KEY) || '';
+  if (!key) { alert('Payment config not found.'); return; }
+
   const options = {
-    key: RAZORPAY_KEY,
-    amount: finalPrice * 100,
+    key,
+    amount: currentPrice * 100,
     currency: 'INR',
     name: 'NATFLIX',
-    description: 'Best Friends Day Experience',
+    description: 'Generate Shareable Link',
     theme: { color: '#E50914' },
-    handler: function(response) { onPaymentSuccess(); },
-    modal: { ondismiss: function() {} }
+    handler: onPaymentSuccess
   };
-  const rzp = new Razorpay(options);
-  rzp.open();
+
+  try {
+    const rzp = new Razorpay(options);
+    rzp.open();
+  } catch(e) {
+    alert('Could not open payment. Please try again.');
+  }
 }
 
 function onPaymentSuccess() {
-  // Remove paid=false, set paid=true
-  const paidData = { ...D, paid: true };
-  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(paidData))));
-  const shareUrl = `${window.location.origin}/watching.html?data=${encoded}`;
+  D.paid = true;
+  const encode = btoa(unescape(encodeURIComponent(JSON.stringify(D))));
+  const shareUrl = window.location.origin + '/watching.html?data=' + encode;
 
-  document.getElementById('payNowBtn').style.display = 'none';
-  document.getElementById('couponRow')?.remove();
-  const shareSection = document.getElementById('shareSection');
-  shareSection.style.display = 'block';
-  document.getElementById('shareLinkBox').textContent = shareUrl;
+  document.getElementById('share-url-box').textContent = shareUrl;
+  document.getElementById('share-result').style.display = 'block';
+  document.getElementById('pay-btn').style.display = 'none';
 
-  // Remove watermark for this session
-  document.getElementById('wmTiles').innerHTML = '';
-  document.querySelector('.preview-banner').style.display = 'none';
-  document.querySelector('.top-spacer').style.display = 'none';
+  // Remove watermark
+  const wm = document.getElementById('watermark');
+  if (wm) wm.remove();
+
+  // Hide banner
+  const banner = document.getElementById('preview-banner');
+  if (banner) banner.style.display = 'none';
+
+  // Remove nav offset
+  document.getElementById('nav').style.top = '';
 }
 
 function copyLink() {
-  const link = document.getElementById('shareLinkBox').textContent;
-  navigator.clipboard.writeText(link).then(() => {
-    const btn = document.querySelector('.copy-btn');
-    btn.textContent = 'Copied! ✅';
+  const url = document.getElementById('share-url-box').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
     setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000);
   });
 }
