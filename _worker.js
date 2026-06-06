@@ -38,6 +38,7 @@ export default {
       });
     }
 
+    
     // ── STATIC ASSETS ──
     return env.ASSETS.fetch(request);
   }
