@@ -42,6 +42,27 @@
     transition: opacity 0.6s ease;
   }
 
+  /* ═══════════ START WALL ═══════════ */
+  #start-wall {
+    position: fixed; inset: 0; z-index: 200;
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #start-wall button {
+    background: var(--red);
+    border: none;
+    color: #fff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.3em;
+    padding: 20px 60px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  #start-wall button:hover  { opacity: 0.88; }
+  #start-wall button:active { transform: scale(0.98); }
+
   /* ═══════════ PHASE 2 — WHO'S WATCHING ═══════════ */
   #phase-who {
     display: none;
@@ -53,8 +74,8 @@
     opacity: 0;
     transition: opacity 0.4s ease;
   }
-  #phase-who.visible { display: flex; }
-  #phase-who.faded-in { opacity: 1; }
+  #phase-who.visible    { display: flex; }
+  #phase-who.faded-in   { opacity: 1; }
 
   #phase-who h1 {
     font-family: 'DM Sans', sans-serif;
@@ -88,10 +109,13 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 72px;
     border: 3px solid transparent;
-    transition: border-color 0.2s ease;
-    position: relative;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   }
-  .profile-card:hover .profile-avatar { border-color: var(--red); }
+  .profile-card:hover .profile-avatar {
+    border-color: var(--red);
+    transform: scale(1.05);
+    box-shadow: 0 0 28px rgba(229,9,20,0.25);
+  }
 
   .profile-name {
     margin-top: 14px;
@@ -112,15 +136,14 @@
   /* ═══════════ WATERMARK ═══════════ */
   #watermark {
     position: fixed; inset: 0; z-index: 9999;
-    pointer-events: none;
-    overflow: hidden;
+    pointer-events: none; overflow: hidden;
   }
   .wm-tile {
     position: absolute;
     font-family: 'Bebas Neue', cursive;
     font-size: 1.5rem;
     letter-spacing: 0.2em;
-    color: rgba(229, 9, 20, 0.10);
+    color: rgba(229,9,20,0.10);
     transform: rotate(-30deg);
     white-space: nowrap;
     user-select: none;
@@ -187,7 +210,7 @@
   }
   .nav-links a:hover { color: #fff; }
 
-  /* ═══════════ HERO ═══════════ */
+  /* ═══════════ PHASE 3 MAIN ═══════════ */
   #phase-main { display: none; }
   #phase-main.visible { display: block; }
 
@@ -197,19 +220,15 @@
     height: 100vh;
     overflow: hidden;
   }
-
-  /* Hero background when no video — dark gradient fallback */
   .hero-bg-fallback {
     position: absolute; inset: 0;
     background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%);
   }
-
   .hero-video {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
   }
-
   .hero-overlay-lr {
     position: absolute; inset: 0;
     background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.05) 100%);
@@ -218,13 +237,11 @@
     position: absolute; inset: 0;
     background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, transparent 40%);
   }
-
   .hero-content {
     position: absolute; bottom: 0; left: 0;
     max-width: 600px;
     padding: 0 48px 80px;
   }
-
   .hero-label {
     font-family: 'DM Sans', sans-serif;
     font-size: 0.78rem;
@@ -246,7 +263,6 @@
     align-items: center; justify-content: center;
     border-radius: 3px;
   }
-
   .hero-title {
     font-family: 'Bebas Neue', cursive;
     font-size: clamp(3rem, 7vw, 6rem);
@@ -255,15 +271,14 @@
     margin-bottom: 16px;
     text-shadow: 2px 2px 20px rgba(0,0,0,0.5);
   }
-
   .hero-meta {
     display: flex; align-items: center; gap: 12px;
     flex-wrap: wrap;
     margin-bottom: 14px;
     font-size: 0.88rem;
   }
-  .hero-meta .match { color: #46d369; font-weight: 600; }
-  .hero-meta .year { color: #aaa; }
+  .hero-meta .match    { color: #46d369; font-weight: 600; }
+  .hero-meta .year     { color: #aaa; }
   .bff-badge {
     border: 1px solid #aaa;
     color: #aaa;
@@ -272,7 +287,6 @@
     border-radius: 3px;
   }
   .hero-meta .duration { color: #ddd; }
-
   .hero-desc {
     color: #b3b3b3;
     font-size: 0.95rem;
@@ -280,126 +294,87 @@
     margin-bottom: 28px;
     font-weight: 300;
   }
-
-  .hero-btns {
-    display: flex; gap: 12px;
-  }
-
+  .hero-btns { display: flex; gap: 12px; }
   .btn-play {
-    background: #fff;
-    color: #000;
-    border: none;
+    background: #fff; color: #000; border: none;
     padding: 12px 32px;
     font-family: 'DM Sans', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
-    border-radius: 6px;
-    cursor: pointer;
+    font-weight: 600; font-size: 1rem;
+    border-radius: 6px; cursor: pointer;
     display: flex; align-items: center; gap: 8px;
     transition: background 0.2s;
   }
   .btn-play:hover { background: rgba(255,255,255,0.85); }
-
   .btn-info {
-    background: rgba(109,109,110,0.7);
-    color: #fff;
-    border: none;
+    background: rgba(109,109,110,0.7); color: #fff; border: none;
     padding: 12px 32px;
     font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 1rem;
-    border-radius: 6px;
-    cursor: pointer;
+    font-weight: 500; font-size: 1rem;
+    border-radius: 6px; cursor: pointer;
     display: flex; align-items: center; gap: 8px;
     transition: background 0.2s;
   }
   .btn-info:hover { background: rgba(109,109,110,0.5); }
 
-  /* ═══════════ STATS ═══════════ */
-  .stats-section {
-    padding: 48px 48px 40px;
-    background: #000;
-  }
+  /* STATS */
+  .stats-section { padding: 48px 48px 40px; background: #000; }
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    max-width: 900px;
+    gap: 20px; max-width: 900px;
   }
   .stat-card {
     background: #0d0d0d;
     border: 1px solid #1a1a1a;
-    border-radius: 10px;
-    padding: 24px 20px;
+    border-radius: 10px; padding: 24px 20px;
   }
   .stat-number {
     font-family: 'Bebas Neue', cursive;
-    font-size: 2.8rem;
-    color: var(--red);
-    line-height: 1;
-    margin-bottom: 6px;
+    font-size: 2.8rem; color: var(--red);
+    line-height: 1; margin-bottom: 6px;
   }
   .stat-label {
     color: var(--grey);
-    font-size: 0.82rem;
-    font-weight: 400;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 0.82rem; font-weight: 400;
+    letter-spacing: 0.06em; text-transform: uppercase;
   }
 
-  /* ═══════════ MEMORIES ROW ═══════════ */
-  .memories-section {
-    padding: 8px 48px 56px;
-  }
+  /* MEMORIES */
+  .memories-section { padding: 8px 48px 56px; }
   .section-title {
     font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 1.35rem;
-    color: #e5e5e5;
-    margin-bottom: 20px;
+    font-weight: 500; font-size: 1.35rem;
+    color: #e5e5e5; margin-bottom: 20px;
   }
   .memories-scroll {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 8px;
+    display: flex; gap: 10px;
+    overflow-x: auto; padding-bottom: 8px;
     scrollbar-width: none;
   }
   .memories-scroll::-webkit-scrollbar { display: none; }
-
   .memory-card {
-    flex: 0 0 220px;
-    height: 150px;
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
+    flex: 0 0 220px; height: 150px;
+    border-radius: 8px; overflow: hidden;
+    position: relative; cursor: pointer;
     transition: transform 0.25s ease;
   }
   .memory-card:hover { transform: scale(1.08); z-index: 10; }
-
   .memory-card img {
     width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
+    object-fit: cover; display: block;
     background: #1a1a1a;
   }
   .memory-caption {
     position: absolute; inset: 0;
     background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
     display: flex; align-items: flex-end;
-    padding: 10px 12px;
-    opacity: 0;
+    padding: 10px 12px; opacity: 0;
     transition: opacity 0.22s ease;
   }
   .memory-card:hover .memory-caption { opacity: 1; }
-  .memory-caption span {
-    font-size: 0.78rem;
-    color: #fff;
-    line-height: 1.3;
-  }
+  .memory-caption span { font-size: 0.78rem; color: #fff; line-height: 1.3; }
 
-  /* ═══════════ LIGHTBOX ═══════════ */
+  /* LIGHTBOX */
   #lightbox {
     display: none;
     position: fixed; inset: 0; z-index: 5000;
@@ -409,8 +384,7 @@
   #lightbox.open { display: flex; }
   #lightbox img {
     max-width: 85vw; max-height: 80vh;
-    border-radius: 8px;
-    object-fit: contain;
+    border-radius: 8px; object-fit: contain;
   }
   .lb-close {
     position: absolute; top: 24px; right: 32px;
@@ -421,9 +395,8 @@
   .lb-close:hover { opacity: 1; }
   .lb-nav {
     position: absolute; top: 50%; transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: #fff; border: none; border-radius: 50%;
-    width: 48px; height: 48px; font-size: 1.4rem;
+    background: rgba(0,0,0,0.5); color: #fff; border: none;
+    border-radius: 50%; width: 48px; height: 48px; font-size: 1.4rem;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
     transition: background 0.2s;
   }
@@ -432,52 +405,35 @@
   #lb-next { right: 24px; }
   #lb-caption {
     position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-    color: #ccc; font-size: 0.9rem; text-align: center;
-    max-width: 500px;
+    color: #ccc; font-size: 0.9rem; text-align: center; max-width: 500px;
   }
 
-  /* ═══════════ FINAL MESSAGE ═══════════ */
-  .message-section {
-    padding: 8px 48px 80px;
-  }
+  /* FINAL MESSAGE */
+  .message-section { padding: 8px 48px 80px; }
   .message-card {
     background: #0d0d0d;
     border: 1px solid #1e1e1e;
-    border-radius: 14px;
-    padding: 40px 48px;
-    max-width: 760px;
-    position: relative;
-    overflow: hidden;
+    border-radius: 14px; padding: 40px 48px;
+    max-width: 760px; position: relative; overflow: hidden;
   }
   .message-card::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--red);
+    height: 3px; background: var(--red);
   }
   .message-label {
     font-family: 'Bebas Neue', cursive;
-    font-size: 0.85rem;
-    letter-spacing: 0.18em;
-    color: var(--red);
-    margin-bottom: 20px;
-    text-transform: uppercase;
+    font-size: 0.85rem; letter-spacing: 0.18em;
+    color: var(--red); margin-bottom: 20px; text-transform: uppercase;
   }
   .message-text {
-    font-size: 1.15rem;
-    line-height: 1.75;
-    color: #d4d4d4;
-    font-style: italic;
-    font-weight: 300;
-    margin-bottom: 20px;
+    font-size: 1.15rem; line-height: 1.75;
+    color: #d4d4d4; font-style: italic;
+    font-weight: 300; margin-bottom: 20px;
   }
-  .message-sig {
-    color: var(--grey);
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
+  .message-sig { color: var(--grey); font-size: 0.9rem; font-weight: 500; }
 
-  /* ═══════════ PAYMENT MODAL ═══════════ */
+  /* PAYMENT MODAL */
   #modal-overlay {
     display: none;
     position: fixed; inset: 0; z-index: 8000;
@@ -486,15 +442,10 @@
     padding: 20px;
   }
   #modal-overlay.open { display: flex; }
-
   .modal-box {
-    background: #141414;
-    border: 1px solid #2a2a2a;
-    border-radius: 16px;
-    padding: 40px 44px;
-    width: 100%;
-    max-width: 440px;
-    position: relative;
+    background: #141414; border: 1px solid #2a2a2a;
+    border-radius: 16px; padding: 40px 44px;
+    width: 100%; max-width: 440px; position: relative;
   }
   .modal-close {
     position: absolute; top: 16px; right: 20px;
@@ -503,123 +454,71 @@
     transition: color 0.2s;
   }
   .modal-close:hover { color: #fff; }
-
   .modal-title {
     font-family: 'Bebas Neue', cursive;
-    font-size: 2rem;
-    letter-spacing: 2px;
-    color: #fff;
-    margin-bottom: 8px;
+    font-size: 2rem; letter-spacing: 2px; color: #fff; margin-bottom: 8px;
   }
-  .modal-subtitle {
-    color: var(--grey);
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-bottom: 28px;
-  }
+  .modal-subtitle { color: var(--grey); font-size: 0.9rem; line-height: 1.5; margin-bottom: 28px; }
   .modal-price {
     font-family: 'Bebas Neue', cursive;
-    font-size: 4rem;
-    color: var(--red);
-    line-height: 1;
-    margin-bottom: 28px;
-    display: flex; align-items: baseline; gap: 6px;
+    font-size: 4rem; color: var(--red); line-height: 1;
+    margin-bottom: 28px; display: flex; align-items: baseline; gap: 6px;
   }
-  .price-strike {
-    font-size: 1.8rem;
-    color: #555;
-    text-decoration: line-through;
-  }
-
-  .coupon-row {
-    display: flex; gap: 10px;
-    margin-bottom: 20px;
-  }
+  .price-strike { font-size: 1.8rem; color: #555; text-decoration: line-through; }
+  .coupon-row { display: flex; gap: 10px; margin-bottom: 20px; }
   #coupon-input {
-    flex: 1;
-    background: #1e1e1e;
-    border: 1px solid #333;
-    border-radius: 8px;
-    color: #fff;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    padding: 12px 16px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    outline: none;
-    transition: border-color 0.2s;
+    flex: 1; background: #1e1e1e; border: 1px solid #333;
+    border-radius: 8px; color: #fff;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    padding: 12px 16px; letter-spacing: 0.1em; text-transform: uppercase;
+    outline: none; transition: border-color 0.2s;
   }
   #coupon-input:focus { border-color: var(--red); }
   #coupon-input::placeholder { text-transform: none; color: #555; letter-spacing: 0; }
-
   #apply-coupon {
-    background: #222;
-    color: #fff;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.88rem;
-    cursor: pointer;
-    transition: background 0.2s;
+    background: #222; color: #fff; border: 1px solid #333;
+    border-radius: 8px; padding: 12px 20px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    cursor: pointer; transition: background 0.2s;
   }
   #apply-coupon:hover { background: #2a2a2a; }
-
-  #coupon-msg {
-    font-size: 0.82rem;
-    margin-bottom: 16px;
-    min-height: 18px;
-  }
+  #coupon-msg { font-size: 0.82rem; margin-bottom: 16px; min-height: 18px; }
   #coupon-msg.success { color: #46d369; }
-  #coupon-msg.error { color: var(--red); }
-
+  #coupon-msg.error   { color: var(--red); }
   #pay-btn {
-    width: 100%;
-    background: var(--red);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 16px;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.2rem;
-    letter-spacing: 3px;
-    cursor: pointer;
+    width: 100%; background: var(--red); color: #fff; border: none;
+    border-radius: 8px; padding: 16px;
+    font-family: 'Bebas Neue', cursive; font-size: 1.2rem;
+    letter-spacing: 3px; cursor: pointer;
     transition: background 0.2s, transform 0.1s;
   }
-  #pay-btn:hover { background: #c0060f; }
-  #pay-btn:active { transform: scale(0.99); }
+  #pay-btn:hover    { background: #c0060f; }
+  #pay-btn:active   { transform: scale(0.99); }
+  #pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  #share-result {
-    display: none;
-    margin-top: 20px;
-  }
+  /* Share result */
+  #share-result { display: none; margin-top: 20px; }
   #share-url-box {
-    background: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 0.78rem;
-    color: #999;
-    word-break: break-all;
-    margin-bottom: 12px;
-    line-height: 1.5;
+    background: #1a1a1a; border: 1px solid #2a2a2a;
+    border-radius: 8px; padding: 12px 16px;
+    font-size: 0.78rem; color: #999;
+    word-break: break-all; margin-bottom: 12px; line-height: 1.5;
   }
   #copy-btn {
-    width: 100%;
-    background: var(--red);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 13px;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.1rem;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: background 0.2s;
+    width: 100%; background: var(--red); color: #fff; border: none;
+    border-radius: 8px; padding: 13px;
+    font-family: 'Bebas Neue', cursive; font-size: 1.1rem;
+    letter-spacing: 2px; cursor: pointer; transition: background 0.2s;
   }
   #copy-btn:hover { background: #c0060f; }
 
-  /* ═══════════ RESPONSIVE ═══════════ */
+  /* SAVE ERROR */
+  #save-error {
+    display: none; margin-top: 14px;
+    color: var(--red); font-size: 0.82rem; text-align: center; line-height: 1.5;
+  }
+
+  /* RESPONSIVE */
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
     .hero-content { padding: 0 20px 60px; }
@@ -638,6 +537,11 @@
   <video id="intro-video" playsinline></video>
 </div>
 <div id="intro-fade"></div>
+
+<!-- START wall — visible until user clicks -->
+<div id="start-wall">
+  <button id="start-btn">▶ START</button>
+</div>
 
 <!-- Phase 2: Who's Watching -->
 <div id="phase-who">
@@ -674,7 +578,6 @@
     </ul>
   </nav>
 
-  <!-- Hero — video injected by JS if available, fallback bg otherwise -->
   <section class="hero" id="hero-section">
     <div class="hero-bg-fallback" id="hero-fallback"></div>
     <div class="hero-overlay-lr"></div>
@@ -696,7 +599,6 @@
     </div>
   </section>
 
-  <!-- Stats -->
   <section class="stats-section">
     <div class="stats-grid">
       <div class="stat-card">
@@ -718,13 +620,11 @@
     </div>
   </section>
 
-  <!-- Memories -->
   <section class="memories-section">
     <div class="section-title">📸 Our Memories</div>
     <div class="memories-scroll" id="memories-scroll"></div>
   </section>
 
-  <!-- Final Message -->
   <section class="message-section">
     <div class="message-card">
       <div class="message-label">A Message For You</div>
@@ -761,52 +661,69 @@
       <div id="share-url-box"></div>
       <button id="copy-btn" onclick="copyLink()">Copy Link</button>
     </div>
+    <div id="save-error">
+      Something went wrong saving your link. Please try again or contact support.
+    </div>
   </div>
 </div>
 
 <script>
-// ─── DATA ─────────────────────────────────────────────────
+// ─── ENCODING HELPERS ─────────────────────────────────────────────────────────
+// These MUST match the safeEncode in index.html exactly.
+
+// Decode: TextDecoder path (mirrors TextEncoder in index.html)
+function safeDecode(raw) {
+  try {
+    // Modern path — mirror of TextEncoder encode in index.html
+    const binary = atob(raw);
+    const bytes  = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return JSON.parse(new TextDecoder().decode(bytes));
+  } catch (_) {
+    // Legacy fallback — mirror of unescape(encodeURIComponent()) in index.html
+    return JSON.parse(decodeURIComponent(escape(atob(raw))));
+  }
+}
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
 let D = {};
 
 try {
   const raw = new URLSearchParams(location.search).get('data');
-
   if (raw) {
-    D = JSON.parse(decodeURIComponent(atob(raw)));
+    // FIX (Bug 3): use safeDecode — matches safeEncode in index.html
+    D = safeDecode(raw);
   }
 } catch (e) {
-  console.error('Data parse error:', e);
-
+  console.error('Data parse error — falling back to demo data:', e);
   D = {
-    recipientName: 'Priya',
-    recipientGender: 'female',
-    senderName: 'Arjun',
-    senderGender: 'male',
-    paid: false,
-    video: null,
-    photos: [],
+    recipientName:      'Priya',
+    recipientGender:    'female',
+    senderName:         'Arjun',
+    senderGender:       'male',
+    paid:               false,
+    video:              null,
+    photos:             [],
     friendshipDuration: '5 Years',
     groq: {
-      heroTagline: 'A Bond That Defies Time',
-      heroDescription:
-        'From late-night calls to forever memories — a story of two souls that found each other and never let go.',
-      photoCaptions: [],
-      finalMessage:
-        'You are not just my best friend — you are the chapter I will always return to.'
+      heroTagline:     'A Bond That Defies Time',
+      heroDescription: 'From late-night calls to forever memories — a story of two souls that found each other and never let go.',
+      photoCaptions:   [],
+      finalMessage:    'You are not just my best friend — you are the chapter I will always return to.'
     }
   };
 }
 
 const groq = D.groq || {};
 
-// ─── AVATAR ────────────────────────────────────────────────
+// ─── AVATAR ───────────────────────────────────────────────────────────────────
 function getAvatar(gender) {
   if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
   if (gender === 'male')   return { emoji: '🥷', bg: '#1a1a2e' };
   return { emoji: '👽', bg: '#0d2b0d' };
 }
 
-// ─── PHASE CONTROL ────────────────────────────────────────
+// ─── PHASE CONTROL ────────────────────────────────────────────────────────────
 const phaseIntro = document.getElementById('phase-intro');
 const introFade  = document.getElementById('intro-fade');
 const phaseWho   = document.getElementById('phase-who');
@@ -815,182 +732,164 @@ const phaseMain  = document.getElementById('phase-main');
 
 function showPhase2() {
   phaseWho.classList.add('visible');
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      phaseWho.classList.add('faded-in');
-      setTimeout(() => document.getElementById('card-recipient').classList.add('show'), 100);
-      setTimeout(() => document.getElementById('card-sender').classList.add('show'), 250);
-    });
-  });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    phaseWho.classList.add('faded-in');
+    setTimeout(() => document.getElementById('card-recipient').classList.add('show'), 100);
+    setTimeout(() => document.getElementById('card-sender').classList.add('show'),    250);
+  }));
 }
 
 function goToPhase2() {
-  introFade.style.opacity = '1';
-  introFade.style.pointerEvents = 'auto';
+  introFade.style.opacity        = '1';
+  introFade.style.pointerEvents  = 'auto';
   setTimeout(() => {
-    phaseIntro.style.display = 'none';
-    introFade.style.opacity = '0';
-    introFade.style.pointerEvents = 'none';
+    phaseIntro.style.display       = 'none';
+    introFade.style.opacity        = '0';
+    introFade.style.pointerEvents  = 'none';
     showPhase2();
   }, 600);
 }
 
 function goToPhase3() {
-  whoFade.style.opacity = '1';
-  whoFade.style.pointerEvents = 'auto';
+  whoFade.style.opacity        = '1';
+  whoFade.style.pointerEvents  = 'auto';
   setTimeout(() => {
-    phaseWho.style.display = 'none';
-    whoFade.style.opacity = '0';
-    whoFade.style.pointerEvents = 'none';
+    phaseWho.style.display       = 'none';
+    whoFade.style.opacity        = '0';
+    whoFade.style.pointerEvents  = 'none';
     phaseMain.classList.add('visible');
     initMain();
   }, 500);
 }
 
-// ─── PHASE 1 INIT ──────────────────────────────────────────
+// ─── PHASE 1 INIT ─────────────────────────────────────────────────────────────
 (function initIntro() {
-  const vid = document.getElementById('intro-video');
-  vid.src = 'intro.mp4';
-  // DO NOT set autoplay or muted — we control it manually
+  const vid     = document.getElementById('intro-video');
+  const wall    = document.getElementById('start-wall');
+  const startBtn = document.getElementById('start-btn');
 
-  const wall = document.createElement('div');
-  wall.style.cssText = `
-    position:fixed; inset:0; z-index:200;
-    background:#000;
-    display:flex; align-items:center; justify-content:center;
-  `;
-  wall.innerHTML = `
-    <button style="
-      background:#E50914;
-      border:none;
-      color:#fff;
-      font-family:'Bebas Neue',sans-serif;
-      font-size:1.8rem;
-      letter-spacing:0.3em;
-      padding:20px 60px;
-      border-radius:6px;
-      cursor:pointer;
-    ">▶ START</button>
-  `;
-  document.body.appendChild(wall);
+  // Pre-load the video but do NOT autoplay — browser policy blocks unmuted autoplay
+  vid.preload = 'auto';
+  vid.src     = 'intro.mp4';
 
-  wall.querySelector('button').addEventListener('click', () => {
-    wall.remove();
-    vid.muted = false;
-    vid.volume = 1;
-    vid.currentTime = 0; // ← ensure starts from beginning
-    vid.play();
-  });
-
-  vid.addEventListener('ended', goToPhase2);
+  // If video fails to load at all, skip straight to Phase 2
   vid.addEventListener('error', () => {
+    wall.style.display  = 'none';
     phaseIntro.style.display = 'none';
     showPhase2();
   });
+
+  vid.addEventListener('ended', goToPhase2);
+
+  startBtn.addEventListener('click', () => {
+    wall.style.display = 'none';
+    vid.muted  = false;
+    vid.volume = 1;
+    vid.currentTime = 0;
+
+    // FIX (Bug 6): handle play() rejection gracefully
+    const playPromise = vid.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.warn('Video play() rejected:', err);
+        // If play fails (e.g. codec issue), go straight to Phase 2
+        goToPhase2();
+      });
+    }
+  });
 })();
 
-// ─── PHASE 2 INIT ──────────────────────────────────────────
+// ─── PHASE 2 INIT ─────────────────────────────────────────────────────────────
 (function initWho() {
   const ra = getAvatar(D.recipientGender);
   const sa = getAvatar(D.senderGender);
 
   const avR = document.getElementById('avatar-recipient');
   avR.style.background = ra.bg;
-  avR.textContent = ra.emoji;
+  avR.textContent      = ra.emoji;
   document.getElementById('name-recipient').textContent = D.recipientName || 'Recipient';
 
   const avS = document.getElementById('avatar-sender');
   avS.style.background = sa.bg;
-  avS.textContent = sa.emoji;
+  avS.textContent      = sa.emoji;
   document.getElementById('name-sender').textContent = D.senderName || 'Sender';
 
   document.getElementById('card-recipient').addEventListener('click', goToPhase3);
-  document.getElementById('card-sender').addEventListener('click', goToPhase3);
+  document.getElementById('card-sender').addEventListener('click',    goToPhase3);
 })();
 
-// ─── PHASE 3 INIT ──────────────────────────────────────────
+// ─── PHASE 3 INIT ─────────────────────────────────────────────────────────────
 function initMain() {
-  // Watermark / banner
   const isPaid = D.paid === true || D.paid === 'true';
+
   if (isPaid) {
-    document.getElementById('watermark').style.display = 'none';
+    document.getElementById('watermark').style.display     = 'none';
     document.getElementById('preview-banner').style.display = 'none';
   } else {
     buildWatermark();
+    document.getElementById('nav').style.top = '44px';
   }
 
-  // Hero video — optional. If D.video is set, inject it; otherwise show fallback bg.
-  const heroSection = document.getElementById('hero-section');
+  // Hero video (optional)
   if (D.video) {
     const hv = document.createElement('video');
     hv.className = 'hero-video';
-    hv.src = D.video;
-    hv.autoplay = true;
-    hv.muted = true;
-    hv.loop = true;          // ← looping!
+    hv.src       = D.video;
+    hv.autoplay  = true;
+    hv.muted     = true;
+    hv.loop      = true;
     hv.setAttribute('playsinline', '');
-    // Insert before the fallback div so it sits behind overlays
-    heroSection.insertBefore(hv, heroSection.firstChild);
+    document.getElementById('hero-section').insertBefore(hv, document.getElementById('hero-section').firstChild);
     document.getElementById('hero-fallback').style.display = 'none';
   }
-  // If no video, hero-fallback gradient is already visible — nothing to do.
 
-  // Hero content
-  document.getElementById('hero-tagline').textContent = groq.heroTagline || '';
-  document.getElementById('hero-year').textContent = new Date().getFullYear();
+  document.getElementById('hero-tagline').textContent  = groq.heroTagline     || '';
+  document.getElementById('hero-year').textContent     = new Date().getFullYear();
   document.getElementById('hero-duration').textContent = D.friendshipDuration || '';
-  document.getElementById('hero-desc').textContent = groq.heroDescription || '';
+  document.getElementById('hero-desc').textContent     = groq.heroDescription || '';
 
-  // Stats
-  document.getElementById('stat-photos').textContent = (D.photos && D.photos.length) || '0';
+  document.getElementById('stat-photos').textContent   = (D.photos && D.photos.length) || '0';
   document.getElementById('stat-duration').textContent = D.friendshipDuration || '—';
 
-  // Memories
   buildMemories();
 
-  // Final message
   document.getElementById('final-message').textContent = groq.finalMessage || '';
-  document.getElementById('message-sig').textContent = '— ' + (D.senderName || '');
+  document.getElementById('message-sig').textContent   = '— ' + (D.senderName || '');
 
-  // Nav scroll
   window.addEventListener('scroll', () => {
     document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
   });
-
-  // Banner nav offset
-  if (!isPaid) {
-    document.getElementById('nav').style.top = '44px';
-  }
 }
 
-// ─── WATERMARK ─────────────────────────────────────────────
+// ─── WATERMARK ────────────────────────────────────────────────────────────────
 function buildWatermark() {
-  const wm = document.getElementById('watermark');
+  const wm   = document.getElementById('watermark');
   const text = 'NATFLIX PREVIEW';
-  const w = window.innerWidth, h = window.innerHeight;
+  const w    = window.innerWidth;
+  const h    = window.innerHeight;
   const cols = Math.ceil(w / 200) + 2;
   const rows = Math.ceil(h / 160) + 6;
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const el = document.createElement('div');
-      el.className = 'wm-tile';
+      el.className   = 'wm-tile';
       el.textContent = text;
-      el.style.left = (c * 200 - 100) + 'px';
-      el.style.top  = (r * 120 - 100) + 'px';
+      el.style.left  = (c * 200 - 100) + 'px';
+      el.style.top   = (r * 120 - 100) + 'px';
       wm.appendChild(el);
     }
   }
 }
 
-// ─── MEMORIES ──────────────────────────────────────────────
-let lbIndex = 0;
-const lbPhotos = [];
+// ─── MEMORIES ─────────────────────────────────────────────────────────────────
+let lbIndex   = 0;
+const lbPhotos   = [];
 const lbCaptions = [];
 
 function buildMemories() {
-  const scroll = document.getElementById('memories-scroll');
-  const photos = D.photos || [];
-  const captions = groq.photoCaptions || [];
+  const scroll   = document.getElementById('memories-scroll');
+  const photos   = D.photos   || [];
+  const captions = (groq.photoCaptions) || [];
 
   if (!photos.length) {
     scroll.parentElement.style.display = 'none';
@@ -999,20 +898,21 @@ function buildMemories() {
 
   photos.forEach((url, i) => {
     lbPhotos.push(url);
-    lbCaptions.push(captions[i] || '');
+    // FIX (Bug 4): guard null/undefined captions
+    lbCaptions.push((captions[i] && String(captions[i])) || '');
 
     const card = document.createElement('div');
     card.className = 'memory-card';
 
-    const img = document.createElement('img');
-    img.src = url;
-    img.alt = 'Memory ' + (i + 1);
+    const img  = document.createElement('img');
+    img.src     = url;
+    img.alt     = 'Memory ' + (i + 1);
     img.loading = 'lazy';
 
-    const cap = document.createElement('div');
+    const cap  = document.createElement('div');
     cap.className = 'memory-caption';
     const span = document.createElement('span');
-    span.textContent = captions[i] || '';
+    span.textContent = lbCaptions[i];
     cap.appendChild(span);
 
     card.appendChild(img);
@@ -1024,7 +924,7 @@ function buildMemories() {
 
 function openLightbox(i) {
   lbIndex = i;
-  document.getElementById('lb-img').src = lbPhotos[i];
+  document.getElementById('lb-img').src    = lbPhotos[i];
   document.getElementById('lb-caption').textContent = lbCaptions[i] || '';
   document.getElementById('lightbox').classList.add('open');
 }
@@ -1035,35 +935,35 @@ function lbNav(dir) {
 }
 document.addEventListener('keydown', e => {
   if (!document.getElementById('lightbox').classList.contains('open')) return;
-  if (e.key === 'Escape') closeLightbox();
-  if (e.key === 'ArrowLeft') lbNav(-1);
-  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'Escape')      closeLightbox();
+  if (e.key === 'ArrowLeft')   lbNav(-1);
+  if (e.key === 'ArrowRight')  lbNav(1);
 });
 
-// ─── MODAL ─────────────────────────────────────────────────
+// ─── MODAL ────────────────────────────────────────────────────────────────────
 let currentPrice = 149;
 const COUPONS = { NATFREE: 0, BESTIE1: 1, NATFLIX79: 79, NATFLIX129: 129 };
 
-function openModal() { document.getElementById('modal-overlay').classList.add('open'); }
+function openModal()  { document.getElementById('modal-overlay').classList.add('open'); }
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 document.getElementById('modal-overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 });
 
 function applyCoupon() {
-  const code = document.getElementById('coupon-input').value.trim().toUpperCase();
-  const msg  = document.getElementById('coupon-msg');
+  const code    = document.getElementById('coupon-input').value.trim().toUpperCase();
+  const msg     = document.getElementById('coupon-msg');
   const priceEl = document.getElementById('modal-price');
 
   if (code in COUPONS) {
-    currentPrice = COUPONS[code];
-    msg.className = 'success';
-    msg.textContent = currentPrice === 0
+    currentPrice      = COUPONS[code];
+    msg.className     = 'success';
+    msg.textContent   = currentPrice === 0
       ? '🎉 100% off! This one\'s on us.'
-      : '✓ Coupon applied — ₹' + currentPrice + ' only!';
-    priceEl.innerHTML = '<span>₹' + currentPrice + '</span><span class="price-strike">₹149</span>';
+      : `✓ Coupon applied — ₹${currentPrice} only!`;
+    priceEl.innerHTML = `<span>₹${currentPrice}</span><span class="price-strike">₹149</span>`;
   } else {
-    msg.className = 'error';
+    msg.className   = 'error';
     msg.textContent = 'Invalid coupon code.';
   }
 }
@@ -1072,50 +972,71 @@ function handlePay() {
   if (currentPrice === 0) { onPaymentSuccess(); return; }
 
   const key = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.RAZORPAY_KEY) || '';
-  if (!key) { alert('Payment config not found.'); return; }
+  if (!key) {
+    alert('Payment config not found. Please check config.js (RAZORPAY_KEY).');
+    return;
+  }
 
   const options = {
     key,
-    amount: currentPrice * 100,
-    currency: 'INR',
-    name: 'NATFLIX',
+    amount:      currentPrice * 100,
+    currency:    'INR',
+    name:        'NATFLIX',
     description: 'Generate Shareable Link',
-    theme: { color: '#E50914' },
-    handler: onPaymentSuccess
+    theme:       { color: '#E50914' },
+    handler:     onPaymentSuccess,
   };
 
   try {
     const rzp = new Razorpay(options);
     rzp.open();
-  } catch(e) {
+  } catch (e) {
     alert('Could not open payment. Please try again.');
   }
 }
 
 async function onPaymentSuccess() {
   D.paid = true;
-  
-  const btn = document.getElementById('pay-btn');
-  btn.textContent = 'Generating link…';
-  btn.disabled = true;
 
-  const resp = await fetch('/api/save', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(D)
-  });
-  const { id } = await resp.json();
+  const btn       = document.getElementById('pay-btn');
+  const saveError = document.getElementById('save-error');
+  btn.textContent = 'Saving…';
+  btn.disabled    = true;
+  saveError.style.display = 'none';
 
-  const shareUrl = window.location.origin + '/watching?id=' + id;
-  document.getElementById('share-url-box').textContent = shareUrl;
-  document.getElementById('share-result').style.display = 'block';
-  document.getElementById('pay-btn').style.display = 'none';
+  try {
+    const resp = await fetch('/api/save', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(D),
+    });
 
-  const wm = document.getElementById('watermark');
-  if (wm) wm.remove();
-  const banner = document.getElementById('preview-banner');
-  if (banner) banner.style.display = 'none';
-  document.getElementById('nav').style.top = '';
+    // FIX (Bug 5 / api/save): explicit error handling
+    if (!resp.ok) throw new Error(`Server responded with ${resp.status}`);
+
+    const data = await resp.json();
+    if (!data.id) throw new Error('No ID returned from /api/save');
+
+    // Share URL uses ?id= (the new KV-based path)
+    const shareUrl = `${window.location.origin}/watching?id=${data.id}`;
+
+    document.getElementById('share-url-box').textContent  = shareUrl;
+    document.getElementById('share-result').style.display = 'block';
+    btn.style.display = 'none';
+
+    // Remove preview watermark/banner now that payment succeeded
+    const wm = document.getElementById('watermark');
+    if (wm) wm.remove();
+    const banner = document.getElementById('preview-banner');
+    if (banner) banner.style.display = 'none';
+    document.getElementById('nav').style.top = '';
+
+  } catch (err) {
+    console.error('Save error:', err);
+    btn.textContent  = '✦ Generate My Link →';
+    btn.disabled     = false;
+    saveError.style.display = 'block';
+  }
 }
 
 function copyLink() {
@@ -1124,6 +1045,16 @@ function copyLink() {
     const btn = document.getElementById('copy-btn');
     btn.textContent = '✓ Copied!';
     setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000);
+  }).catch(() => {
+    // Fallback for browsers without clipboard API
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    ta.style.position = 'fixed';
+    ta.style.opacity  = '0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
   });
 }
 </script>

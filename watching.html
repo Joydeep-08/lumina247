@@ -24,13 +24,57 @@
     font-family: 'DM Sans', sans-serif;
   }
 
+  /* ── LOADING SCREEN ── */
+  #loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .loading-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--red);
+    letter-spacing: 6px;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .loading-spinner {
+    width: 28px; height: 28px;
+    border: 2px solid rgba(229,9,20,0.2);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  .loading-error {
+    display: none;
+    color: #666;
+    font-size: 0.85rem;
+    text-align: center;
+    max-width: 280px;
+    line-height: 1.6;
+  }
+  .loading-error a {
+    color: var(--red);
+    text-decoration: none;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  @keyframes spin   { to { transform: rotate(360deg); } }
+
   /* ── PHASE 1: VIDEO ── */
   #phase1 {
     position: fixed;
     inset: 0;
     z-index: 10;
     background: var(--black);
+    display: none;
   }
+  #phase1.visible { display: block; }
 
   #intro-video {
     width: 100vw;
@@ -68,9 +112,7 @@
     opacity: 0;
     transition: opacity 0.6s ease;
   }
-  #phase2.visible {
-    opacity: 1;
-  }
+  #phase2.visible { opacity: 1; }
 
   .who-title {
     font-family: 'DM Sans', sans-serif;
@@ -96,9 +138,7 @@
     cursor: pointer;
     opacity: 0;
     transform: translateY(16px);
-    transition:
-      opacity 0.45s ease,
-      transform 0.45s ease;
+    transition: opacity 0.45s ease, transform 0.45s ease;
   }
   .profile-card.shown {
     opacity: 1;
@@ -106,37 +146,19 @@
   }
 
   .avatar-wrap {
-    width: 160px;
-    height: 160px;
+    width: 160px; height: 160px;
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-size: 72px;
     border: 3px solid transparent;
-    transition:
-      border-color 0.2s ease,
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
     overflow: hidden;
   }
-  .avatar-wrap::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0.03);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-
   .profile-card:hover .avatar-wrap {
     border-color: var(--red);
     transform: scale(1.05);
-    box-shadow: 0 0 28px rgba(229, 9, 20, 0.25);
-  }
-  .profile-card:hover .avatar-wrap::after {
-    opacity: 1;
+    box-shadow: 0 0 28px rgba(229,9,20,0.25);
   }
 
   .profile-name {
@@ -148,9 +170,7 @@
     transition: color 0.2s ease;
     text-align: center;
   }
-  .profile-card:hover .profile-name {
-    color: var(--white);
-  }
+  .profile-card:hover .profile-name { color: var(--white); }
 
   /* ── MANAGE PROFILES ── */
   .manage-btn {
@@ -167,10 +187,7 @@
     cursor: pointer;
     transition: border-color 0.2s ease, color 0.2s ease;
   }
-  .manage-btn:hover {
-    border-color: var(--white);
-    color: var(--white);
-  }
+  .manage-btn:hover { border-color: var(--white); color: var(--white); }
 
   /* ── CLICK OVERLAY ── */
   #click-overlay {
@@ -190,7 +207,18 @@
 </head>
 <body>
 
-<!-- Fade layer between phases -->
+<!-- Loading screen — shown while /api/page fetch is in-flight -->
+<div id="loading-screen">
+  <div class="loading-logo">NATFLIX</div>
+  <div class="loading-spinner"></div>
+  <div class="loading-error" id="loading-error">
+    Could not load this NATFLIX film.<br>
+    The link may have expired or be invalid.<br><br>
+    <a href="/">Create your own →</a>
+  </div>
+</div>
+
+<!-- Fade layer -->
 <div id="fade"></div>
 
 <!-- Click-to-redirect overlay -->
@@ -211,113 +239,162 @@
 </div>
 
 <script>
-  // ── DATA ──
-  let D = {};
+// FIX (Bug 5): D starts empty — ALL card building happens inside initPage()
+// which only runs AFTER the async KV fetch completes.
+let D = {};
+let phase2Triggered = false;
+let hardCutoff      = null;
 
-async function loadData() {
-  const id = new URLSearchParams(location.search).get('id');
-
-  if (id) {
-    const resp = await fetch('/api/page?id=' + id);
-
-    if (resp.ok) {
-      D = await resp.json();
-    }
-  }
-
-  initPage();
+// ─── AVATAR ───────────────────────────────────────────────────────────────────
+function getAvatar(gender) {
+  if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
+  if (gender === 'male')   return { emoji: '🥷', bg: '#1a1a2e' };
+  return { emoji: '👽', bg: '#0d2b0d' };
 }
 
-loadData();
-
-  // ── AVATAR ──
-  function getAvatar(gender) {
-    if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
-    if (gender === 'male')   return { emoji: '🥷', bg: '#1a1a2e' };
-    return { emoji: '👽', bg: '#0d2b0d' };
+// ─── ENCODING ─────────────────────────────────────────────────────────────────
+// Matches safeEncode in index.html exactly.
+function safeEncode(obj) {
+  const json = JSON.stringify(obj);
+  try {
+    const bytes = new TextEncoder().encode(json);
+    let binary  = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    return btoa(binary);
+  } catch (_) {
+    return btoa(unescape(encodeURIComponent(json)));
   }
+}
 
-  
+// ─── REDIRECT TO HOME ─────────────────────────────────────────────────────────
+function handleCardClick() {
+  const overlay = document.getElementById('click-overlay');
+  overlay.classList.add('active');
+  setTimeout(() => {
+    const encoded = safeEncode(D);
+    location.href = 'home.html?data=' + encoded;
+  }, 520);
+}
 
-  // ── BUILD CARDS ──
+// ─── BUILD PROFILE CARDS ─────────────────────────────────────────────────────
+// FIX (Bug 5): only called from initPage(), after D is populated
+function buildCards() {
   const profilesEl = document.getElementById('profiles');
-  const cards = [
+  profilesEl.innerHTML = ''; // clear any previous
+
+  const people = [
     { name: D.recipientName || 'You',    gender: D.recipientGender },
-    { name: D.senderName   || 'Sender',  gender: D.senderGender   },
+    { name: D.senderName    || 'Sender', gender: D.senderGender    },
   ];
 
-  cards.forEach((p, i) => {
-    const av = getAvatar(p.gender);
+  people.forEach((p, i) => {
+    const av   = getAvatar(p.gender);
     const card = document.createElement('div');
     card.className = 'profile-card';
     card.innerHTML = `
       <div class="avatar-wrap" style="background:${av.bg}">${av.emoji}</div>
       <div class="profile-name">${p.name}</div>
     `;
-    card.addEventListener('click', () => handleCardClick());
+    card.addEventListener('click', handleCardClick);
     profilesEl.appendChild(card);
   });
+}
 
-  // ── REDIRECT ──
-  function handleCardClick() {
-    const overlay = document.getElementById('click-overlay');
-    overlay.classList.add('active');
-    setTimeout(() => {
-      const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(D))));
-      location.href = 'home.html?data=' + encoded;
-    }, 520);
-  }
+// ─── START VIDEO PHASE ────────────────────────────────────────────────────────
+// Only called after data is loaded, so the cards are ready
+function startVideoPhase() {
+  const loadingScreen = document.getElementById('loading-screen');
+  const phase1        = document.getElementById('phase1');
+  loadingScreen.style.display = 'none';
+  phase1.classList.add('visible');
 
-  // ── PHASE TRANSITION ──
-  let phase2Triggered = false;
-
-  function goPhase2() {
-    if (phase2Triggered) return;
-    phase2Triggered = true;
-
-    const fade = document.getElementById('fade');
-    const phase1 = document.getElementById('phase1');
-    const phase2 = document.getElementById('phase2');
-
-    // Fade to black
-    fade.classList.add('active');
-
-    setTimeout(() => {
-      // Hide video layer, show phase 2
-      phase1.style.display = 'none';
-      fade.classList.remove('active');
-      phase2.classList.add('visible');
-
-      // Stagger cards in
-      const cardEls = document.querySelectorAll('.profile-card');
-      const delays = [150, 300];
-      cardEls.forEach((c, i) => {
-        setTimeout(() => c.classList.add('shown'), delays[i] || 300);
-      });
-    }, 620); // slightly after fade completes
-  }
-
-  // ── VIDEO EVENTS ──
   const video = document.getElementById('intro-video');
-  const hardCutoff = setTimeout(goPhase2, 10000);
+
+  // 10-second hard cutoff in case video never fires 'ended'
+  hardCutoff = setTimeout(goPhase2, 10000);
 
   video.addEventListener('ended', () => {
     clearTimeout(hardCutoff);
     goPhase2();
   });
 
+  // FIX (Bug 6): removed phase2Triggered = false reset — just call goPhase2
   video.addEventListener('error', () => {
     clearTimeout(hardCutoff);
-    // Immediate — no animation, no text
-    phase2Triggered = false; // reset so goPhase2 can run
-    const p1 = document.getElementById('phase1');
-    p1.style.display = 'none';
-    document.getElementById('phase2').classList.add('visible');
-    const cardEls = document.querySelectorAll('.profile-card');
-    const delays = [150, 300];
-    cardEls.forEach((c, i) => setTimeout(() => c.classList.add('shown'), delays[i]));
-    phase2Triggered = true;
+    goPhase2();
   });
+}
+
+// ─── PHASE TRANSITION ─────────────────────────────────────────────────────────
+function goPhase2() {
+  // FIX (Bug 6): guard against double-fire — no reset anywhere else
+  if (phase2Triggered) return;
+  phase2Triggered = true;
+
+  const fade   = document.getElementById('fade');
+  const phase1 = document.getElementById('phase1');
+  const phase2 = document.getElementById('phase2');
+
+  fade.classList.add('active');
+
+  setTimeout(() => {
+    phase1.style.display = 'none';
+    fade.classList.remove('active');
+    phase2.classList.add('visible');
+
+    // Stagger cards in
+    const cardEls = document.querySelectorAll('.profile-card');
+    const delays  = [150, 300];
+    cardEls.forEach((c, i) => setTimeout(() => c.classList.add('shown'), delays[i] || 300));
+  }, 620);
+}
+
+// ─── DATA LOADING ─────────────────────────────────────────────────────────────
+// FIX (Bug 5): initPage runs AFTER await — D is fully populated before cards are built
+async function loadData() {
+  const id = new URLSearchParams(location.search).get('id');
+
+  if (!id) {
+    // No ?id= — show error
+    showLoadError();
+    return;
+  }
+
+  try {
+    const resp = await fetch('/api/page?id=' + encodeURIComponent(id));
+
+    if (!resp.ok) throw new Error(`API responded with ${resp.status}`);
+
+    const data = await resp.json();
+
+    // Validate that we got something useful
+    if (!data || typeof data !== 'object') throw new Error('Invalid response from API');
+
+    D = data;
+    initPage();
+
+  } catch (err) {
+    console.error('Failed to load NATFLIX data:', err);
+    showLoadError();
+  }
+}
+
+function showLoadError() {
+  const spinner = document.querySelector('.loading-spinner');
+  const error   = document.getElementById('loading-error');
+  if (spinner) spinner.style.display = 'none';
+  if (error)   error.style.display   = 'block';
+}
+
+function initPage() {
+  // Build cards with real data
+  buildCards();
+  // Then start the video / intro sequence
+  startVideoPhase();
+}
+
+// Kick off
+loadData();
 </script>
 </body>
 </html>

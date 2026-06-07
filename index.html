@@ -1,801 +1,826 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NATFLIX — Create Your Friendship Film</title>
-  <script src="config.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NATFLIX — Create Your Friendship Film</title>
+<script src="config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --red: #E50914;
-      --black: #000000;
-      --card: #141414;
-      --border: #2a2a2a;
-      --muted: #666;
-      --text: #e5e5e5;
-      --text-dim: #999;
-    }
+  :root {
+    --red: #E50914;
+    --black: #000000;
+    --card: #141414;
+    --border: #2a2a2a;
+    --muted: #666;
+    --text: #e5e5e5;
+    --text-dim: #999;
+  }
 
-    html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; }
 
-    body {
-      background: var(--black);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.03;
-      pointer-events: none;
-      z-index: 1000;
-    }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1000;
+  }
 
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--red);
-      z-index: 999;
-    }
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--red);
+    z-index: 999;
+  }
 
-    header {
-      padding: 36px 24px 0;
-      text-align: center;
-      position: relative;
-      animation: fadeUp 0.6s 0s ease both;
-    }
+  header {
+    padding: 36px 24px 0;
+    text-align: center;
+    position: relative;
+    animation: fadeUp 0.6s 0s ease both;
+  }
 
-    .logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(52px, 10vw, 88px);
-      letter-spacing: 0.04em;
-      color: var(--red);
-      line-height: 1;
-      display: inline-block;
-      position: relative;
-    }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 10vw, 88px);
+    letter-spacing: 0.04em;
+    color: var(--red);
+    line-height: 1;
+    display: inline-block;
+    position: relative;
+  }
 
-    .logo::after {
-      content: 'NATFLIX';
-      position: absolute;
-      inset: 0;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(229,9,20,0.2);
-      transform: translate(3px, 3px);
-      z-index: -1;
-    }
+  .logo::after {
+    content: 'NATFLIX';
+    position: absolute;
+    inset: 0;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(229,9,20,0.2);
+    transform: translate(3px, 3px);
+    z-index: -1;
+  }
 
-    .header-sub {
-      font-size: 13px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 8px;
-    }
+  .header-sub {
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 8px;
+  }
 
-    .header-rule {
-      width: 40px;
-      height: 2px;
-      background: var(--red);
-      margin: 20px auto 0;
-    }
+  .header-rule {
+    width: 40px;
+    height: 2px;
+    background: var(--red);
+    margin: 20px auto 0;
+  }
 
-    main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 48px 24px 80px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 40px 40px 36px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s ease;
-      animation: fadeUp 0.5s ease both;
-    }
-    .card:hover { border-color: #3a3a3a; }
-    .card:nth-child(1) { animation-delay: 0.05s; }
-    .card:nth-child(2) { animation-delay: 0.12s; }
-    .card:nth-child(3) { animation-delay: 0.19s; }
-    .card:nth-child(4) { animation-delay: 0.26s; }
-    .card:nth-child(5) { animation-delay: 0.33s; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px 40px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+    animation: fadeUp 0.5s ease both;
+  }
+  .card:hover { border-color: #3a3a3a; }
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.12s; }
+  .card:nth-child(3) { animation-delay: 0.19s; }
+  .card:nth-child(4) { animation-delay: 0.26s; }
+  .card:nth-child(5) { animation-delay: 0.33s; }
 
-    .card-step-bg {
-      position: absolute;
-      top: -10px; right: 16px;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 140px;
-      line-height: 1;
-      color: #fff;
-      opacity: 0.04;
-      pointer-events: none;
-      user-select: none;
-      letter-spacing: -4px;
-    }
+  .card-step-bg {
+    position: absolute;
+    top: -10px; right: 16px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 140px;
+    line-height: 1;
+    color: #fff;
+    opacity: 0.04;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -4px;
+  }
 
-    .card-header { margin-bottom: 32px; position: relative; z-index: 1; }
+  .card-header { margin-bottom: 32px; position: relative; z-index: 1; }
 
-    .step-label {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.28em;
-      color: var(--red);
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
+  .step-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
 
-    .card-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(28px, 5vw, 38px);
-      letter-spacing: 0.03em;
-      color: #fff;
-      line-height: 1.05;
-    }
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 5vw, 38px);
+    letter-spacing: 0.03em;
+    color: #fff;
+    line-height: 1.05;
+  }
 
-    .card-subtitle {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 6px;
-      font-style: italic;
-    }
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-style: italic;
+  }
 
-    .field { margin-bottom: 24px; position: relative; z-index: 1; }
-    .field:last-child { margin-bottom: 0; }
+  .field { margin-bottom: 24px; position: relative; z-index: 1; }
+  .field:last-child { margin-bottom: 0; }
 
-    label {
-      display: block;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 13px;
-      letter-spacing: 0.2em;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
+  label {
+    display: block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
 
-    input[type="text"], select, textarea {
-      width: 100%;
-      background: #0a0a0a;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 400;
-      padding: 14px 16px;
-      outline: none;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
-      -webkit-appearance: none;
-      appearance: none;
-    }
+  input[type="text"], select, textarea {
+    width: 100%;
+    background: #0a0a0a;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
 
-    input[type="text"]:focus, select:focus, textarea:focus {
-      border-color: var(--red);
-      box-shadow: 0 0 0 3px rgba(229,9,20,0.1);
-    }
+  input[type="text"]:focus, select:focus, textarea:focus {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(229,9,20,0.1);
+  }
 
-    input[type="text"]::placeholder, textarea::placeholder { color: #444; font-style: italic; }
+  input[type="text"]::placeholder, textarea::placeholder { color: #444; font-style: italic; }
 
-    select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 40px;
-      cursor: pointer;
-    }
-    select option { background: #1a1a1a; color: var(--text); }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+  select option { background: #1a1a1a; color: var(--text); }
 
-    textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+  textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
 
-    .field-hint { font-size: 12px; color: var(--muted); margin-top: 7px; line-height: 1.5; }
+  .field-hint { font-size: 12px; color: var(--muted); margin-top: 7px; line-height: 1.5; }
 
-    .optional-tag {
-      font-size: 11px; color: #444; font-style: italic;
-      margin-left: 6px; font-family: 'DM Sans', sans-serif;
-      text-transform: none; letter-spacing: 0;
-    }
+  .optional-tag {
+    font-size: 11px; color: #444; font-style: italic;
+    margin-left: 6px; font-family: 'DM Sans', sans-serif;
+    text-transform: none; letter-spacing: 0;
+  }
 
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-      position: relative;
-      z-index: 1;
-    }
-    .field-row .field { margin-bottom: 0; }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .field-row .field { margin-bottom: 0; }
 
-    .upload-zone {
-      border: 1.5px dashed var(--border);
-      border-radius: 8px;
-      padding: 40px 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.25s, background 0.25s;
-      position: relative;
-      z-index: 1;
-      user-select: none;
-    }
-    .upload-zone:hover, .upload-zone.drag-over {
-      border-color: var(--red);
-      background: rgba(229,9,20,0.03);
-    }
-    .upload-zone:active { opacity: 0.8; }
+  .upload-zone {
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.25s, background 0.25s;
+    position: relative;
+    z-index: 1;
+    user-select: none;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--red);
+    background: rgba(229,9,20,0.03);
+  }
 
-    .upload-icon { font-size: 36px; margin-bottom: 10px; display: block; opacity: 0.5; }
-    .upload-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.1em; color: #fff; margin-bottom: 4px; }
-    .upload-sub { font-size: 12px; color: var(--muted); }
+  .upload-icon { font-size: 36px; margin-bottom: 10px; display: block; opacity: 0.5; }
+  .upload-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.1em; color: #fff; margin-bottom: 4px; }
+  .upload-sub { font-size: 12px; color: var(--muted); }
 
-    .progress-wrap {
-      height: 2px; background: var(--border); border-radius: 2px;
-      margin-top: 12px; overflow: hidden; display: none; position: relative; z-index: 1;
-    }
-    .progress-wrap.active { display: block; }
-    .progress-bar { height: 100%; background: var(--red); width: 0%; transition: width 0.2s ease; border-radius: 2px; }
+  .progress-wrap {
+    height: 2px; background: var(--border); border-radius: 2px;
+    margin-top: 12px; overflow: hidden; display: none; position: relative; z-index: 1;
+  }
+  .progress-wrap.active { display: block; }
+  .progress-bar { height: 100%; background: var(--red); width: 0%; transition: width 0.2s ease; border-radius: 2px; }
 
-    .thumb-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px; margin-top: 16px; position: relative; z-index: 1;
-    }
+  .thumb-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px; margin-top: 16px; position: relative; z-index: 1;
+  }
 
-    .thumb-item {
-      position: relative; aspect-ratio: 1;
-      border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
-    }
-    .thumb-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb-item {
+    position: relative; aspect-ratio: 1;
+    border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
+  }
+  .thumb-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    .thumb-remove {
-      position: absolute; top: 4px; right: 4px;
-      width: 20px; height: 20px;
-      background: rgba(0,0,0,0.8); border: 1px solid var(--border);
-      border-radius: 50%; color: #fff; font-size: 11px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; line-height: 1;
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .thumb-remove:hover { background: var(--red); border-color: var(--red); }
+  .thumb-remove {
+    position: absolute; top: 4px; right: 4px;
+    width: 20px; height: 20px;
+    background: rgba(0,0,0,0.8); border: 1px solid var(--border);
+    border-radius: 50%; color: #fff; font-size: 11px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .thumb-remove:hover { background: var(--red); border-color: var(--red); }
 
-    .thumb-uploading {
-      position: absolute; inset: 0;
-      background: rgba(0,0,0,0.65);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .thumb-uploading .spinner {
-      width: 18px; height: 18px;
-      border: 2px solid rgba(255,255,255,0.2);
-      border-top-color: var(--red);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
+  .thumb-uploading {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .thumb-uploading .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
 
-    .thumb-compress-badge {
-      position: absolute; bottom: 4px; left: 4px;
-      background: rgba(229,9,20,0.85);
-      color: #fff; font-size: 9px; padding: 1px 5px;
-      border-radius: 3px; letter-spacing: 0.04em;
-    }
+  .thumb-compress-badge {
+    position: absolute; bottom: 4px; left: 4px;
+    background: rgba(229,9,20,0.85);
+    color: #fff; font-size: 9px; padding: 1px 5px;
+    border-radius: 3px; letter-spacing: 0.04em;
+  }
 
-    .photo-counter { font-size: 12px; color: var(--muted); margin-top: 10px; position: relative; z-index: 1; }
-    .photo-counter span { color: var(--red); font-weight: 500; }
+  .photo-counter { font-size: 12px; color: var(--muted); margin-top: 10px; position: relative; z-index: 1; }
+  .photo-counter span { color: var(--red); font-weight: 500; }
 
-    #video-preview {
-      width: 100%; border-radius: 8px; margin-top: 16px; display: none;
-      border: 1px solid var(--border); max-height: 280px; object-fit: cover;
-      position: relative; z-index: 1;
-    }
+  #video-preview {
+    width: 100%; border-radius: 8px; margin-top: 16px; display: none;
+    border: 1px solid var(--border); max-height: 280px; object-fit: cover;
+    position: relative; z-index: 1;
+  }
 
-    .video-status { font-size: 12px; color: var(--muted); margin-top: 8px; position: relative; z-index: 1; }
-    .video-status.success { color: #2ecc71; }
-    .video-status.error { color: var(--red); }
+  .video-status { font-size: 12px; color: var(--muted); margin-top: 8px; position: relative; z-index: 1; }
+  .video-status.success { color: #2ecc71; }
+  .video-status.error { color: var(--red); }
 
-    .submit-section { margin-top: 8px; animation: fadeUp 0.5s 0.4s ease both; }
+  .field-divider { height: 1px; background: var(--border); margin: 28px 0; position: relative; z-index: 1; }
 
-    .submit-btn {
-      width: 100%; background: var(--red); border: none; border-radius: 8px;
-      color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 20px;
-      letter-spacing: 0.18em; padding: 18px 24px; cursor: pointer;
-      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-      position: relative; overflow: hidden;
-    }
-    .submit-btn::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.08), transparent);
-      pointer-events: none;
-    }
-    .submit-btn:hover:not(:disabled) {
-      background: #ff0a16; transform: translateY(-1px);
-      box-shadow: 0 8px 30px rgba(229,9,20,0.35);
-    }
-    .submit-btn:active:not(:disabled) { transform: translateY(0); }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .submit-section { margin-top: 8px; animation: fadeUp 0.5s 0.4s ease both; }
 
-    #toast {
-      position: fixed; bottom: 28px; left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: #1a0a0a; border: 1px solid var(--red);
-      border-radius: 8px; padding: 12px 24px; font-size: 14px;
-      color: var(--text); opacity: 0;
-      transition: opacity 0.3s, transform 0.3s;
-      pointer-events: none; z-index: 9999; max-width: 360px; text-align: center;
-    }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .submit-btn {
+    width: 100%; background: var(--red); border: none; border-radius: 8px;
+    color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 20px;
+    letter-spacing: 0.18em; padding: 18px 24px; cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .submit-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.08), transparent);
+    pointer-events: none;
+  }
+  .submit-btn:hover:not(:disabled) {
+    background: #ff0a16; transform: translateY(-1px);
+    box-shadow: 0 8px 30px rgba(229,9,20,0.35);
+  }
+  .submit-btn:active:not(:disabled) { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    .field-divider { height: 1px; background: var(--border); margin: 28px 0; position: relative; z-index: 1; }
+  #toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a0a0a; border: 1px solid var(--red);
+    border-radius: 8px; padding: 12px 24px; font-size: 14px;
+    color: var(--text); opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none; z-index: 9999; max-width: 360px; text-align: center;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-    @media (max-width: 540px) {
-      .card { padding: 28px 20px 24px; }
-      .field-row { grid-template-columns: 1fr; }
-      .thumb-grid { grid-template-columns: repeat(4, 1fr); }
-      .card-step-bg { font-size: 100px; }
-    }
-  </style>
+  @media (max-width: 540px) {
+    .card { padding: 28px 20px 24px; }
+    .field-row { grid-template-columns: 1fr; }
+    .thumb-grid { grid-template-columns: repeat(4, 1fr); }
+    .card-step-bg { font-size: 100px; }
+  }
+</style>
 </head>
 <body>
 
-  <input type="file" id="photo-input" accept="image/*" multiple style="display:none" />
-  <input type="file" id="video-input" accept="video/*" style="display:none" />
+<input type="file" id="photo-input" accept="image/*" multiple style="display:none">
+<input type="file" id="video-input" accept="video/*" style="display:none">
 
-  <header>
-    <div class="logo">NATFLIX</div>
-    <p class="header-sub">Create Your Friendship Film</p>
-    <div class="header-rule"></div>
-  </header>
+<header>
+  <div class="logo">NATFLIX</div>
+  <p class="header-sub">Create Your Friendship Film</p>
+  <div class="header-rule"></div>
+</header>
 
-  <main>
+<main>
 
-    <div class="card">
-      <div class="card-step-bg">01</div>
-      <div class="card-header">
-        <div class="step-label">Step 01</div>
-        <div class="card-title">About You</div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="sender-name">Your Name</label>
-          <input type="text" id="sender-name" placeholder="e.g. Alex" autocomplete="given-name" />
-        </div>
-        <div class="field">
-          <label for="sender-gender">Your Gender</label>
-          <select id="sender-gender">
-            <option value="" disabled selected>Select…</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-      </div>
+  <div class="card">
+    <div class="card-step-bg">01</div>
+    <div class="card-header">
+      <div class="step-label">Step 01</div>
+      <div class="card-title">About You</div>
     </div>
-
-    <div class="card">
-      <div class="card-step-bg">02</div>
-      <div class="card-header">
-        <div class="step-label">Step 02</div>
-        <div class="card-title">About Your Bestie</div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="recipient-name">Their Name</label>
-          <input type="text" id="recipient-name" placeholder="e.g. Jordan" autocomplete="off" />
-        </div>
-        <div class="field">
-          <label for="recipient-gender">Their Gender</label>
-          <select id="recipient-gender">
-            <option value="" disabled selected>Select…</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-step-bg">03</div>
-      <div class="card-header">
-        <div class="step-label">Step 03</div>
-        <div class="card-title">Your Friendship Story</div>
+    <div class="field-row">
+      <div class="field">
+        <label for="sender-name">Your Name</label>
+        <input type="text" id="sender-name" placeholder="e.g. Alex" autocomplete="given-name">
       </div>
       <div class="field">
-        <label for="friendship-duration">How long have you been friends?</label>
-        <input type="text" id="friendship-duration" placeholder="e.g. 5 years, since kindergarten..." />
-        <p class="field-hint">This helps us personalise your AI messages ✨</p>
+        <label for="sender-gender">Your Gender</label>
+        <select id="sender-gender">
+          <option value="" disabled selected>Select…</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
       </div>
-      <div class="field-divider"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-step-bg">02</div>
+    <div class="card-header">
+      <div class="step-label">Step 02</div>
+      <div class="card-title">About Your Bestie</div>
+    </div>
+    <div class="field-row">
       <div class="field">
-        <label for="final-message">A final message for them <span class="optional-tag">— optional</span></label>
-        <textarea id="final-message" placeholder="Write something from the heart... or leave it to us 💬"></textarea>
+        <label for="recipient-name">Their Name</label>
+        <input type="text" id="recipient-name" placeholder="e.g. Jordan" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="recipient-gender">Their Gender</label>
+        <select id="recipient-gender">
+          <option value="" disabled selected>Select…</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
       </div>
     </div>
+  </div>
 
-    <div class="card">
-      <div class="card-step-bg">04</div>
-      <div class="card-header">
-        <div class="step-label">Step 04</div>
-        <div class="card-title">Your Memories Together</div>
-        <div class="card-subtitle">Photos over 1MB are auto-compressed before upload 🗜️</div>
-      </div>
-      <div class="upload-zone" id="photo-zone">
-        <span class="upload-icon">🖼</span>
-        <div class="upload-title">Drag & Drop Photos Here</div>
-        <div class="upload-sub">Or tap to browse — up to 10 photos · max 1MB each (auto-compressed) · optional if uploading a video</div>
-      </div>
-      <div class="progress-wrap" id="photo-progress-wrap">
-        <div class="progress-bar" id="photo-progress-bar"></div>
-      </div>
-      <div class="thumb-grid" id="thumb-grid"></div>
-      <div class="photo-counter" id="photo-counter" style="display:none">
-        <span id="photo-count">0</span> / 10 photos uploaded
-      </div>
+  <div class="card">
+    <div class="card-step-bg">03</div>
+    <div class="card-header">
+      <div class="step-label">Step 03</div>
+      <div class="card-title">Your Friendship Story</div>
     </div>
-
-    <div class="card">
-      <div class="card-step-bg">05</div>
-      <div class="card-header">
-        <div class="step-label">Step 05</div>
-        <div class="card-title">Your Friendship Video <span class="optional-tag" style="font-family:'DM Sans',sans-serif;font-size:14px;color:#555;text-transform:none;letter-spacing:0;">— optional</span></div>
-        <div class="card-subtitle">Max 5MB · plays on loop in your final film 🎬</div>
-      </div>
-      <div class="upload-zone" id="video-zone">
-        <span class="upload-icon">🎬</span>
-        <div class="upload-title">Drag & Drop Your Video Here</div>
-        <div class="upload-sub">Or tap to browse — 1 video · max 5MB · skip if you don't have one</div>
-      </div>
-      <div class="progress-wrap" id="video-progress-wrap">
-        <div class="progress-bar" id="video-progress-bar"></div>
-      </div>
-      <video id="video-preview" controls></video>
-      <div class="video-status" id="video-status"></div>
+    <div class="field">
+      <label for="friendship-duration">How long have you been friends?</label>
+      <input type="text" id="friendship-duration" placeholder="e.g. 5 years, since kindergarten…">
+      <p class="field-hint">This helps personalise your AI-generated messages ✨</p>
     </div>
-
-    <div class="submit-section">
-      <button class="submit-btn" id="submit-btn">Generate Preview →</button>
+    <div class="field-divider"></div>
+    <div class="field">
+      <label for="final-message">A final message for them <span class="optional-tag">— optional</span></label>
+      <textarea id="final-message" placeholder="Write something from the heart… or leave it to us 💬"></textarea>
     </div>
+  </div>
 
-  </main>
+  <div class="card">
+    <div class="card-step-bg">04</div>
+    <div class="card-header">
+      <div class="step-label">Step 04</div>
+      <div class="card-title">Your Memories Together</div>
+      <div class="card-subtitle">Photos over 1MB are auto-compressed before upload 🗜️</div>
+    </div>
+    <div class="upload-zone" id="photo-zone">
+      <span class="upload-icon">🖼</span>
+      <div class="upload-title">Drag & Drop Photos Here</div>
+      <div class="upload-sub">Or tap to browse — up to 10 photos · max 1MB each (auto-compressed)</div>
+    </div>
+    <div class="progress-wrap" id="photo-progress-wrap">
+      <div class="progress-bar" id="photo-progress-bar"></div>
+    </div>
+    <div class="thumb-grid" id="thumb-grid"></div>
+    <div class="photo-counter" id="photo-counter" style="display:none">
+      <span id="photo-count">0</span> / 10 photos uploaded
+    </div>
+  </div>
 
-  <div id="toast"></div>
+  <div class="card">
+    <div class="card-step-bg">05</div>
+    <div class="card-header">
+      <div class="step-label">Step 05</div>
+      <div class="card-title">Your Friendship Video <span class="optional-tag" style="font-family:'DM Sans',sans-serif;font-size:14px;color:#555;text-transform:none;letter-spacing:0;">— optional</span></div>
+      <div class="card-subtitle">Max 5MB · plays on loop in your final film 🎬</div>
+    </div>
+    <div class="upload-zone" id="video-zone">
+      <span class="upload-icon">🎬</span>
+      <div class="upload-title">Drag & Drop Your Video Here</div>
+      <div class="upload-sub">Or tap to browse — 1 video · max 5MB · skip if you don't have one</div>
+    </div>
+    <div class="progress-wrap" id="video-progress-wrap">
+      <div class="progress-bar" id="video-progress-bar"></div>
+    </div>
+    <video id="video-preview" controls></video>
+    <div class="video-status" id="video-status"></div>
+  </div>
 
-  <script>
-    const state = { photos: [], video: null };
+  <div class="submit-section">
+    <button class="submit-btn" id="submit-btn">Generate Preview →</button>
+  </div>
 
-    const CLOUDINARY_CLOUD = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.CLOUD_NAME) || 'dbwcpxzou';
-    const PHOTO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || 'netflix_uploads';
-    const VIDEO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || 'netflix_uploads';
+</main>
 
-    const MAX_PHOTO_BYTES = 1 * 1024 * 1024;  // 1 MB
-    const MAX_VIDEO_BYTES = 5 * 1024 * 1024;  // 5 MB
+<div id="toast"></div>
 
-    // ─── TOAST ──────────────────────────────────────────────
-    let toastTimer;
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.remove('show'), 3800);
-    }
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+const state = { photos: [], video: null };
 
-    // ─── IMAGE COMPRESSION ──────────────────────────────────
-    // Uses <canvas> to re-draw and re-encode as JPEG under maxBytes.
-    // Iterates quality 0.85 → 0.35, then scales resolution if still over.
-    function compressImage(file, maxBytes) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        const blobUrl = URL.createObjectURL(file);
+const CLOUDINARY_CLOUD = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.CLOUD_NAME)    || '';
+const PHOTO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || '';
+const VIDEO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || '';
 
-        img.onload = () => {
-          URL.revokeObjectURL(blobUrl);
+const MAX_PHOTO_BYTES = 1 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 5 * 1024 * 1024;
 
-          const canvas = document.createElement('canvas');
-          let w = img.naturalWidth;
-          let h = img.naturalHeight;
+// ─── ENCODING HELPERS ─────────────────────────────────────────────────────────
+// Safe UTF-8 → Base64. Handles emoji, em-dashes, non-ASCII names.
+// Uses TextEncoder for modern browsers; falls back to unescape trick.
+function safeEncode(obj) {
+  const json = JSON.stringify(obj);
+  try {
+    // Modern path — TextEncoder handles all Unicode correctly
+    const bytes = new TextEncoder().encode(json);
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    return btoa(binary);
+  } catch (_) {
+    // Legacy fallback
+    return btoa(unescape(encodeURIComponent(json)));
+  }
+}
 
-          // Never exceed 1920px on longest edge
-          const maxDim = 1920;
-          if (w > maxDim || h > maxDim) {
-            const ratio = Math.min(maxDim / w, maxDim / h);
-            w = Math.round(w * ratio);
-            h = Math.round(h * ratio);
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3800);
+}
+
+// ─── IMAGE COMPRESSION ────────────────────────────────────────────────────────
+function compressImage(file, maxBytes) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const blobUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(blobUrl);
+      const canvas = document.createElement('canvas');
+      let w = img.naturalWidth;
+      let h = img.naturalHeight;
+
+      const maxDim = 1920;
+      if (w > maxDim || h > maxDim) {
+        const ratio = Math.min(maxDim / w, maxDim / h);
+        w = Math.round(w * ratio);
+        h = Math.round(h * ratio);
+      }
+
+      canvas.width  = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+
+      const tryQuality = (q) => {
+        canvas.toBlob(blob => {
+          if (!blob) { reject(new Error('Canvas export failed')); return; }
+          if (blob.size <= maxBytes || q <= 0.35) {
+            if (blob.size > maxBytes) {
+              const scale = Math.sqrt(maxBytes / blob.size) * 0.9;
+              w = Math.max(80, Math.round(w * scale));
+              h = Math.max(80, Math.round(h * scale));
+              canvas.width  = w;
+              canvas.height = h;
+              ctx.drawImage(img, 0, 0, w, h);
+              canvas.toBlob(b2 => resolve(b2 || blob), 'image/jpeg', 0.7);
+            } else {
+              resolve(blob);
+            }
+          } else {
+            tryQuality(parseFloat((q - 0.1).toFixed(2)));
           }
+        }, 'image/jpeg', q);
+      };
 
-          canvas.width  = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
+      tryQuality(0.85);
+    };
 
-          const tryQuality = (q) => {
-            canvas.toBlob(blob => {
-              if (!blob) { reject(new Error('Canvas export failed')); return; }
+    img.onerror = () => { URL.revokeObjectURL(blobUrl); reject(new Error('Image load error')); };
+    img.src = blobUrl;
+  });
+}
 
-              if (blob.size <= maxBytes || q <= 0.35) {
-                // Still over at lowest quality — scale resolution down further
-                if (blob.size > maxBytes) {
-                  const scale = Math.sqrt(maxBytes / blob.size) * 0.9;
-                  w = Math.max(80, Math.round(w * scale));
-                  h = Math.max(80, Math.round(h * scale));
-                  canvas.width  = w;
-                  canvas.height = h;
-                  ctx.drawImage(img, 0, 0, w, h);
-                  canvas.toBlob(b2 => resolve(b2 || blob), 'image/jpeg', 0.7);
-                } else {
-                  resolve(blob);
-                }
-              } else {
-                tryQuality(parseFloat((q - 0.1).toFixed(2)));
-              }
-            }, 'image/jpeg', q);
-          };
+// ─── UPLOAD ZONE WIRING ───────────────────────────────────────────────────────
+const photoInput = document.getElementById('photo-input');
+const videoInput = document.getElementById('video-input');
+const photoZone  = document.getElementById('photo-zone');
+const videoZone  = document.getElementById('video-zone');
 
-          tryQuality(0.85);
-        };
+function wireZone(zone, input, onFiles) {
+  zone.addEventListener('click',     ()  => input.click());
+  zone.addEventListener('dragover',  e   => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', ()  => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop',      e   => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    onFiles([...e.dataTransfer.files]);
+  });
+  input.addEventListener('change', () => {
+    if (input.files.length) onFiles([...input.files]);
+    input.value = '';
+  });
+}
 
-        img.onerror = () => { URL.revokeObjectURL(blobUrl); reject(new Error('Image load error')); };
-        img.src = blobUrl;
-      });
-    }
+wireZone(photoZone, photoInput, handlePhotoFiles);
+wireZone(videoZone, videoInput, handleVideoFile);
 
-    // ─── UPLOAD ZONES ───────────────────────────────────────
-    const photoInput = document.getElementById('photo-input');
-    const videoInput = document.getElementById('video-input');
-    const photoZone  = document.getElementById('photo-zone');
-    const videoZone  = document.getElementById('video-zone');
+// ─── PHOTOS ───────────────────────────────────────────────────────────────────
+async function handlePhotoFiles(files) {
+  const allowed = 10 - state.photos.length;
+  if (allowed <= 0) { showToast('Maximum 10 photos allowed.'); return; }
+  files = files.filter(f => f.type.startsWith('image/')).slice(0, allowed);
+  if (!files.length) return;
 
-    function wireZone(zone, input, onFiles) {
-      zone.addEventListener('click', () => input.click());
-      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-      zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-      zone.addEventListener('drop', e => {
-        e.preventDefault();
-        zone.classList.remove('drag-over');
-        onFiles([...e.dataTransfer.files]);
-      });
-      input.addEventListener('change', () => {
-        if (input.files.length) onFiles([...input.files]);
-        input.value = '';
-      });
-    }
+  for (const file of files) {
+    const idx = state.photos.length;
+    const localUrl = URL.createObjectURL(file);
+    state.photos.push({ localUrl, cloudUrl: null, uploading: true, compressed: false });
+    renderThumbs();
+    await processAndUploadPhoto(file, idx);
+  }
+}
 
-    wireZone(photoZone, photoInput, handlePhotoFiles);
-    wireZone(videoZone, videoInput, handleVideoFile);
+async function processAndUploadPhoto(file, idx) {
+  if (!CLOUDINARY_CLOUD || !PHOTO_PRESET) {
+    showToast('Cloudinary not configured. Check config.js.');
+    state.photos.splice(idx, 1);
+    renderThumbs();
+    return;
+  }
 
-    // ─── PHOTOS ─────────────────────────────────────────────
-    async function handlePhotoFiles(files) {
-      const allowed = 10 - state.photos.length;
-      if (allowed <= 0) { showToast('Maximum 10 photos allowed.'); return; }
-      files = files.filter(f => f.type.startsWith('image/')).slice(0, allowed);
-      if (!files.length) return;
+  const wrap = document.getElementById('photo-progress-wrap');
+  const bar  = document.getElementById('photo-progress-bar');
+  wrap.classList.add('active');
+  bar.style.width = '5%';
 
-      // Process one at a time to keep progress bar meaningful
-      for (const file of files) {
-        const idx = state.photos.length;
-        const localUrl = URL.createObjectURL(file);
-        state.photos.push({ localUrl, cloudUrl: null, uploading: true, compressed: false });
-        renderThumbs();
-        await processAndUploadPhoto(file, idx);
-      }
-    }
+  let uploadFile = file;
 
-    async function processAndUploadPhoto(file, idx) {
-      const wrap = document.getElementById('photo-progress-wrap');
-      const bar  = document.getElementById('photo-progress-bar');
-      wrap.classList.add('active');
-      bar.style.width = '5%';
-
-      let uploadFile = file;
-
-      if (file.size > MAX_PHOTO_BYTES) {
-        try {
-          const blob = await compressImage(file, MAX_PHOTO_BYTES);
-          uploadFile = new File([blob], file.name.replace(/\.[^.]+$/, '') + '_compressed.jpg', { type: 'image/jpeg' });
-          // Update preview to compressed version
-          const newUrl = URL.createObjectURL(uploadFile);
-          URL.revokeObjectURL(state.photos[idx].localUrl);
-          state.photos[idx].localUrl = newUrl;
-          state.photos[idx].compressed = true;
-          renderThumbs();
-        } catch (e) {
-          console.warn('Compression error, using original:', e);
-        }
-      }
-
-      bar.style.width = '25%';
-
-      const fd = new FormData();
-      fd.append('file', uploadFile);
-      fd.append('upload_preset', PHOTO_PRESET);
-
-      try {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
-        xhr.upload.addEventListener('progress', e => {
-          if (e.lengthComputable)
-            bar.style.width = (25 + Math.round((e.loaded / e.total) * 70)) + '%';
-        });
-        const result = await new Promise((res, rej) => {
-          xhr.onload = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error('Upload failed'));
-          xhr.onerror = () => rej(new Error('Network error'));
-          xhr.send(fd);
-        });
-        state.photos[idx].cloudUrl = result.secure_url;
-      } catch (err) {
-        showToast('Photo upload failed. Please try again.');
-        URL.revokeObjectURL(state.photos[idx] && state.photos[idx].localUrl);
-        state.photos.splice(idx, 1);
-      } finally {
-        if (state.photos[idx]) state.photos[idx].uploading = false;
-        bar.style.width = '100%';
-        setTimeout(() => wrap.classList.remove('active'), 600);
-        renderThumbs();
-      }
-    }
-
-    function removePhoto(idx) {
+  if (file.size > MAX_PHOTO_BYTES) {
+    try {
+      const blob = await compressImage(file, MAX_PHOTO_BYTES);
+      uploadFile = new File([blob], file.name.replace(/\.[^.]+$/, '') + '_compressed.jpg', { type: 'image/jpeg' });
+      const newUrl = URL.createObjectURL(uploadFile);
       URL.revokeObjectURL(state.photos[idx].localUrl);
-      state.photos.splice(idx, 1);
+      state.photos[idx].localUrl   = newUrl;
+      state.photos[idx].compressed = true;
       renderThumbs();
+    } catch (e) {
+      console.warn('Compression failed, using original:', e);
     }
+  }
 
-    function renderThumbs() {
-      const grid    = document.getElementById('thumb-grid');
-      const counter = document.getElementById('photo-counter');
-      const count   = document.getElementById('photo-count');
+  bar.style.width = '25%';
 
-      grid.innerHTML = '';
-      state.photos.forEach((p, i) => {
-        const item = document.createElement('div');
-        item.className = 'thumb-item';
-        item.innerHTML = `<img src="${p.localUrl}" alt="Photo ${i + 1}" />`;
+  const fd = new FormData();
+  fd.append('file',           uploadFile);
+  fd.append('upload_preset',  PHOTO_PRESET);
 
-        if (p.uploading) {
-          const ov = document.createElement('div');
-          ov.className = 'thumb-uploading';
-          ov.innerHTML = '<div class="spinner"></div>';
-          item.appendChild(ov);
-        } else {
-          const btn = document.createElement('button');
-          btn.className = 'thumb-remove';
-          btn.innerHTML = '✕';
-          btn.onclick = (e) => { e.stopPropagation(); removePhoto(i); };
-          item.appendChild(btn);
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
+    xhr.upload.addEventListener('progress', e => {
+      if (e.lengthComputable)
+        bar.style.width = (25 + Math.round((e.loaded / e.total) * 70)) + '%';
+    });
+    const result = await new Promise((res, rej) => {
+      xhr.onload  = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error(`Upload failed: ${xhr.status}`));
+      xhr.onerror = () => rej(new Error('Network error'));
+      xhr.send(fd);
+    });
+    state.photos[idx].cloudUrl = result.secure_url;
+  } catch (err) {
+    console.error('Photo upload error:', err);
+    showToast('Photo upload failed — please try again.');
+    URL.revokeObjectURL(state.photos[idx] && state.photos[idx].localUrl);
+    state.photos.splice(idx, 1);
+  } finally {
+    if (state.photos[idx]) state.photos[idx].uploading = false;
+    bar.style.width = '100%';
+    setTimeout(() => wrap.classList.remove('active'), 600);
+    renderThumbs();
+  }
+}
 
-          if (p.compressed) {
-            const badge = document.createElement('div');
-            badge.className = 'thumb-compress-badge';
-            badge.textContent = 'compressed';
-            item.appendChild(badge);
-          }
-        }
-        grid.appendChild(item);
-      });
+function removePhoto(idx) {
+  URL.revokeObjectURL(state.photos[idx].localUrl);
+  state.photos.splice(idx, 1);
+  renderThumbs();
+}
 
-      const uploaded = state.photos.filter(p => p.cloudUrl).length;
-      counter.style.display = state.photos.length > 0 ? 'block' : 'none';
-      count.textContent = uploaded;
-    }
+function renderThumbs() {
+  const grid    = document.getElementById('thumb-grid');
+  const counter = document.getElementById('photo-counter');
+  const count   = document.getElementById('photo-count');
+  grid.innerHTML = '';
 
-    // ─── VIDEO ──────────────────────────────────────────────
-    function handleVideoFile(files) {
-      const file = files.find(f => f.type.startsWith('video/'));
-      if (!file) { showToast('Please select a valid video file.'); return; }
+  state.photos.forEach((p, i) => {
+    const item = document.createElement('div');
+    item.className = 'thumb-item';
+    item.innerHTML = `<img src="${p.localUrl}" alt="Photo ${i + 1}">`;
 
-      const status = document.getElementById('video-status');
+    if (p.uploading) {
+      const ov = document.createElement('div');
+      ov.className = 'thumb-uploading';
+      ov.innerHTML = '<div class="spinner"></div>';
+      item.appendChild(ov);
+    } else {
+      const btn = document.createElement('button');
+      btn.className = 'thumb-remove';
+      btn.innerHTML = '✕';
+      btn.onclick = e => { e.stopPropagation(); removePhoto(i); };
+      item.appendChild(btn);
 
-      if (file.size > MAX_VIDEO_BYTES) {
-        const mb = (file.size / 1024 / 1024).toFixed(1);
-        status.className = 'video-status error';
-        status.textContent = `✕ Video is ${mb}MB — max allowed is 5MB. Please trim or compress it before uploading.`;
-        showToast(`Video too large (${mb}MB). Max is 5MB.`);
-        return;
-      }
-
-      const localUrl = URL.createObjectURL(file);
-      const preview  = document.getElementById('video-preview');
-      preview.src = localUrl;
-      preview.style.display = 'block';
-
-      state.video = { localUrl, cloudUrl: null, uploading: true };
-      uploadVideo(file);
-    }
-
-    async function uploadVideo(file) {
-      const wrap   = document.getElementById('video-progress-wrap');
-      const bar    = document.getElementById('video-progress-bar');
-      const status = document.getElementById('video-status');
-      wrap.classList.add('active');
-      bar.style.width = '0%';
-      status.className = 'video-status';
-      status.textContent = 'Uploading video…';
-
-      const fd = new FormData();
-      fd.append('file', file);
-      fd.append('upload_preset', VIDEO_PRESET);
-
-      try {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
-        xhr.upload.addEventListener('progress', e => {
-          if (e.lengthComputable) bar.style.width = Math.round((e.loaded / e.total) * 100) + '%';
-        });
-        const result = await new Promise((res, rej) => {
-          xhr.onload = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error('Upload failed'));
-          xhr.onerror = () => rej(new Error('Network error'));
-          xhr.send(fd);
-        });
-        state.video.cloudUrl = result.secure_url;
-        state.video.uploading = false;
-        status.className = 'video-status success';
-        status.textContent = '✓ Video uploaded — it will loop in your final film 🔁';
-      } catch (err) {
-        showToast('Video upload failed. Please try again.');
-        state.video = null;
-        status.className = 'video-status error';
-        status.textContent = '✕ Upload failed — please try again';
-      } finally {
-        bar.style.width = '100%';
-        setTimeout(() => wrap.classList.remove('active'), 600);
+      if (p.compressed) {
+        const badge = document.createElement('div');
+        badge.className = 'thumb-compress-badge';
+        badge.textContent = 'compressed';
+        item.appendChild(badge);
       }
     }
+    grid.appendChild(item);
+  });
 
-    // ─── SUBMIT ─────────────────────────────────────────────
-    document.getElementById('submit-btn').addEventListener('click', handleSubmit);
+  const uploaded = state.photos.filter(p => p.cloudUrl).length;
+  counter.style.display = state.photos.length > 0 ? 'block' : 'none';
+  count.textContent = uploaded;
+}
 
-    async function handleSubmit() {
-      const senderName      = document.getElementById('sender-name').value.trim();
-      const senderGender    = document.getElementById('sender-gender').value;
-      const recipientName   = document.getElementById('recipient-name').value.trim();
-      const recipientGender = document.getElementById('recipient-gender').value;
-      const friendshipDur   = document.getElementById('friendship-duration').value.trim();
-      const finalMsg        = document.getElementById('final-message').value.trim();
+// ─── VIDEO ────────────────────────────────────────────────────────────────────
+function handleVideoFile(files) {
+  const file = files.find(f => f.type.startsWith('video/'));
+  if (!file) { showToast('Please select a valid video file.'); return; }
 
-      if (!senderName)      { showToast('Please enter your name.'); return; }
-      if (!senderGender)    { showToast('Please select your gender.'); return; }
-      if (!recipientName)   { showToast("Please enter your bestie's name."); return; }
-      if (!recipientGender) { showToast("Please select your bestie's gender."); return; }
-      if (!friendshipDur)   { showToast("Please share how long you've been friends."); return; }
+  const status = document.getElementById('video-status');
 
-      const uploadedPhotos = state.photos.filter(p => p.cloudUrl);
-      const hasVideo = state.video && state.video.cloudUrl;
-      if (uploadedPhotos.length < 1 && !hasVideo) {
-        showToast('Please upload at least 1 photo or a video.'); return;
-      }
+  if (file.size > MAX_VIDEO_BYTES) {
+    const mb = (file.size / 1024 / 1024).toFixed(1);
+    status.className = 'video-status error';
+    status.textContent = `✕ Video is ${mb}MB — max is 5MB. Please trim or compress it first.`;
+    showToast(`Video too large (${mb}MB). Max is 5MB.`);
+    return;
+  }
 
-      const stillUploading = state.photos.some(p => p.uploading) || (state.video && state.video.uploading);
-      if (stillUploading) { showToast('Please wait for uploads to finish.'); return; }
+  if (!CLOUDINARY_CLOUD || !VIDEO_PRESET) {
+    showToast('Cloudinary not configured. Check config.js.');
+    return;
+  }
 
-      const btn = document.getElementById('submit-btn');
-      btn.disabled = true;
-      btn.textContent = 'Generating…';
+  const localUrl = URL.createObjectURL(file);
+  const preview  = document.getElementById('video-preview');
+  preview.src    = localUrl;
+  preview.style.display = 'block';
 
-      let tone = 'warm, genuine, heartfelt';
-      if (senderGender === 'female' && recipientGender === 'female') tone = 'warm, expressive, emotional, celebratory bestie energy';
-      else if (senderGender === 'male' && recipientGender === 'male') tone = 'chill, genuine, funny but heartfelt bro energy';
+  state.video = { localUrl, cloudUrl: null, uploading: true };
+  uploadVideo(file);
+}
 
-      const photoCount = uploadedPhotos.length;
+async function uploadVideo(file) {
+  const wrap   = document.getElementById('video-progress-wrap');
+  const bar    = document.getElementById('video-progress-bar');
+  const status = document.getElementById('video-status');
+  wrap.classList.add('active');
+  bar.style.width = '0%';
+  status.className = 'video-status';
+  status.textContent = 'Uploading video…';
 
-      const groqPrompt = `You are writing copy for a friendship tribute video called "NATFLIX".
+  const fd = new FormData();
+  fd.append('file',          file);
+  fd.append('upload_preset', VIDEO_PRESET);
+
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
+    xhr.upload.addEventListener('progress', e => {
+      if (e.lengthComputable) bar.style.width = Math.round((e.loaded / e.total) * 100) + '%';
+    });
+    const result = await new Promise((res, rej) => {
+      xhr.onload  = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error(`Upload failed: ${xhr.status}`));
+      xhr.onerror = () => rej(new Error('Network error'));
+      xhr.send(fd);
+    });
+    state.video.cloudUrl   = result.secure_url;
+    state.video.uploading  = false;
+    status.className       = 'video-status success';
+    status.textContent     = '✓ Video uploaded — it will loop in your final film 🔁';
+  } catch (err) {
+    console.error('Video upload error:', err);
+    showToast('Video upload failed — please try again.');
+    state.video = null;
+    status.className   = 'video-status error';
+    status.textContent = '✕ Upload failed — please try again';
+  } finally {
+    bar.style.width = '100%';
+    setTimeout(() => wrap.classList.remove('active'), 600);
+  }
+}
+
+// ─── SUBMIT ───────────────────────────────────────────────────────────────────
+document.getElementById('submit-btn').addEventListener('click', handleSubmit);
+
+async function handleSubmit() {
+  const senderName      = document.getElementById('sender-name').value.trim();
+  const senderGender    = document.getElementById('sender-gender').value;
+  const recipientName   = document.getElementById('recipient-name').value.trim();
+  const recipientGender = document.getElementById('recipient-gender').value;
+  const friendshipDur   = document.getElementById('friendship-duration').value.trim();
+  const finalMsg        = document.getElementById('final-message').value.trim();
+
+  if (!senderName)      { showToast('Please enter your name.');            return; }
+  if (!senderGender)    { showToast('Please select your gender.');         return; }
+  if (!recipientName)   { showToast("Please enter your bestie's name.");   return; }
+  if (!recipientGender) { showToast("Please select your bestie's gender."); return; }
+  if (!friendshipDur)   { showToast("Please share how long you've been friends."); return; }
+
+  const uploadedPhotos = state.photos.filter(p => p.cloudUrl);
+  const hasVideo       = state.video && state.video.cloudUrl;
+  if (uploadedPhotos.length < 1 && !hasVideo) {
+    showToast('Please upload at least 1 photo or a video.');
+    return;
+  }
+
+  const stillUploading = state.photos.some(p => p.uploading) || (state.video && state.video.uploading);
+  if (stillUploading) { showToast('Please wait for uploads to finish.'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled    = true;
+  btn.textContent = 'Generating…';
+
+  // AI tone selection
+  let tone = 'warm, genuine, heartfelt';
+  if (senderGender === 'female' && recipientGender === 'female') tone = 'warm, expressive, emotional, celebratory bestie energy';
+  else if (senderGender === 'male' && recipientGender === 'male') tone = 'chill, genuine, funny but heartfelt bro energy';
+
+  const photoCount = uploadedPhotos.length;
+
+  const groqPrompt = `You are writing copy for a friendship tribute video called "NATFLIX".
 Tone: ${tone}.
 Sender: ${senderName} (${senderGender}).
 Recipient: ${recipientName} (${recipientGender}).
@@ -811,57 +836,69 @@ Return ONLY valid JSON (no markdown, no backticks, no preamble):
   "photoCaptions": [${photoCount > 0 ? `${photoCount} short captions, one per photo` : ''}]
 }`;
 
-      let groqData = {
-        heroTagline: `${senderName} & ${recipientName} — Always`,
-        heroDescription: `Some friendships are rare. Yours is one of them.`,
-        finalMessage: `Here's to ${friendshipDur} of memories, laughs, and everything in between. This one's for you.`,
-        photoCaptions: uploadedPhotos.map((_, i) => `Memory ${i + 1}`),
-      };
+  // Default fallback in case Groq fails
+  let groqData = {
+    heroTagline:     `${senderName} & ${recipientName} — Always`,
+    heroDescription: `Some friendships are rare. Yours is one of them.`,
+    finalMessage:    `Here's to ${friendshipDur} of memories, laughs, and everything in between. This one's for you, ${recipientName}.`,
+    photoCaptions:   uploadedPhotos.map((_, i) => `Memory ${i + 1}`),
+  };
 
-      try {
-        const groqKey = window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.GROQ_API_KEY;
-        if (!groqKey) throw new Error('No Groq API key');
+  try {
+    const groqKey = window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.GROQ_API_KEY;
+    if (!groqKey) throw new Error('No Groq API key in config.js');
 
-        const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${groqKey}`,
-          },
-          body: JSON.stringify({
-            model: 'llama3-8b-8192',
-            max_tokens: 800,
-            temperature: 0.8,
-            messages: [{ role: 'user', content: groqPrompt }],
-          }),
-        });
+    const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${groqKey}`,
+      },
+      body: JSON.stringify({
+        model:       'llama3-8b-8192',
+        max_tokens:  800,
+        temperature: 0.8,
+        messages:    [{ role: 'user', content: groqPrompt }],
+      }),
+    });
 
-        if (!resp.ok) throw new Error(`Groq ${resp.status}`);
-        const raw = await resp.json();
-        const text = raw.choices?.[0]?.message?.content || '';
-        const clean = text.replace(/```json|```/g, '').trim();
-        const parsed = JSON.parse(clean);
+    if (!resp.ok) throw new Error(`Groq responded with ${resp.status}`);
+    const raw  = await resp.json();
+    const text = raw.choices?.[0]?.message?.content || '';
+    // Strip any markdown fences Groq might wrap around the JSON
+    const clean  = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
 
-        if (parsed.heroTagline)     groqData.heroTagline     = parsed.heroTagline;
-        if (parsed.heroDescription) groqData.heroDescription = parsed.heroDescription;
-        if (parsed.finalMessage)    groqData.finalMessage    = parsed.finalMessage;
-        if (Array.isArray(parsed.photoCaptions)) groqData.photoCaptions = parsed.photoCaptions;
-      } catch (err) {
-        console.warn('Groq fallback:', err.message);
-      }
-
-      const payload = {
-        senderName, senderGender, recipientName, recipientGender,
-        friendshipDuration: friendshipDur, finalMessage: finalMsg,
-        photos: uploadedPhotos.map(p => p.cloudUrl),
-        video: state.video ? state.video.cloudUrl : null,   // null if skipped
-        groq: groqData,
-        paid: false,
-      };
-
-      const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
-      window.location.href = `preview.html?data=${encoded}`;
+    if (parsed.heroTagline)     groqData.heroTagline     = parsed.heroTagline;
+    if (parsed.heroDescription) groqData.heroDescription = parsed.heroDescription;
+    if (parsed.finalMessage)    groqData.finalMessage    = parsed.finalMessage;
+    if (Array.isArray(parsed.photoCaptions) && parsed.photoCaptions.length) {
+      // Guard: ensure we have a caption for every photo (fill gaps with fallback)
+      groqData.photoCaptions = uploadedPhotos.map((_, i) =>
+        (parsed.photoCaptions[i] && String(parsed.photoCaptions[i])) || `Memory ${i + 1}`
+      );
     }
-  </script>
+  } catch (err) {
+    console.warn('Groq call failed, using fallback copy:', err.message);
+  }
+
+  const payload = {
+    senderName,
+    senderGender,
+    recipientName,
+    recipientGender,
+    friendshipDuration: friendshipDur,
+    finalMessage:       finalMsg,
+    photos:             uploadedPhotos.map(p => p.cloudUrl),
+    video:              hasVideo ? state.video.cloudUrl : null,
+    groq:               groqData,
+    paid:               false,
+  };
+
+  // FIX (Bug 3): use safeEncode for consistent UTF-8 → Base64
+  const encoded = safeEncode(payload);
+  window.location.href = `preview.html?data=${encoded}`;
+}
+</script>
 </body>
 </html>

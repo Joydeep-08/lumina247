@@ -33,38 +33,26 @@
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 100;
-    height: 68px;
-    padding: 0 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    height: 68px; padding: 0 48px;
+    display: flex; align-items: center; justify-content: space-between;
     background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
     transition: background 0.3s;
   }
-  nav.scrolled { background: rgba(0,0,0,0.95); }
+  nav.scrolled { background: rgba(0,0,0,0.97); }
 
   .nav-logo {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    color: var(--red);
-    letter-spacing: 2px;
-    text-decoration: none;
-    flex-shrink: 0;
+    font-size: 2rem; color: var(--red);
+    letter-spacing: 2px; text-decoration: none; flex-shrink: 0;
   }
 
   .nav-links {
-    display: flex;
-    gap: 28px;
-    list-style: none;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    display: flex; gap: 28px; list-style: none;
+    position: absolute; left: 50%; transform: translateX(-50%);
   }
   .nav-links a {
-    color: var(--grey);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
+    color: var(--grey); text-decoration: none;
+    font-size: 0.9rem; font-weight: 500;
     transition: color 0.2s;
   }
   .nav-links a:hover { color: #fff; }
@@ -73,28 +61,25 @@
     width: 42px; height: 42px;
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    cursor: pointer;
-    flex-shrink: 0;
+    font-size: 22px; cursor: pointer; flex-shrink: 0;
   }
 
   /* HERO */
-  .hero {
-    position: relative;
-    height: 100vh;
-    overflow: hidden;
-  }
+  .hero { position: relative; height: 100vh; overflow: hidden; }
 
   .hero video {
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
   }
 
+  .hero-bg-fallback {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%);
+  }
+
   .hero-overlay {
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background:
       linear-gradient(77deg, rgba(0,0,0,0.92) 0%, transparent 55%),
       linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.3) 30%, transparent 60%),
@@ -102,22 +87,15 @@
   }
 
   .hero-content {
-    position: absolute;
-    bottom: 0; left: 0;
-    z-index: 2;
-    padding: 0 48px 80px;
-    max-width: 600px;
+    position: absolute; bottom: 0; left: 0; z-index: 2;
+    padding: 0 48px 80px; max-width: 600px;
   }
 
   .hero-label {
-    font-size: 0.78rem;
-    color: var(--grey);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    font-variant: small-caps;
-    margin-bottom: 10px;
-    opacity: 0;
-    transform: translateY(30px);
+    font-size: 0.78rem; color: var(--grey);
+    letter-spacing: 3px; text-transform: uppercase;
+    font-variant: small-caps; margin-bottom: 10px;
+    opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.6s 0.1s forwards;
   }
   .hero-label span { font-family: 'Bebas Neue', sans-serif; color: var(--red); font-size: 1rem; }
@@ -125,165 +103,105 @@
   .hero-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(3rem, 7vw, 6rem);
-    line-height: 0.95;
-    letter-spacing: 1px;
-    margin-bottom: 16px;
-    opacity: 0;
-    transform: translateY(30px);
+    line-height: 0.95; letter-spacing: 1px; margin-bottom: 16px;
+    opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.6s 0.2s forwards;
   }
 
   .hero-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.88rem;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-    opacity: 0;
-    transform: translateY(30px);
+    display: flex; align-items: center; gap: 12px;
+    font-size: 0.88rem; margin-bottom: 16px; flex-wrap: wrap;
+    opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.6s 0.3s forwards;
   }
-  .meta-match { color: #46d369; font-weight: 700; }
-  .meta-badge {
+  .meta-match  { color: #46d369; font-weight: 700; }
+  .meta-badge  {
     border: 1px solid rgba(255,255,255,0.5);
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.8);
+    padding: 1px 6px; border-radius: 3px;
+    font-size: 0.78rem; color: rgba(255,255,255,0.8);
   }
-  .meta-dot { color: var(--grey); }
+  .meta-dot    { color: var(--grey); }
 
   .hero-desc {
-    font-size: 1rem;
-    color: var(--text);
-    line-height: 1.65;
+    font-size: 1rem; color: var(--text); line-height: 1.65;
     margin-bottom: 28px;
-    opacity: 0;
-    transform: translateY(30px);
+    opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.6s 0.4s forwards;
   }
 
   .hero-btns {
-    display: flex;
-    gap: 12px;
-    opacity: 0;
-    transform: translateY(30px);
+    display: flex; gap: 12px; flex-wrap: wrap;
+    opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.6s 0.5s forwards;
-    flex-wrap: wrap;
   }
 
   .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 28px;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px; border-radius: 5px;
+    font-size: 1rem; font-weight: 700; cursor: pointer; border: none;
     font-family: 'DM Sans', sans-serif;
     transition: opacity 0.2s, transform 0.2s;
     text-decoration: none;
   }
   .btn:hover { opacity: 0.85; transform: scale(1.02); }
   .btn-white { background: #fff; color: #000; }
-  .btn-grey { background: rgba(109,109,110,0.7); color: #fff; }
+  .btn-grey  { background: rgba(109,109,110,0.7); color: #fff; }
 
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
   /* CONTENT */
   .content {
-    position: relative;
-    z-index: 10;
+    position: relative; z-index: 10;
     background: var(--bg);
-    margin-top: -120px;
-    padding-bottom: 80px;
+    margin-top: -120px; padding-bottom: 80px;
   }
 
   /* STATS */
   .stats-row {
-    display: flex;
-    gap: 20px;
-    padding: 0 48px;
-    margin-bottom: 48px;
+    display: flex; gap: 20px;
+    padding: 0 48px; margin-bottom: 48px;
   }
   .stat-card {
-    flex: 1;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 24px;
-    text-align: center;
-    min-width: 0;
+    flex: 1; background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; text-align: center; min-width: 0;
   }
   .stat-number {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 3rem;
-    color: var(--red);
-    line-height: 1;
-    margin-bottom: 8px;
+    font-size: 3rem; color: var(--red); line-height: 1; margin-bottom: 8px;
   }
   .stat-label {
-    color: var(--grey);
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 500;
+    color: var(--grey); font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 500;
   }
 
-  /* ROW */
-  .row-section {
-    padding: 0 48px;
-    margin-bottom: 48px;
-  }
-  .row-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-    color: #fff;
-  }
+  /* ROWS */
+  .row-section { padding: 0 48px; margin-bottom: 48px; }
+  .row-title   { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: #fff; }
+
   .photos-scroll {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding-bottom: 4px;
+    display: flex; gap: 8px;
+    overflow-x: auto; scrollbar-width: none;
+    -ms-overflow-style: none; padding-bottom: 4px;
   }
   .photos-scroll::-webkit-scrollbar { display: none; }
 
   .photo-card {
-    flex-shrink: 0;
-    width: 220px;
-    height: 150px;
-    border-radius: 5px;
-    overflow: hidden;
-    cursor: pointer;
-    background: #222;
-    position: relative;
+    flex-shrink: 0; width: 220px; height: 150px;
+    border-radius: 5px; overflow: hidden;
+    cursor: pointer; background: #222; position: relative;
   }
   .photo-card img {
     width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
+    object-fit: cover; display: block;
     transition: transform 0.3s ease;
   }
   .photo-card:hover img { transform: scale(1.08); }
 
   .photo-caption {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
+    position: absolute; bottom: 0; left: 0; right: 0;
     background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    padding: 24px 10px 8px;
-    font-size: 0.78rem;
-    color: #fff;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-    line-height: 1.3;
+    padding: 24px 10px 8px; font-size: 0.78rem; color: #fff;
+    transform: translateY(100%); transition: transform 0.3s ease; line-height: 1.3;
   }
   .photo-card:hover .photo-caption { transform: translateY(0); }
 
@@ -293,143 +211,85 @@
     padding: 52px 40px;
     background: linear-gradient(135deg, #141414, #1a0000);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    text-align: center;
-    overflow: hidden;
-    position: relative;
+    border-radius: 16px; text-align: center;
+    overflow: hidden; position: relative;
   }
   .final-message .deco-heart {
-    position: absolute;
-    bottom: -2rem; right: 1rem;
-    font-size: 12rem;
-    opacity: 0.04;
-    user-select: none;
-    line-height: 1;
+    position: absolute; bottom: -2rem; right: 1rem;
+    font-size: 12rem; opacity: 0.04; user-select: none; line-height: 1;
   }
   .final-message .deco-clap {
-    position: absolute;
-    top: -1rem; left: 1rem;
-    font-size: 8rem;
-    opacity: 0.04;
-    user-select: none;
-    line-height: 1;
+    position: absolute; top: -1rem; left: 1rem;
+    font-size: 8rem; opacity: 0.04; user-select: none; line-height: 1;
   }
   .msg-label {
-    font-size: 0.7rem;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--red);
-    margin-bottom: 20px;
-    font-weight: 700;
+    font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--red); margin-bottom: 20px; font-weight: 700;
   }
   .msg-text {
     font-style: italic;
     font-size: clamp(1rem, 2.5vw, 1.3rem);
-    line-height: 1.8;
-    color: var(--text);
-    max-width: 600px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
+    line-height: 1.8; color: var(--text);
+    max-width: 600px; margin: 0 auto; position: relative; z-index: 1;
   }
   .msg-sender {
-    color: #fff;
-    font-weight: 700;
-    margin-top: 24px;
-    font-size: 1rem;
-    position: relative;
-    z-index: 1;
+    color: #fff; font-weight: 700; margin-top: 24px;
+    font-size: 1rem; position: relative; z-index: 1;
   }
   .msg-date {
-    color: var(--grey);
-    font-size: 0.82rem;
-    margin-top: 6px;
-    position: relative;
-    z-index: 1;
+    color: var(--grey); font-size: 0.82rem;
+    margin-top: 6px; position: relative; z-index: 1;
   }
 
   /* LIGHTBOX */
   .lightbox {
     display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.94);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.94); z-index: 1000;
+    align-items: center; justify-content: center; flex-direction: column;
   }
   .lightbox.open { display: flex; }
 
   .lightbox-img-wrap {
-    position: relative;
-    max-width: 90vw;
-    max-height: 75vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative; max-width: 90vw; max-height: 75vh;
+    display: flex; align-items: center; justify-content: center;
   }
   .lightbox-img-wrap img {
-    max-width: 90vw;
-    max-height: 75vh;
-    object-fit: contain;
-    border-radius: 8px;
-    display: block;
+    max-width: 90vw; max-height: 75vh;
+    object-fit: contain; border-radius: 8px; display: block;
   }
   .lightbox-caption {
-    color: var(--grey);
-    font-size: 0.9rem;
-    margin-top: 16px;
-    text-align: center;
-    max-width: 80vw;
+    color: var(--grey); font-size: 0.9rem;
+    margin-top: 16px; text-align: center; max-width: 80vw;
   }
   .lb-close {
-    position: fixed;
-    top: 20px; right: 24px;
-    font-size: 2rem;
-    cursor: pointer;
-    color: #fff;
-    background: none;
-    border: none;
-    line-height: 1;
-    z-index: 1001;
+    position: fixed; top: 20px; right: 24px;
+    font-size: 2rem; cursor: pointer; color: #fff;
+    background: none; border: none; line-height: 1; z-index: 1001;
   }
   .lb-arrow {
-    position: fixed;
-    top: 50%; transform: translateY(-50%);
-    font-size: 2.5rem;
-    cursor: pointer;
-    color: rgba(255,255,255,0.7);
-    background: rgba(0,0,0,0.4);
-    border: none;
-    width: 52px; height: 72px;
+    position: fixed; top: 50%; transform: translateY(-50%);
+    font-size: 2.5rem; cursor: pointer;
+    color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.4);
+    border: none; width: 52px; height: 72px;
     display: flex; align-items: center; justify-content: center;
-    border-radius: 0 36px 36px 0;
-    transition: background 0.2s, color 0.2s;
-    z-index: 1001;
-    padding: 0;
+    transition: background 0.2s, color 0.2s; z-index: 1001; padding: 0;
   }
-  .lb-arrow:hover { background: rgba(255,255,255,0.15); color: #fff; }
-  .lb-arrow.right { left: auto; right: 0; border-radius: 36px 0 0 36px; }
-  .lb-arrow.left { left: 0; }
+  .lb-arrow:hover  { background: rgba(255,255,255,0.15); color: #fff; }
+  .lb-arrow.right  { left: auto; right: 0; border-radius: 36px 0 0 36px; }
+  .lb-arrow.left   { left: 0; border-radius: 0 36px 36px 0; }
 
-  /* FADE IN */
+  /* FADE-IN ON SCROLL */
   .fade-in {
-    opacity: 0;
-    transform: translateY(30px);
+    opacity: 0; transform: translateY(30px);
     transition: opacity 0.7s ease, transform 0.7s ease;
   }
-  .fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
 
   /* FOOTER */
   footer {
-    text-align: center;
-    padding: 40px 48px;
-    color: #555;
-    font-size: 0.82rem;
+    text-align: center; padding: 40px 48px;
+    color: #555; font-size: 0.82rem;
     border-top: 1px solid #111;
   }
   footer span { color: var(--red); }
@@ -438,26 +298,13 @@
   @media (max-width: 640px) {
     nav { padding: 0 20px; }
     .nav-links { display: none; }
-
     .hero-content { padding: 0 20px 60px; }
-
     .content { margin-top: -80px; }
-
-    .stats-row {
-      padding: 0 20px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+    .stats-row { padding: 0 20px; flex-wrap: wrap; gap: 12px; }
     .stat-card { min-width: calc(50% - 6px); flex: none; }
-
     .row-section { padding: 0 20px; }
-
     .photo-card { width: 160px; height: 115px; }
-
-    .final-message {
-      margin: 20px 20px;
-      padding: 36px 24px;
-    }
+    .final-message { margin: 20px 20px; padding: 36px 24px; }
   }
 </style>
 </head>
@@ -476,7 +323,8 @@
 
 <!-- HERO -->
 <section class="hero" id="hero">
-  <video id="heroVideo" autoplay muted loop playsinline></video>
+  <div class="hero-bg-fallback" id="heroBgFallback"></div>
+  <video id="heroVideo" autoplay muted loop playsinline style="display:none"></video>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-label"><span>N</span> &nbsp;Friendship Special</div>
@@ -490,7 +338,7 @@
     <div class="hero-desc" id="heroDesc">A beautiful friendship, crafted with care and curated just for you.</div>
     <div class="hero-btns">
       <button class="btn btn-white" onclick="document.getElementById('memories').scrollIntoView({behavior:'smooth'})">▶ &nbsp;Play Memories</button>
-      <button class="btn btn-grey" onclick="document.getElementById('final').scrollIntoView({behavior:'smooth'})">ⓘ &nbsp;Our Story</button>
+      <button class="btn btn-grey"  onclick="document.getElementById('final').scrollIntoView({behavior:'smooth'})">ⓘ &nbsp;Our Story</button>
     </div>
   </div>
 </section>
@@ -498,7 +346,6 @@
 <!-- CONTENT -->
 <div class="content">
 
-  <!-- STATS -->
   <div class="stats-row fade-in" id="statsRow">
     <div class="stat-card">
       <div class="stat-number" id="statPhotos">0</div>
@@ -518,39 +365,37 @@
     </div>
   </div>
 
-  <!-- MEMORIES ROW 1 -->
+  <!-- Memories row 1 (first 5) -->
   <div class="row-section fade-in" id="memories">
     <div class="row-title">📸 Our Memories</div>
     <div class="photos-scroll" id="photosRow1"></div>
   </div>
 
-  <!-- MEMORIES ROW 2 -->
+  <!-- Memories row 2 (photos 6-10, hidden if not needed) -->
   <div class="row-section fade-in" id="row2Section" style="display:none">
     <div class="row-title">⭐ Best Moments</div>
     <div class="photos-scroll" id="photosRow2"></div>
   </div>
 
-  <!-- FINAL MESSAGE -->
+  <!-- Final message -->
   <div class="final-message fade-in" id="final">
     <div class="deco-clap">🎬</div>
     <div class="deco-heart">❤️</div>
     <div class="msg-label">A Message For You</div>
     <div class="msg-text" id="finalMsg">Here's to every laugh, every late-night, and every memory we've made together.</div>
     <div class="msg-sender" id="senderName">— Your Best Friend</div>
-    <div class="msg-date">Best Friends Day · June 8</div>
+    <div class="msg-date" id="msgDate"></div>
   </div>
 
 </div>
 
 <!-- FOOTER -->
-<footer>
-  Made with <span>♥</span> on NATFLIX · Streaming Friendship Since Forever
-</footer>
+<footer>Made with <span>♥</span> on NATFLIX · Streaming Friendship Since Forever</footer>
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
   <button class="lb-close" id="lbClose">✕</button>
-  <button class="lb-arrow left" id="lbLeft">‹</button>
+  <button class="lb-arrow left"  id="lbLeft">‹</button>
   <div class="lightbox-img-wrap">
     <img id="lbImg" src="" alt="Memory">
   </div>
@@ -559,162 +404,186 @@
 </div>
 
 <script>
-(function() {
-  // Parse data from URL
-  let D = {};
+(function () {
+
+// ─── ENCODING HELPERS ─────────────────────────────────────────────────────────
+// FIX (Bug 3): decode must mirror safeEncode from index.html exactly.
+// index.html uses TextEncoder → btoa, so we decode with atob → TextDecoder.
+function safeDecode(raw) {
   try {
-    const raw = new URLSearchParams(location.search).get('data');
-    if (raw) D = JSON.parse(decodeURIComponent(escape(atob(raw))));
-  } catch(e) {
-    // Demo fallback
-    D = {
-      recipientGender: 'female',
-      video: '',
-      friendshipDuration: '5 Years',
-      senderName: 'Your Best Friend',
-      photos: [],
-      groq: {
-        heroTagline: 'The Greatest Story\nEver Told',
-        heroDescription: 'A friendship so legendary, even Netflix couldn\'t make it up. This one\'s real, and it\'s all ours.',
-        photoCaptions: [],
-        finalMessage: 'Every memory we\'ve made together is a scene worth replaying. Here\'s to the moments that made us us — and to all the ones still ahead.'
-      }
-    };
+    // Modern path — exact mirror of TextEncoder encode in index.html
+    const binary = atob(raw);
+    const bytes  = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return JSON.parse(new TextDecoder().decode(bytes));
+  } catch (_) {
+    // Legacy fallback — mirror of unescape(encodeURIComponent()) in index.html
+    return JSON.parse(decodeURIComponent(escape(atob(raw))));
   }
+}
 
-  const groq = D.groq || {};
-
-  // Avatar
-  function getAvatar(gender) {
-    if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
-    if (gender === 'male') return { emoji: '🥷', bg: '#1a1a2e' };
-    return { emoji: '👽', bg: '#0d2b0d' };
+// ─── PARSE DATA ───────────────────────────────────────────────────────────────
+let D = {};
+try {
+  const raw = new URLSearchParams(location.search).get('data');
+  if (raw) {
+    D = safeDecode(raw);
   }
+} catch (e) {
+  console.error('home.html: data parse error:', e);
+  // Demo fallback
+  D = {
+    recipientGender:    'female',
+    video:              '',
+    friendshipDuration: '5 Years',
+    senderName:         'Your Best Friend',
+    photos:             [],
+    groq: {
+      heroTagline:     'The Greatest Story\nEver Told',
+      heroDescription: "A friendship so legendary, even Netflix couldn't make it up. This one's real, and it's all ours.",
+      photoCaptions:   [],
+      finalMessage:    "Every memory we've made together is a scene worth replaying. Here's to all the ones still ahead."
+    }
+  };
+}
 
-  const av = getAvatar(D.recipientGender);
-  const navAvatar = document.getElementById('navAvatar');
-  navAvatar.textContent = av.emoji;
-  navAvatar.style.background = av.bg;
+const groq = D.groq || {};
 
-  // Nav scroll
-  window.addEventListener('scroll', () => {
-    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+// ─── AVATAR ───────────────────────────────────────────────────────────────────
+function getAvatar(gender) {
+  if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
+  if (gender === 'male')   return { emoji: '🥷', bg: '#1a1a2e' };
+  return { emoji: '👽', bg: '#0d2b0d' };
+}
+
+const av        = getAvatar(D.recipientGender);
+const navAvatar = document.getElementById('navAvatar');
+navAvatar.textContent      = av.emoji;
+navAvatar.style.background = av.bg;
+
+// ─── NAV SCROLL ───────────────────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ─── HERO VIDEO ───────────────────────────────────────────────────────────────
+if (D.video) {
+  const vid         = document.getElementById('heroVideo');
+  vid.src           = D.video;
+  vid.style.display = 'block';
+  document.getElementById('heroBgFallback').style.display = 'none';
+}
+
+// ─── HERO CONTENT ─────────────────────────────────────────────────────────────
+if (groq.heroTagline)     document.getElementById('heroTagline').textContent = groq.heroTagline;
+if (groq.heroDescription) document.getElementById('heroDesc').textContent    = groq.heroDescription;
+
+document.getElementById('heroYear').textContent     = new Date().getFullYear();
+document.getElementById('heroDuration').textContent = D.friendshipDuration || '';
+
+// ─── STATS ────────────────────────────────────────────────────────────────────
+const photos = D.photos || [];
+document.getElementById('statPhotos').textContent   = photos.length || '∞';
+document.getElementById('statDuration').textContent = D.friendshipDuration || '∞';
+
+// ─── PHOTO ROWS ───────────────────────────────────────────────────────────────
+// FIX (Bug 4): guard null/undefined captions
+const captions  = Array.isArray(groq.photoCaptions) ? groq.photoCaptions : [];
+const allPhotos   = photos;
+const allCaptions = allPhotos.map((_, i) =>
+  (captions[i] && String(captions[i])) || `Memory #${i + 1}`
+);
+
+let currentIndex = 0;
+const lightbox   = document.getElementById('lightbox');
+const lbImg      = document.getElementById('lbImg');
+const lbCaption  = document.getElementById('lbCaption');
+
+function makeCard(src, caption, index) {
+  const card = document.createElement('div');
+  card.className = 'photo-card';
+  card.innerHTML = `
+    <img src="${src}" alt="${caption}" loading="lazy">
+    <div class="photo-caption">${caption}</div>
+  `;
+  card.addEventListener('click', () => openLightbox(index));
+  return card;
+}
+
+const row1        = document.getElementById('photosRow1');
+const row2        = document.getElementById('photosRow2');
+const row2Section = document.getElementById('row2Section');
+
+allPhotos.forEach((src, i) => {
+  const card = makeCard(src, allCaptions[i], i);
+  if (i < 5) row1.appendChild(card);
+  else        row2.appendChild(card);
+});
+
+if (allPhotos.length > 5) row2Section.style.display = 'block';
+if (allPhotos.length === 0) {
+  // Hide memories section entirely if no photos
+  document.getElementById('memories').style.display = 'none';
+}
+
+// ─── FINAL MESSAGE ────────────────────────────────────────────────────────────
+if (groq.finalMessage) document.getElementById('finalMsg').textContent  = groq.finalMessage;
+if (D.senderName)      document.getElementById('senderName').textContent = `— ${D.senderName}`;
+
+// Dynamic date
+const now      = new Date();
+const dateStr  = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+document.getElementById('msgDate').textContent = dateStr;
+
+// ─── LIGHTBOX ─────────────────────────────────────────────────────────────────
+function openLightbox(index) {
+  currentIndex = index;
+  updateLightbox();
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function updateLightbox() {
+  if (!allPhotos.length) return;
+  lbImg.src            = allPhotos[currentIndex];
+  lbCaption.textContent = allCaptions[currentIndex];
+}
+
+function prevPhoto() {
+  currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
+  updateLightbox();
+}
+
+function nextPhoto() {
+  currentIndex = (currentIndex + 1) % allPhotos.length;
+  updateLightbox();
+}
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbLeft').addEventListener('click',  prevPhoto);
+document.getElementById('lbRight').addEventListener('click', nextPhoto);
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'Escape')      closeLightbox();
+  if (e.key === 'ArrowLeft')   prevPhoto();
+  if (e.key === 'ArrowRight')  nextPhoto();
+});
+
+// ─── SCROLL ANIMATIONS ────────────────────────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
   });
+}, { threshold: 0.1 });
 
-  // Hero video
-  if (D.video) {
-    const vid = document.getElementById('heroVideo');
-    vid.src = D.video;
-  }
-
-  // Hero content
-  const heroTagline = document.getElementById('heroTagline');
-  if (groq.heroTagline) heroTagline.textContent = groq.heroTagline;
-
-  const heroDesc = document.getElementById('heroDesc');
-  if (groq.heroDescription) heroDesc.textContent = groq.heroDescription;
-
-  const heroYear = document.getElementById('heroYear');
-  heroYear.textContent = new Date().getFullYear();
-
-  const heroDuration = document.getElementById('heroDuration');
-  if (D.friendshipDuration) heroDuration.textContent = D.friendshipDuration;
-
-  // Stats
-  const photos = D.photos || [];
-  document.getElementById('statPhotos').textContent = photos.length || '∞';
-  document.getElementById('statDuration').textContent = D.friendshipDuration || '∞';
-
-  // Photo rows
-  const captions = (groq.photoCaptions) || [];
-
-  function makeCard(src, caption, index) {
-    const card = document.createElement('div');
-    card.className = 'photo-card';
-    card.innerHTML = `
-      <img src="${src}" alt="${caption}" loading="lazy">
-      <div class="photo-caption">${caption}</div>
-    `;
-    card.addEventListener('click', () => openLightbox(index));
-    return card;
-  }
-
-  const row1 = document.getElementById('photosRow1');
-  const row2 = document.getElementById('photosRow2');
-  const row2Section = document.getElementById('row2Section');
-
-  const allPhotos = photos.length ? photos : [];
-  const allCaptions = allPhotos.map((_, i) => captions[i] || `Memory #${i + 1}`);
-
-  allPhotos.forEach((src, i) => {
-    const card = makeCard(src, allCaptions[i], i);
-    if (i < 5) row1.appendChild(card);
-    else row2.appendChild(card);
-  });
-
-  if (allPhotos.length > 5) row2Section.style.display = 'block';
-
-  // Final message
-  const finalMsg = document.getElementById('finalMsg');
-  if (groq.finalMessage) finalMsg.textContent = groq.finalMessage;
-
-  const senderName = document.getElementById('senderName');
-  if (D.senderName) senderName.textContent = `— ${D.senderName}`;
-
-  // Lightbox
-  let currentIndex = 0;
-  const lightbox = document.getElementById('lightbox');
-  const lbImg = document.getElementById('lbImg');
-  const lbCaption = document.getElementById('lbCaption');
-
-  function openLightbox(index) {
-    currentIndex = index;
-    updateLightbox();
-    lightbox.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeLightbox() {
-    lightbox.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  function updateLightbox() {
-    if (!allPhotos.length) return;
-    lbImg.src = allPhotos[currentIndex];
-    lbCaption.textContent = allCaptions[currentIndex];
-  }
-
-  function prevPhoto() {
-    currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
-    updateLightbox();
-  }
-
-  function nextPhoto() {
-    currentIndex = (currentIndex + 1) % allPhotos.length;
-    updateLightbox();
-  }
-
-  document.getElementById('lbClose').addEventListener('click', closeLightbox);
-  document.getElementById('lbLeft').addEventListener('click', prevPhoto);
-  document.getElementById('lbRight').addEventListener('click', nextPhoto);
-  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-
-  document.addEventListener('keydown', (e) => {
-    if (!lightbox.classList.contains('open')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') prevPhoto();
-    if (e.key === 'ArrowRight') nextPhoto();
-  });
-
-  // Scroll animations
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
 })();
 </script>
