@@ -256,7 +256,7 @@
     margin-top: 6px; position: relative; z-index: 1;
   }
 
-  /* ═══ LIGHTBOX — z-index 10000, above everything ═══ */
+  /* LIGHTBOX */
   .lightbox {
     display: none;
     position: fixed; inset: 0;
@@ -318,33 +318,158 @@
   }
   footer span { color: var(--red); }
 
-  /* MOBILE */
+  /* ============================================================
+     MOBILE — max-width 640px
+     Desktop is completely untouched above this line.
+     ============================================================ */
   @media (max-width: 640px) {
+
+    /* NAV */
     nav { padding: 0 16px; height: 54px; }
     .nav-links { display: none; }
     .nav-avatar { width: 36px; height: 36px; font-size: 18px; }
+
+    /* ── HERO ──────────────────────────────────────────────── */
+
+    /* svh = small viewport height — excludes mobile browser chrome.
+       100svh means the hero fills exactly the visible screen,
+       nothing hidden behind the address bar. */
     .hero { height: 100svh; }
-    .hero-content { padding: 0 16px 36px; max-width: 100%; }
-    .hero-title { font-size: clamp(2rem, 9vw, 3rem); line-height: 1; }
-    .hero-desc { font-size: 0.85rem; margin-bottom: 14px; }
-    .hero-meta { font-size: 0.8rem; gap: 8px; margin-bottom: 12px; }
-    .btn { padding: 10px 18px; font-size: 0.85rem; }
-    .content { margin-top: 0 !important; padding-top: 24px; }
+
+    /* Tighter gutters matching real Netflix mobile (20px side padding).
+       pb: 28px gives the CTA buttons room to breathe above the fold edge. */
+    .hero-content {
+      padding: 0 20px 28px;
+      max-width: 100%;
+    }
+
+    /* Label row */
+    .hero-label {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    /* Fluid title — scales naturally from 375px to 640px.
+       line-height 1 prevents clipping on descenders. */
+    .hero-title {
+      font-size: clamp(1.75rem, 8.5vw, 2.8rem);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    /* Metadata row — tighter, wraps cleanly on 375px */
+    .hero-meta {
+      font-size: 0.78rem;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Description — 3-line clamp keeps it brief and hierarchy clear.
+       Netflix mobile does this — never full paragraphs in hero. */
+    .hero-desc {
+      font-size: 0.82rem;
+      line-height: 1.5;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ── CTA BUTTONS ───────────────────────────────────────── */
+
+    /* Side-by-side. Stacking = cheap. Netflix never stacks on mobile hero. */
+    .hero-btns {
+      flex-wrap: nowrap;
+      gap: 8px;
+      width: 100%;
+    }
+
+    /* 40px is Netflix's actual mobile button height.
+       flex + min-width 0 prevents overflow on tight screens. */
+    .hero-btns .btn {
+      flex: 1;
+      min-width: 0;
+      padding: 0 12px;
+      height: 40px;
+      font-size: 0.82rem;
+      justify-content: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Play gets slightly more visual weight — it's the primary CTA */
+    .hero-btns .btn-white { flex: 1.3; }
+    .hero-btns .btn-grey  { flex: 1; }
+
+    /* ── CONTENT BLOCK ─────────────────────────────────────── */
+
+    /* Hero bleeds into content seamlessly — no gap, no hard edge.
+       The hero overlay already fades to pure black at bottom,
+       so content at margin-top: 0 feels like one continuous canvas. */
+    .content {
+      margin-top: 0 !important;
+      padding-top: 0;
+      padding-bottom: 48px;
+    }
+
+    /* ── STATS CARDS ───────────────────────────────────────── */
+
+    /* Reduced padding top because the hero→content transition is now seamless.
+       The stats section opens with breathing room via padding-top instead. */
     .stats-row {
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px; padding: 0 16px; margin-bottom: 28px;
+      gap: 8px;
+      padding: 20px 16px 0;
+      margin-bottom: 24px;
     }
-    .stat-card { padding: 16px 12px; }
-    .stat-number { font-size: 2rem; }
-    .stat-label { font-size: 0.65rem; }
-    .row-section { padding: 0 16px; margin-bottom: 28px; }
+
+    /* ~30% reduction in vertical padding — cards feel compact, not crushed.
+       12px horizontal is enough for 2-col at 375px. */
+    .stat-card {
+      padding: 14px 10px;
+      border-radius: 8px;
+    }
+
+    /* Reduced from 2.8rem — still bold and legible, no longer dominating. */
+    .stat-number {
+      font-size: 1.75rem;
+      margin-bottom: 5px;
+    }
+
+    /* Slightly tighter tracking — reads cleaner at this size */
+    .stat-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.5px;
+      line-height: 1.3;
+    }
+
+    /* ── MEMORIES SECTION ──────────────────────────────────── */
+    .row-section {
+      padding: 0 16px;
+      margin-bottom: 24px;
+    }
     .row-title { font-size: 0.95rem; }
-    .photo-card { width: 150px; height: 105px; }
-    .final-message { margin: 16px 16px; padding: 32px 20px; }
-    .msg-text { font-size: 0.95rem; }
+
+    /* Photo cards: slightly smaller to hint at horizontal scroll */
+    .photo-card { width: 148px; height: 104px; }
+
+    /* ── FINAL MESSAGE ─────────────────────────────────────── */
+    .final-message {
+      margin: 0 16px 24px;
+      padding: 32px 20px;
+    }
+    .msg-text { font-size: 0.92rem; line-height: 1.7; }
     .deco-heart { font-size: 7rem; }
     .deco-clap  { font-size: 5rem; }
+
+    /* ── FOOTER ────────────────────────────────────────────── */
     footer { padding: 28px 16px; font-size: 0.75rem; }
+
+    /* ── LIGHTBOX ──────────────────────────────────────────── */
     .lb-close { top: 12px; right: 12px; width: 38px; height: 38px; font-size: 1.2rem; }
     .lb-arrow { width: 40px; height: 60px; font-size: 1.8rem; }
   }
@@ -354,7 +479,7 @@
 
 <!-- NAV -->
 <nav id="mainNav">
-  <a class="nav-logo" href="#">NETFLIX</a>
+  <a class="nav-logo" href="#">NATFLIX</a>
   <ul class="nav-links">
     <li><a href="#">Home</a></li>
     <li><a href="#memories">Memories</a></li>
@@ -430,7 +555,7 @@
 
 <footer>Made with <span>♥</span> on NETFLIX · Streaming Friendship Since Forever</footer>
 
-<!-- LIGHTBOX — z-index 10000, above all fixed overlays -->
+<!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
   <button class="lb-close" id="lbClose">✕</button>
   <button class="lb-arrow left"  id="lbLeft">‹</button>
@@ -570,7 +695,6 @@ const dateStr = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long',
 document.getElementById('msgDate').textContent = dateStr;
 
 // ─── LIGHTBOX ─────────────────────────────────────────────────────────────────
-// z-index is 10000 in CSS — above all fixed overlays
 function openLightbox(index) {
   currentIndex = index;
   updateLightbox();
@@ -599,17 +723,14 @@ function nextPhoto() {
   updateLightbox();
 }
 
-// Wire buttons via addEventListener (more reliable than onclick attributes)
 document.getElementById('lbClose').addEventListener('click', closeLightbox);
 document.getElementById('lbLeft').addEventListener('click',  prevPhoto);
 document.getElementById('lbRight').addEventListener('click', nextPhoto);
 
-// Close on backdrop click
 lightbox.addEventListener('click', e => {
   if (e.target === lightbox) closeLightbox();
 });
 
-// Keyboard navigation
 document.addEventListener('keydown', e => {
   if (!lightbox.classList.contains('open')) return;
   if (e.key === 'Escape')     closeLightbox();
