@@ -655,12 +655,12 @@
         Your Friendship Video
         <span class="optional-pill">Optional</span>
       </div>
-      <div class="card-subtitle">Max 10MB · MP4 / MOV / WebM · plays as the hero background 🎬</div>
+      <div class="card-subtitle">Max 2.5MB · MP4 / MOV / WebM · plays as the hero background 🎬</div>
     </div>
     <div class="upload-zone" id="video-zone">
       <span class="upload-icon">🎬</span>
       <div class="upload-title">Drag & Drop Your Video Here</div>
-      <div class="upload-sub">Or tap to browse · max 10MB</div>
+      <div class="upload-sub">Or tap to browse · max 2.5MB</div>
     </div>
     <video id="video-preview" controls></video>
     <div class="video-status" id="video-status"></div>
@@ -734,7 +734,7 @@ const VIDEO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_
 
 const HERO_PHOTO_BYTES  = 800 * 1024;
 const OTHER_PHOTO_BYTES = 400 * 1024;
-const MAX_VIDEO_BYTES   = 10  * 1024 * 1024;
+const MAX_VIDEO_BYTES   = 2.5 * 1024 * 1024; // 2.5MB
 
 const COUPONS = { NATFREE: 0, BESTIE1: 1, NATFLIX79: 79, NATFLIX129: 129 };
 let currentPrice = 149;
@@ -825,8 +825,8 @@ function handleVideoFile(files) {
   if (file.size > MAX_VIDEO_BYTES) {
     const mb = (file.size / 1024 / 1024).toFixed(1);
     status.className   = 'video-status error';
-    status.textContent = `✕ Video is ${mb}MB — max is 10MB.`;
-    showToast(`Video too large (${mb}MB). Max is 10MB.`);
+    status.textContent = `✕ Video is ${mb}MB — max is 2.5MB.`;
+    showToast(`Video too large (${mb}MB). Max is 2.5MB.`);
     return;
   }
   if (state.video && state.video.localUrl) URL.revokeObjectURL(state.video.localUrl);
