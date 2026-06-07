@@ -473,6 +473,14 @@ if (D.video) {
   vid.style.display = 'block';
   document.getElementById('heroBgFallback').style.display = 'none';
 }
+// After: if (D.video) { ... }
+// Add:
+if (!D.video && D.heroPhoto) {
+  const hf = document.getElementById('hero-fallback'); // or heroBgFallback
+  hf.style.backgroundImage = `url('${D.heroPhoto}')`;
+  hf.style.backgroundSize = 'cover';
+  hf.style.backgroundPosition = 'center';
+}
 
 // ─── HERO CONTENT ─────────────────────────────────────────────────────────────
 if (groq.heroTagline)     document.getElementById('heroTagline').textContent = groq.heroTagline;

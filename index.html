@@ -242,6 +242,39 @@
   .upload-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.1em; color: #fff; margin-bottom: 4px; }
   .upload-sub { font-size: 12px; color: var(--muted); }
 
+  /* Optional video badge */
+  .optional-pill {
+    display: inline-block;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    color: #666;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 10px;
+  }
+
+  /* Photo-as-hero notice */
+  .hero-fallback-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(229,9,20,0.06);
+    border: 1px solid rgba(229,9,20,0.15);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 16px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-fallback-notice .notice-icon { font-size: 18px; flex-shrink: 0; }
+  .hero-fallback-notice .notice-text { font-size: 12px; color: #888; line-height: 1.5; }
+  .hero-fallback-notice .notice-text strong { color: #aaa; font-weight: 500; }
+
   .progress-wrap {
     height: 2px; background: var(--border); border-radius: 2px;
     margin-top: 12px; overflow: hidden; display: none; position: relative; z-index: 1;
@@ -260,6 +293,20 @@
     border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
   }
   .thumb-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* Hero photo indicator ring */
+  .thumb-item.hero-photo { border-color: var(--red); }
+  .thumb-item.hero-photo::after {
+    content: '🎬';
+    position: absolute;
+    bottom: 4px; left: 4px;
+    font-size: 12px;
+    background: rgba(229,9,20,0.85);
+    border-radius: 3px;
+    width: 22px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
 
   .thumb-remove {
     position: absolute; top: 4px; right: 4px;
@@ -454,19 +501,30 @@
     <div class="card-step-bg">05</div>
     <div class="card-header">
       <div class="step-label">Step 05</div>
-      <div class="card-title">Your Friendship Video <span class="optional-tag" style="font-family:'DM Sans',sans-serif;font-size:14px;color:#555;text-transform:none;letter-spacing:0;">— optional</span></div>
-      <div class="card-subtitle">Max 5MB · plays on loop in your final film 🎬</div>
+      <div class="card-title">
+        Your Friendship Video
+        <span class="optional-pill">Optional</span>
+      </div>
+      <div class="card-subtitle">Max 20MB · plays as the hero background in your film 🎬 · skip if you don't have one — we'll use your best photo instead</div>
     </div>
     <div class="upload-zone" id="video-zone">
       <span class="upload-icon">🎬</span>
       <div class="upload-title">Drag & Drop Your Video Here</div>
-      <div class="upload-sub">Or tap to browse — 1 video · max 5MB · skip if you don't have one</div>
+      <div class="upload-sub">Or tap to browse · MP4 / MOV / WebM · max 20MB</div>
     </div>
     <div class="progress-wrap" id="video-progress-wrap">
       <div class="progress-bar" id="video-progress-bar"></div>
     </div>
     <video id="video-preview" controls></video>
     <div class="video-status" id="video-status"></div>
+
+    <!-- Notice shown when no video — explains photo fallback -->
+    <div class="hero-fallback-notice" id="hero-fallback-notice">
+      <span class="notice-icon">✨</span>
+      <div class="notice-text">
+        <strong>No video? No problem.</strong> Your first uploaded photo will automatically become the hero background of your film — it still looks 🔥
+      </div>
+    </div>
   </div>
 
   <div class="submit-section">
@@ -485,22 +543,18 @@ const CLOUDINARY_CLOUD = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.CLOUD_N
 const PHOTO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || '';
 const VIDEO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || '';
 
-const MAX_PHOTO_BYTES = 1 * 1024 * 1024;
-const MAX_VIDEO_BYTES = 5 * 1024 * 1024;
+const MAX_PHOTO_BYTES = 1  * 1024 * 1024;   // 1 MB
+const MAX_VIDEO_BYTES = 20 * 1024 * 1024;   // 20 MB  ← updated
 
 // ─── ENCODING HELPERS ─────────────────────────────────────────────────────────
-// Safe UTF-8 → Base64. Handles emoji, em-dashes, non-ASCII names.
-// Uses TextEncoder for modern browsers; falls back to unescape trick.
 function safeEncode(obj) {
   const json = JSON.stringify(obj);
   try {
-    // Modern path — TextEncoder handles all Unicode correctly
     const bytes = new TextEncoder().encode(json);
     let binary = '';
     bytes.forEach(b => binary += String.fromCharCode(b));
     return btoa(binary);
   } catch (_) {
-    // Legacy fallback
     return btoa(unescape(encodeURIComponent(json)));
   }
 }
@@ -518,7 +572,7 @@ function showToast(msg) {
 // ─── IMAGE COMPRESSION ────────────────────────────────────────────────────────
 function compressImage(file, maxBytes) {
   return new Promise((resolve, reject) => {
-    const img = new Image();
+    const img    = new Image();
     const blobUrl = URL.createObjectURL(file);
 
     img.onload = () => {
@@ -575,10 +629,10 @@ const photoZone  = document.getElementById('photo-zone');
 const videoZone  = document.getElementById('video-zone');
 
 function wireZone(zone, input, onFiles) {
-  zone.addEventListener('click',     ()  => input.click());
-  zone.addEventListener('dragover',  e   => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', ()  => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop',      e   => {
+  zone.addEventListener('click',    ()  => input.click());
+  zone.addEventListener('dragover', e   => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave',()  => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop',     e   => {
     e.preventDefault();
     zone.classList.remove('drag-over');
     onFiles([...e.dataTransfer.files]);
@@ -600,7 +654,7 @@ async function handlePhotoFiles(files) {
   if (!files.length) return;
 
   for (const file of files) {
-    const idx = state.photos.length;
+    const idx      = state.photos.length;
     const localUrl = URL.createObjectURL(file);
     state.photos.push({ localUrl, cloudUrl: null, uploading: true, compressed: false });
     renderThumbs();
@@ -640,8 +694,8 @@ async function processAndUploadPhoto(file, idx) {
   bar.style.width = '25%';
 
   const fd = new FormData();
-  fd.append('file',           uploadFile);
-  fd.append('upload_preset',  PHOTO_PRESET);
+  fd.append('file',          uploadFile);
+  fd.append('upload_preset', PHOTO_PRESET);
 
   try {
     const xhr = new XMLHttpRequest();
@@ -683,7 +737,8 @@ function renderThumbs() {
 
   state.photos.forEach((p, i) => {
     const item = document.createElement('div');
-    item.className = 'thumb-item';
+    // Mark first photo as the hero fallback so user knows
+    item.className = 'thumb-item' + (i === 0 && !state.video ? ' hero-photo' : '');
     item.innerHTML = `<img src="${p.localUrl}" alt="Photo ${i + 1}">`;
 
     if (p.uploading) {
@@ -711,6 +766,20 @@ function renderThumbs() {
   const uploaded = state.photos.filter(p => p.cloudUrl).length;
   counter.style.display = state.photos.length > 0 ? 'block' : 'none';
   count.textContent = uploaded;
+
+  // Update hero-fallback-notice visibility
+  updateFallbackNotice();
+}
+
+// ─── FALLBACK NOTICE ─────────────────────────────────────────────────────────
+// Show the "no video → first photo used as hero" notice only when no video is set
+function updateFallbackNotice() {
+  const notice = document.getElementById('hero-fallback-notice');
+  if (state.video) {
+    notice.style.display = 'none';
+  } else {
+    notice.style.display = 'flex';
+  }
 }
 
 // ─── VIDEO ────────────────────────────────────────────────────────────────────
@@ -723,8 +792,8 @@ function handleVideoFile(files) {
   if (file.size > MAX_VIDEO_BYTES) {
     const mb = (file.size / 1024 / 1024).toFixed(1);
     status.className = 'video-status error';
-    status.textContent = `✕ Video is ${mb}MB — max is 5MB. Please trim or compress it first.`;
-    showToast(`Video too large (${mb}MB). Max is 5MB.`);
+    status.textContent = `✕ Video is ${mb}MB — max is 20MB. Please trim or compress it first.`;
+    showToast(`Video too large (${mb}MB). Max is 20MB.`);
     return;
   }
 
@@ -739,6 +808,11 @@ function handleVideoFile(files) {
   preview.style.display = 'block';
 
   state.video = { localUrl, cloudUrl: null, uploading: true };
+
+  // Hide the fallback notice once a video is selected & re-render thumbs to clear hero ring
+  updateFallbackNotice();
+  renderThumbs();
+
   uploadVideo(file);
 }
 
@@ -769,14 +843,18 @@ async function uploadVideo(file) {
     state.video.cloudUrl   = result.secure_url;
     state.video.uploading  = false;
     status.className       = 'video-status success';
-    status.textContent     = '✓ Video uploaded — it will loop in your final film 🔁';
+    status.textContent     = '✓ Video uploaded — it will play as your hero background 🎬';
   } catch (err) {
     console.error('Video upload error:', err);
     showToast('Video upload failed — please try again.');
     state.video = null;
     status.className   = 'video-status error';
     status.textContent = '✕ Upload failed — please try again';
+    // Restore fallback notice & hero ring on first photo
+    updateFallbackNotice();
+    renderThumbs();
   } finally {
+    if (state.video) {} // only if not already nulled by error
     bar.style.width = '100%';
     setTimeout(() => wrap.classList.remove('active'), 600);
   }
@@ -793,14 +871,15 @@ async function handleSubmit() {
   const friendshipDur   = document.getElementById('friendship-duration').value.trim();
   const finalMsg        = document.getElementById('final-message').value.trim();
 
-  if (!senderName)      { showToast('Please enter your name.');            return; }
-  if (!senderGender)    { showToast('Please select your gender.');         return; }
-  if (!recipientName)   { showToast("Please enter your bestie's name.");   return; }
-  if (!recipientGender) { showToast("Please select your bestie's gender."); return; }
-  if (!friendshipDur)   { showToast("Please share how long you've been friends."); return; }
+  if (!senderName)      { showToast('Please enter your name.');                      return; }
+  if (!senderGender)    { showToast('Please select your gender.');                   return; }
+  if (!recipientName)   { showToast("Please enter your bestie's name.");             return; }
+  if (!recipientGender) { showToast("Please select your bestie's gender.");          return; }
+  if (!friendshipDur)   { showToast("Please share how long you've been friends.");   return; }
 
   const uploadedPhotos = state.photos.filter(p => p.cloudUrl);
   const hasVideo       = state.video && state.video.cloudUrl;
+
   if (uploadedPhotos.length < 1 && !hasVideo) {
     showToast('Please upload at least 1 photo or a video.');
     return;
@@ -820,13 +899,18 @@ async function handleSubmit() {
 
   const photoCount = uploadedPhotos.length;
 
+  // ── Determine hero source for AI context ──────────────────────────────────
+  // If no video, first photo becomes the hero — note this in the prompt
+  const heroSource = hasVideo ? 'video' : (photoCount > 0 ? 'first uploaded photo' : 'gradient fallback');
+
   const groqPrompt = `You are writing copy for a friendship tribute video called "NATFLIX".
 Tone: ${tone}.
 Sender: ${senderName} (${senderGender}).
 Recipient: ${recipientName} (${recipientGender}).
 Friendship duration: ${friendshipDur}.
 ${finalMsg ? `Personal message from sender: "${finalMsg}"` : ''}
-${photoCount > 0 ? `Number of photos: ${photoCount}.` : 'No photos — video only tribute.'}
+${photoCount > 0 ? `Number of photos: ${photoCount}.` : 'No photos.'}
+Hero background source: ${heroSource}.
 
 Return ONLY valid JSON (no markdown, no backticks, no preamble):
 {
@@ -863,9 +947,8 @@ Return ONLY valid JSON (no markdown, no backticks, no preamble):
     });
 
     if (!resp.ok) throw new Error(`Groq responded with ${resp.status}`);
-    const raw  = await resp.json();
-    const text = raw.choices?.[0]?.message?.content || '';
-    // Strip any markdown fences Groq might wrap around the JSON
+    const raw    = await resp.json();
+    const text   = raw.choices?.[0]?.message?.content || '';
     const clean  = text.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
 
@@ -873,7 +956,6 @@ Return ONLY valid JSON (no markdown, no backticks, no preamble):
     if (parsed.heroDescription) groqData.heroDescription = parsed.heroDescription;
     if (parsed.finalMessage)    groqData.finalMessage    = parsed.finalMessage;
     if (Array.isArray(parsed.photoCaptions) && parsed.photoCaptions.length) {
-      // Guard: ensure we have a caption for every photo (fill gaps with fallback)
       groqData.photoCaptions = uploadedPhotos.map((_, i) =>
         (parsed.photoCaptions[i] && String(parsed.photoCaptions[i])) || `Memory ${i + 1}`
       );
@@ -881,6 +963,9 @@ Return ONLY valid JSON (no markdown, no backticks, no preamble):
   } catch (err) {
     console.warn('Groq call failed, using fallback copy:', err.message);
   }
+
+  // ── heroPhoto: first uploaded photo URL (used when no video) ─────────────
+  const heroPhoto = uploadedPhotos.length > 0 ? uploadedPhotos[0].cloudUrl : null;
 
   const payload = {
     senderName,
@@ -891,11 +976,11 @@ Return ONLY valid JSON (no markdown, no backticks, no preamble):
     finalMessage:       finalMsg,
     photos:             uploadedPhotos.map(p => p.cloudUrl),
     video:              hasVideo ? state.video.cloudUrl : null,
+    heroPhoto,          // ← new: consumed by preview.html & home.html for the bg image fallback
     groq:               groqData,
     paid:               false,
   };
 
-  // FIX (Bug 3): use safeEncode for consistent UTF-8 → Base64
   const encoded = safeEncode(payload);
   window.location.href = `preview.html?data=${encoded}`;
 }

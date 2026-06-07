@@ -842,6 +842,14 @@ function initMain() {
     document.getElementById('hero-section').insertBefore(hv, document.getElementById('hero-section').firstChild);
     document.getElementById('hero-fallback').style.display = 'none';
   }
+  // After: if (D.video) { ... }
+// Add:
+if (!D.video && D.heroPhoto) {
+  const hf = document.getElementById('hero-fallback'); // or heroBgFallback
+  hf.style.backgroundImage = `url('${D.heroPhoto}')`;
+  hf.style.backgroundSize = 'cover';
+  hf.style.backgroundPosition = 'center';
+}
 
   document.getElementById('hero-tagline').textContent  = groq.heroTagline     || '';
   document.getElementById('hero-year').textContent     = new Date().getFullYear();
