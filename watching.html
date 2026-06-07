@@ -26,7 +26,7 @@
 
   /* ── PORTRAIT GATE ── */
   #rotate-gate {
-    display: none;
+    display: none; /* JS controlled */
     position: fixed;
     inset: 0;
     z-index: 9999;
@@ -62,15 +62,13 @@
   }
 
   /* Show gate in portrait, hide all other UI */
-  @media screen and (max-width: 768px) and (orientation: portrait) {
-    #rotate-gate { display: flex; }
+  
     #loading-screen, #start-wall, #phase1, #phase2,
     #fade, #click-overlay { display: none !important; }
   }
 
   /* Mobile landscape tweaks */
-  @media screen and (max-height: 500px) and (orientation: landscape) {
-    .who-title { font-size: 1.8rem; margin-bottom: 28px; }
+  
     .profiles  { gap: 32px; }
     .avatar-wrap { width: 100px; height: 100px; font-size: 48px; }
     #start-wall button { font-size: 1.4rem; padding: 14px 40px; }
@@ -436,5 +434,35 @@ function initPage() {
 
 loadData();
 </script>
+
+<script>
+// ─── MOBILE ORIENTATION GATE ─────────────────────────────────────────────────
+// Detects real phones (not tablets/desktops) using screen size + touch
+// then shows rotate gate only when in portrait
+(function() {
+  // A phone: touch device with a small screen (max dimension <= 900px)
+  var isPhone = (
+    ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
+    Math.min(screen.width, screen.height) <= 430 &&
+    Math.max(screen.width, screen.height) <= 960
+  );
+
+  if (!isPhone) return; // desktop or tablet — do nothing
+
+  var gate = document.getElementById('rotate-gate');
+
+  function checkOrientation() {
+    var isPortrait = window.innerHeight > window.innerWidth;
+    gate.style.display = isPortrait ? 'flex' : 'none';
+  }
+
+  checkOrientation();
+  window.addEventListener('resize', checkOrientation);
+  window.addEventListener('orientationchange', function() {
+    setTimeout(checkOrientation, 150); // small delay for browser to update dimensions
+  });
+})();
+</script>
+
 </body>
 </html>

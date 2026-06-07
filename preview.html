@@ -29,7 +29,7 @@
 
   /* ═══════════ PORTRAIT GATE — shown only when phone is held portrait ═══════════ */
   #rotate-gate {
-    display: none;
+    display: none; /* JS controlled */
     position: fixed;
     inset: 0;
     z-index: 9999;
@@ -64,16 +64,7 @@
     100% { transform: rotate(90deg); }
   }
 
-  /* On mobile portrait — show gate, hide everything else */
-  @media screen and (max-width: 768px) and (orientation: portrait) {
-    #rotate-gate { display: flex; }
-    #phase-intro, #phase-who, #phase-main,
-    #who-fade, #intro-fade, #start-wall { display: none !important; }
-  }
-
-  /* On mobile landscape — make everything fill properly */
-  @media screen and (max-height: 500px) and (orientation: landscape) {
-    .hero { height: 100dvh; }
+  
     .hero-content { padding: 0 24px 40px; max-width: 480px; }
     .hero-title { font-size: clamp(1.8rem, 5vw, 3.5rem); }
     .stats-section { padding: 24px 24px 20px; }
@@ -1106,5 +1097,35 @@ function copyLink() {
   });
 }
 </script>
+
+<script>
+// ─── MOBILE ORIENTATION GATE ─────────────────────────────────────────────────
+// Detects real phones (not tablets/desktops) using screen size + touch
+// then shows rotate gate only when in portrait
+(function() {
+  // A phone: touch device with a small screen (max dimension <= 900px)
+  var isPhone = (
+    ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
+    Math.min(screen.width, screen.height) <= 430 &&
+    Math.max(screen.width, screen.height) <= 960
+  );
+
+  if (!isPhone) return; // desktop or tablet — do nothing
+
+  var gate = document.getElementById('rotate-gate');
+
+  function checkOrientation() {
+    var isPortrait = window.innerHeight > window.innerWidth;
+    gate.style.display = isPortrait ? 'flex' : 'none';
+  }
+
+  checkOrientation();
+  window.addEventListener('resize', checkOrientation);
+  window.addEventListener('orientationchange', function() {
+    setTimeout(checkOrientation, 150); // small delay for browser to update dimensions
+  });
+})();
+</script>
+
 </body>
 </html>
