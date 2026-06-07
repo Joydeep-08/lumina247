@@ -114,6 +114,51 @@
   }
   .example-btn-icon { font-size: 0.9rem; }
 
+  /* ── EXAMPLE MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 9000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    position: relative;
+    width: 90vw; height: 90vh;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #2a2a2a;
+    animation: modalIn 0.25s ease both;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .modal-close {
+    position: absolute; top: 12px; right: 12px;
+    width: 38px; height: 38px;
+    background: rgba(0,0,0,0.85);
+    border: 1px solid #555;
+    border-radius: 50%;
+    color: #fff; font-size: 15px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .modal-close:hover { background: var(--red); border-color: var(--red); }
+
+  .modal-box iframe {
+    width: 100%; height: 100%;
+    border: none; display: block;
+    background: #000;
+  }
+
   /* ── HEADER ── */
   header {
     padding: 36px 24px 0; text-align: center;
@@ -127,7 +172,7 @@
     line-height: 1; display: inline-block; position: relative;
   }
   .logo::after {
-    content: 'NATFLIX'; position: absolute; inset: 0;
+    content: 'NETFLIX'; position: absolute; inset: 0;
     color: transparent; -webkit-text-stroke: 1px rgba(229,9,20,0.2);
     transform: translate(3px, 3px); z-index: -1;
   }
@@ -516,6 +561,7 @@
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   @keyframes fadeUp  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.96); }      to { opacity: 1; transform: scale(1); } }
 
   /* ── MOBILE ── */
   @media (max-width: 540px) {
@@ -531,6 +577,7 @@
     .pay-perks { gap: 12px; }
     .coupon-row { flex-direction: column; }
     #apply-coupon { width: 100%; }
+    .modal-box { width: 100vw; height: 100vh; border-radius: 0; }
   }
 </style>
 </head>
@@ -538,6 +585,14 @@
 
 <input type="file" id="photo-input" accept="image/*" multiple style="display:none">
 <input type="file" id="video-input" accept="video/*" style="display:none">
+
+<!-- EXAMPLE MODAL -->
+<div class="modal-overlay" id="example-modal" onclick="handleModalOverlayClick(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeExampleModal()" title="Close">✕</button>
+    <iframe id="example-iframe" src="" loading="lazy" allowfullscreen></iframe>
+  </div>
+</div>
 
 <!-- EXAMPLE BANNER — sticky at top -->
 <div class="example-banner">
@@ -547,13 +602,13 @@
       <strong>Curious what it looks like?</strong> See a real NETFLIX experience before you pay.
     </div>
   </div>
-  <a class="example-btn" href="https://lumina247.pages.dev/watching?id=ac40b1d0" target="_blank" rel="noopener">
+  <a class="example-btn" href="#" onclick="openExampleModal(); return false;">
     <span class="example-btn-icon">▶</span> See Example
   </a>
 </div>
 
 <header>
-  <div class="logo"NETFLIX</div>
+  <div class="logo">NETFLIX</div>
   <p class="header-sub">Create Your Friendship Film</p>
   <div class="header-rule"></div>
 </header>
@@ -734,7 +789,7 @@ const VIDEO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_
 
 const HERO_PHOTO_BYTES  = 800 * 1024;
 const OTHER_PHOTO_BYTES = 400 * 1024;
-const MAX_VIDEO_BYTES   = 2.5 * 1024 * 1024; // 2.5MB
+const MAX_VIDEO_BYTES   = 2.5 * 1024 * 1024;
 
 const COUPONS = { NATFREE: 0, BESTIE1: 1, NATFLIX79: 79, NATFLIX129: 129 };
 let currentPrice = 149;
@@ -750,6 +805,32 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 3800);
 }
+
+// ─── EXAMPLE MODAL ────────────────────────────────────────────────────────────
+function openExampleModal() {
+  const iframe = document.getElementById('example-iframe');
+  if (!iframe.src || iframe.src === window.location.href) {
+    iframe.src = 'https://lumina247.pages.dev/watching?id=ac40b1d0';
+  }
+  document.getElementById('example-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeExampleModal() {
+  document.getElementById('example-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleModalOverlayClick(e) {
+  if (e.target === document.getElementById('example-modal')) {
+    closeExampleModal();
+  }
+}
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeExampleModal();
+});
 
 // ─── COUPON ───────────────────────────────────────────────────────────────────
 window.applyCoupon = function() {
@@ -900,7 +981,6 @@ async function onPaymentSuccess(formData) {
   btn.innerHTML   = '<span>⏳</span> Uploading…';
   saveError.style.display = 'none';
 
-  // Step 1: Upload
   try {
     await uploadAllAssets();
   } catch (err) {
@@ -913,7 +993,6 @@ async function onPaymentSuccess(formData) {
 
   btn.innerHTML = '<span>⏳</span> Generating…';
 
-  // Step 2: Groq
   const uploadedPhotos = state.photos.filter(p => p.cloudUrl);
   const hasVideo       = state.video && state.video.cloudUrl;
   const photoCount     = uploadedPhotos.length;
@@ -922,7 +1001,7 @@ async function onPaymentSuccess(formData) {
   if (formData.senderGender === 'female' && formData.recipientGender === 'female') tone = 'warm, expressive, emotional, celebratory bestie energy';
   else if (formData.senderGender === 'male' && formData.recipientGender === 'male') tone = 'chill, genuine, funny but heartfelt bro energy';
 
-  const groqPrompt = `You are writing copy for a friendship tribute called "NETFLIX".
+  const groqPrompt = `You are writing copy for a friendship tribute called NETFLIX".
 Tone: ${tone}.
 Sender: ${formData.senderName} (${formData.senderGender}).
 Recipient: ${formData.recipientName} (${formData.recipientGender}).
@@ -971,7 +1050,6 @@ Return ONLY valid JSON:
     console.warn('Groq failed, using fallback:', err.message);
   }
 
-  // Step 3: Save & get link
   const payload = {
     ...formData,
     photos:    uploadedPhotos.map(p => p.cloudUrl),
@@ -996,8 +1074,6 @@ Return ONLY valid JSON:
     document.getElementById('share-result').style.display = 'block';
     btn.style.display = 'none';
     document.querySelector('.pay-secure').style.display = 'none';
-
-    // Scroll to link
     document.getElementById('share-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   } catch (err) {
