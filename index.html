@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NATFLIX — Create Your Friendship Film</title>
+<title>NETFLIX — Create Your Friendship Film</title>
 <script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -544,7 +544,7 @@
   <div class="example-banner-left">
     <div class="example-pulse"></div>
     <div class="example-banner-text">
-      <strong>Curious what it looks like?</strong> See a real NATFLIX experience before you pay.
+      <strong>Curious what it looks like?</strong> See a real NETFLIX experience before you pay.
     </div>
   </div>
   <a class="example-btn" href="YOUR_EXAMPLE_LINK_HERE" target="_blank" rel="noopener">
@@ -553,7 +553,7 @@
 </div>
 
 <header>
-  <div class="logo">NATFLIX</div>
+  <div class="logo"NETFLIX</div>
   <p class="header-sub">Create Your Friendship Film</p>
   <div class="header-rule"></div>
 </header>
@@ -882,7 +882,7 @@ window.handlePay = function() {
     key,
     amount: currentPrice * 100,
     currency: 'INR',
-    name: 'NATFLIX',
+    name: 'NETFLIX',
     description: 'Generate Shareable Friendship Link',
     theme: { color: '#E50914' },
     handler: () => onPaymentSuccess(formData),
@@ -922,7 +922,7 @@ async function onPaymentSuccess(formData) {
   if (formData.senderGender === 'female' && formData.recipientGender === 'female') tone = 'warm, expressive, emotional, celebratory bestie energy';
   else if (formData.senderGender === 'male' && formData.recipientGender === 'male') tone = 'chill, genuine, funny but heartfelt bro energy';
 
-  const groqPrompt = `You are writing copy for a friendship tribute called "NATFLIX".
+  const groqPrompt = `You are writing copy for a friendship tribute called "NETFLIX".
 Tone: ${tone}.
 Sender: ${formData.senderName} (${formData.senderGender}).
 Recipient: ${formData.recipientName} (${formData.recipientGender}).
