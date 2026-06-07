@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NETFLIX</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-<script src="config.js"></script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -50,87 +48,59 @@
     flex-direction: column; gap: 16px;
   }
   #start-wall button {
-    background: var(--red);
-    border: none;
-    color: #fff;
+    background: var(--red); border: none; color: #fff;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    letter-spacing: 0.3em;
-    padding: 20px 60px;
-    border-radius: 6px;
-    cursor: pointer;
+    font-size: 1.8rem; letter-spacing: 0.3em;
+    padding: 20px 60px; border-radius: 6px; cursor: pointer;
     transition: opacity 0.2s, transform 0.1s;
   }
   #start-wall button:hover  { opacity: 0.88; }
   #start-wall button:active { transform: scale(0.98); }
   #start-wall .start-sub {
-    color: var(--grey);
-    font-size: 0.82rem;
-    letter-spacing: 0.06em;
-    text-align: center;
+    color: var(--grey); font-size: 0.82rem;
+    letter-spacing: 0.06em; text-align: center;
   }
 
   /* ═══════════ PHASE 2 — WHO'S WATCHING ═══════════ */
   #phase-who {
-    display: none;
-    position: fixed; inset: 0; z-index: 90;
-    background: #000;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    display: none; position: fixed; inset: 0; z-index: 90;
+    background: #000; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.4s ease;
   }
-  #phase-who.visible    { display: flex; }
-  #phase-who.faded-in   { opacity: 1; }
+  #phase-who.visible  { display: flex; }
+  #phase-who.faded-in { opacity: 1; }
 
   #phase-who h1 {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 2.5rem;
-    color: #fff;
-    margin-bottom: 60px;
-    letter-spacing: -0.01em;
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 2.5rem; color: #fff;
+    margin-bottom: 60px; letter-spacing: -0.01em;
   }
 
-  .profiles-row {
-    display: flex;
-    gap: 50px;
-    align-items: flex-start;
-  }
+  .profiles-row { display: flex; gap: 50px; align-items: flex-start; }
 
   .profile-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(12px);
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer; opacity: 0; transform: translateY(12px);
     transition: opacity 0.4s ease, transform 0.4s ease;
   }
   .profile-card.show { opacity: 1; transform: none; }
 
   .profile-avatar {
-    width: 140px; height: 140px;
-    border-radius: 10px;
+    width: 140px; height: 140px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 72px;
-    border: 3px solid transparent;
+    font-size: 72px; border: 3px solid transparent;
     transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   }
   .profile-card:hover .profile-avatar {
-    border-color: var(--red);
-    transform: scale(1.05);
+    border-color: var(--red); transform: scale(1.05);
     box-shadow: 0 0 28px rgba(229,9,20,0.25);
   }
 
   .profile-name {
-    margin-top: 14px;
-    color: var(--grey);
-    font-size: 1.05rem;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    transition: color 0.2s ease;
+    margin-top: 14px; color: var(--grey);
+    font-size: 1.05rem; font-weight: 400;
+    letter-spacing: 0.02em; transition: color 0.2s ease;
   }
   .profile-card:hover .profile-name { color: #fff; }
 
@@ -140,57 +110,10 @@
     transition: opacity 0.5s ease;
   }
 
-  /* ═══════════ WATERMARK ═══════════ */
-  #watermark {
-    position: fixed; inset: 0; z-index: 9999;
-    pointer-events: none; overflow: hidden;
-  }
-  .wm-tile {
-    position: absolute;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.5rem;
-    letter-spacing: 0.2em;
-    color: rgba(229,9,20,0.10);
-    transform: rotate(-30deg);
-    white-space: nowrap;
-    user-select: none;
-  }
-
-  /* ═══════════ PREVIEW BANNER ═══════════ */
-  #preview-banner {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 9998;
-    background: linear-gradient(90deg, #b00710 0%, var(--red) 50%, #b00710 100%);
-    padding: 10px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 500;
-  }
-  #preview-banner .banner-text { display: flex; align-items: center; gap: 8px; }
-  #unlock-btn {
-    background: #fff;
-    color: var(--red);
-    font-family: 'Bebas Neue', cursive;
-    letter-spacing: 2px;
-    font-size: 0.95rem;
-    padding: 10px 28px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    white-space: nowrap;
-  }
-  #unlock-btn:hover { opacity: 0.88; }
-
   /* ═══════════ NAV ═══════════ */
   nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 200;
-    padding: 0 48px;
-    height: 68px;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    padding: 0 48px; height: 68px;
     display: flex; align-items: center; justify-content: space-between;
     background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
     transition: background 0.3s ease;
@@ -198,22 +121,13 @@
   nav.scrolled { background: #000; }
 
   .nav-logo {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2rem;
-    color: var(--red);
-    letter-spacing: 3px;
-    text-decoration: none;
+    font-family: 'Bebas Neue', cursive; font-size: 2rem;
+    color: var(--red); letter-spacing: 3px; text-decoration: none;
   }
-
-  .nav-links {
-    display: flex; gap: 28px; list-style: none;
-  }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
   .nav-links a {
-    color: var(--grey);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 400;
-    transition: color 0.2s;
+    color: var(--grey); text-decoration: none;
+    font-size: 0.9rem; font-weight: 400; transition: color 0.2s;
   }
   .nav-links a:hover { color: #fff; }
 
@@ -222,19 +136,14 @@
   #phase-main.visible { display: block; }
 
   .hero {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
+    position: relative; width: 100%; height: 100vh; overflow: hidden;
   }
   .hero-bg-fallback {
     position: absolute; inset: 0;
     background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%);
   }
   .hero-video {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   }
   .hero-overlay-lr {
     position: absolute; inset: 0;
@@ -246,79 +155,50 @@
   }
   .hero-content {
     position: absolute; bottom: 0; left: 0;
-    max-width: 600px;
-    padding: 0 48px 80px;
+    max-width: 600px; padding: 0 48px 80px;
   }
   .hero-label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    color: #aaa;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    display: flex; align-items: center; gap: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.18em; color: #aaa; text-transform: uppercase;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
   }
   .hero-label::before {
-    content: 'N';
-    display: inline-flex;
-    background: var(--red);
-    color: #fff;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 0.95rem;
-    width: 20px; height: 20px;
-    align-items: center; justify-content: center;
-    border-radius: 3px;
+    content: 'N'; display: inline-flex; background: var(--red); color: #fff;
+    font-family: 'Bebas Neue', cursive; font-size: 0.95rem;
+    width: 20px; height: 20px; align-items: center; justify-content: center; border-radius: 3px;
   }
   .hero-title {
-    font-family: 'Bebas Neue', cursive;
-    font-size: clamp(3rem, 7vw, 6rem);
-    line-height: 0.95;
-    color: #fff;
-    margin-bottom: 16px;
+    font-family: 'Bebas Neue', cursive; font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.95; color: #fff; margin-bottom: 16px;
     text-shadow: 2px 2px 20px rgba(0,0,0,0.5);
   }
   .hero-meta {
     display: flex; align-items: center; gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-    font-size: 0.88rem;
+    flex-wrap: wrap; margin-bottom: 14px; font-size: 0.88rem;
   }
   .hero-meta .match    { color: #46d369; font-weight: 600; }
   .hero-meta .year     { color: #aaa; }
   .bff-badge {
-    border: 1px solid #aaa;
-    color: #aaa;
-    padding: 1px 7px;
-    font-size: 0.78rem;
-    border-radius: 3px;
+    border: 1px solid #aaa; color: #aaa;
+    padding: 1px 7px; font-size: 0.78rem; border-radius: 3px;
   }
   .hero-meta .duration { color: #ddd; }
   .hero-desc {
-    color: #b3b3b3;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 28px;
-    font-weight: 300;
+    color: #b3b3b3; font-size: 0.95rem; line-height: 1.6;
+    margin-bottom: 28px; font-weight: 300;
   }
   .hero-btns { display: flex; gap: 12px; }
   .btn-play {
-    background: #fff; color: #000; border: none;
-    padding: 12px 32px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 600; font-size: 1rem;
-    border-radius: 6px; cursor: pointer;
-    display: flex; align-items: center; gap: 8px;
+    background: #fff; color: #000; border: none; padding: 12px 32px;
+    font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem;
+    border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;
     transition: background 0.2s;
   }
   .btn-play:hover { background: rgba(255,255,255,0.85); }
   .btn-info {
-    background: rgba(109,109,110,0.7); color: #fff; border: none;
-    padding: 12px 32px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500; font-size: 1rem;
-    border-radius: 6px; cursor: pointer;
-    display: flex; align-items: center; gap: 8px;
+    background: rgba(109,109,110,0.7); color: #fff; border: none; padding: 12px 32px;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem;
+    border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;
     transition: background 0.2s;
   }
   .btn-info:hover { background: rgba(109,109,110,0.5); }
@@ -326,83 +206,68 @@
   /* STATS */
   .stats-section { padding: 48px 48px 40px; background: #000; }
   .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: grid; grid-template-columns: repeat(4, 1fr);
     gap: 20px; max-width: 900px;
   }
   .stat-card {
-    background: #0d0d0d;
-    border: 1px solid #1a1a1a;
+    background: #0d0d0d; border: 1px solid #1a1a1a;
     border-radius: 10px; padding: 24px 20px;
   }
   .stat-number {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2.8rem; color: var(--red);
-    line-height: 1; margin-bottom: 6px;
+    font-family: 'Bebas Neue', cursive; font-size: 2.8rem;
+    color: var(--red); line-height: 1; margin-bottom: 6px;
   }
   .stat-label {
-    color: var(--grey);
-    font-size: 0.82rem; font-weight: 400;
+    color: var(--grey); font-size: 0.82rem; font-weight: 400;
     letter-spacing: 0.06em; text-transform: uppercase;
   }
 
   /* MEMORIES */
   .memories-section { padding: 8px 48px 56px; }
   .section-title {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500; font-size: 1.35rem;
-    color: #e5e5e5; margin-bottom: 20px;
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 1.35rem; color: #e5e5e5; margin-bottom: 20px;
   }
   .memories-scroll {
-    display: flex; gap: 10px;
-    overflow-x: auto; padding-bottom: 8px;
-    scrollbar-width: none;
+    display: flex; gap: 10px; overflow-x: auto;
+    padding-bottom: 8px; scrollbar-width: none;
   }
   .memories-scroll::-webkit-scrollbar { display: none; }
   .memory-card {
-    flex: 0 0 220px; height: 150px;
-    border-radius: 8px; overflow: hidden;
-    position: relative; cursor: pointer;
+    flex: 0 0 220px; height: 150px; border-radius: 8px;
+    overflow: hidden; position: relative; cursor: pointer;
     transition: transform 0.25s ease;
   }
   .memory-card:hover { transform: scale(1.08); z-index: 10; }
   .memory-card img {
-    width: 100%; height: 100%;
-    object-fit: cover; display: block;
-    background: #1a1a1a;
+    width: 100%; height: 100%; object-fit: cover; display: block; background: #1a1a1a;
   }
   .memory-caption {
     position: absolute; inset: 0;
     background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
     display: flex; align-items: flex-end;
-    padding: 10px 12px; opacity: 0;
-    transition: opacity 0.22s ease;
+    padding: 10px 12px; opacity: 0; transition: opacity 0.22s ease;
   }
   .memory-card:hover .memory-caption { opacity: 1; }
   .memory-caption span { font-size: 0.78rem; color: #fff; line-height: 1.3; }
 
-  /* ═══════════ LIGHTBOX — z-index above watermark (9999) and banner (9998) ═══════════ */
+  /* LIGHTBOX */
   #lightbox {
-    display: none;
-    position: fixed; inset: 0;
-    z-index: 10000;
-    background: rgba(0,0,0,0.95);
-    align-items: center; justify-content: center;
+    display: none; position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.95); align-items: center; justify-content: center;
   }
   #lightbox.open { display: flex; }
   #lightbox img {
-    max-width: 85vw; max-height: 80vh;
-    border-radius: 8px; object-fit: contain;
-    position: relative; z-index: 10002;
+    max-width: 85vw; max-height: 80vh; border-radius: 8px;
+    object-fit: contain; position: relative; z-index: 10002;
   }
   .lb-close {
-    position: fixed; top: 24px; right: 32px;
-    font-size: 2rem; color: #fff; cursor: pointer;
+    position: fixed; top: 24px; right: 32px; font-size: 2rem; color: #fff; cursor: pointer;
     background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);
     border-radius: 50%; width: 48px; height: 48px;
     display: flex; align-items: center; justify-content: center;
-    line-height: 1; z-index: 10003;
-    opacity: 0.85; transition: opacity 0.2s, background 0.2s;
+    line-height: 1; z-index: 10003; opacity: 0.85;
+    transition: opacity 0.2s, background 0.2s;
   }
   .lb-close:hover { opacity: 1; background: rgba(229,9,20,0.7); border-color: var(--red); }
   .lb-nav {
@@ -410,8 +275,7 @@
     background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.15);
     border-radius: 50%; width: 48px; height: 48px; font-size: 1.4rem;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s, border-color 0.2s;
-    z-index: 10003;
+    transition: background 0.2s, border-color 0.2s; z-index: 10003;
   }
   .lb-nav:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
   #lb-prev { left: 24px; }
@@ -419,143 +283,34 @@
   #lb-caption {
     position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
     color: #ccc; font-size: 0.9rem; text-align: center; max-width: 500px;
-    z-index: 10003; background: rgba(0,0,0,0.5);
-    padding: 6px 16px; border-radius: 20px;
+    z-index: 10003; background: rgba(0,0,0,0.5); padding: 6px 16px; border-radius: 20px;
   }
 
   /* FINAL MESSAGE */
   .message-section { padding: 8px 48px 80px; }
   .message-card {
-    background: #0d0d0d;
-    border: 1px solid #1e1e1e;
+    background: #0d0d0d; border: 1px solid #1e1e1e;
     border-radius: 14px; padding: 40px 48px;
     max-width: 760px; position: relative; overflow: hidden;
   }
   .message-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0;
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
     height: 3px; background: var(--red);
   }
   .message-label {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 0.85rem; letter-spacing: 0.18em;
-    color: var(--red); margin-bottom: 20px; text-transform: uppercase;
+    font-family: 'Bebas Neue', cursive; font-size: 0.85rem;
+    letter-spacing: 0.18em; color: var(--red); margin-bottom: 20px; text-transform: uppercase;
   }
   .message-text {
-    font-size: 1.15rem; line-height: 1.75;
-    color: #d4d4d4; font-style: italic;
-    font-weight: 300; margin-bottom: 20px;
+    font-size: 1.15rem; line-height: 1.75; color: #d4d4d4;
+    font-style: italic; font-weight: 300; margin-bottom: 20px;
   }
   .message-sig { color: var(--grey); font-size: 0.9rem; font-weight: 500; }
 
-  /* PAYMENT MODAL */
-  #modal-overlay {
-    display: none;
-    position: fixed; inset: 0; z-index: 8000;
-    background: rgba(0,0,0,0.88);
-    align-items: center; justify-content: center;
-    padding: 20px;
-    overflow-y: auto;
-  }
-  #modal-overlay.open { display: flex; }
-  .modal-box {
-    background: #141414; border: 1px solid #2a2a2a;
-    border-radius: 16px; padding: 40px 44px;
-    width: 100%; max-width: 440px; position: relative;
-    margin: auto;
-  }
-  .modal-close {
-    position: absolute; top: 16px; right: 20px;
-    background: none; border: none; color: var(--grey);
-    font-size: 1.5rem; cursor: pointer; line-height: 1;
-    transition: color 0.2s;
-  }
-  .modal-close:hover { color: #fff; }
-  .modal-title {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2rem; letter-spacing: 2px; color: #fff; margin-bottom: 8px;
-  }
-  .modal-subtitle { color: var(--grey); font-size: 0.9rem; line-height: 1.5; margin-bottom: 28px; }
-  .modal-price {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 4rem; color: var(--red); line-height: 1;
-    margin-bottom: 28px; display: flex; align-items: baseline; gap: 6px;
-  }
-  .price-strike { font-size: 1.8rem; color: #555; text-decoration: line-through; }
-  .coupon-row { display: flex; gap: 10px; margin-bottom: 20px; }
-  #coupon-input {
-    flex: 1; background: #1e1e1e; border: 1px solid #333;
-    border-radius: 8px; color: #fff;
-    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
-    padding: 12px 16px; letter-spacing: 0.1em; text-transform: uppercase;
-    outline: none; transition: border-color 0.2s;
-  }
-  #coupon-input:focus { border-color: var(--red); }
-  #coupon-input::placeholder { text-transform: none; color: #555; letter-spacing: 0; }
-  #apply-coupon {
-    background: #222; color: #fff; border: 1px solid #333;
-    border-radius: 8px; padding: 12px 20px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
-    cursor: pointer; transition: background 0.2s;
-  }
-  #apply-coupon:hover { background: #2a2a2a; }
-  #coupon-msg { font-size: 0.82rem; margin-bottom: 16px; min-height: 18px; }
-  #coupon-msg.success { color: #46d369; }
-  #coupon-msg.error   { color: var(--red); }
-  #pay-btn {
-    width: 100%; background: var(--red); color: #fff; border: none;
-    border-radius: 8px; padding: 16px;
-    font-family: 'Bebas Neue', cursive; font-size: 1.2rem;
-    letter-spacing: 3px; cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-  }
-  #pay-btn:hover    { background: #c0060f; }
-  #pay-btn:active   { transform: scale(0.99); }
-  #pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  #share-result { display: none; margin-top: 20px; }
-  #share-url-box {
-    background: #1a1a1a; border: 1px solid #2a2a2a;
-    border-radius: 8px; padding: 12px 16px;
-    font-size: 0.78rem; color: #999;
-    word-break: break-all; margin-bottom: 12px; line-height: 1.5;
-  }
-  #copy-btn {
-    width: 100%; background: var(--red); color: #fff; border: none;
-    border-radius: 8px; padding: 13px;
-    font-family: 'Bebas Neue', cursive; font-size: 1.1rem;
-    letter-spacing: 2px; cursor: pointer; transition: background 0.2s;
-  }
-  #copy-btn:hover { background: #c0060f; }
-
-  #save-error {
-    display: none; margin-top: 14px;
-    color: var(--red); font-size: 0.82rem; text-align: center; line-height: 1.5;
-  }
-
   /* RESPONSIVE */
   @media (max-width: 768px) {
-    nav { padding: 0 20px; }
-    .nav-links { display: none; }
-    .hero-content { padding: 0 20px 60px; }
-    .stats-section { padding: 32px 20px; }
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .memories-section, .message-section { padding-left: 20px; padding-right: 20px; }
-    #preview-banner { font-size: 0.78rem; padding: 8px 12px; }
-    #preview-banner .banner-text span { display: none; }
-    .message-card { padding: 28px 24px; }
-    .lb-close { top: 12px; right: 12px; width: 40px; height: 40px; font-size: 1.4rem; }
-    .lb-nav { width: 40px; height: 40px; font-size: 1.2rem; }
-    #lb-prev { left: 8px; }
-    #lb-next { right: 8px; }
-  }
-
-  @media screen and (max-width: 768px) {
     nav { padding: 0 16px; height: 52px; }
     .nav-links { display: none; }
-    #preview-banner { padding: 8px 12px; font-size: 0.75rem; }
-    #preview-banner .banner-text span { display: none; }
-    #unlock-btn { padding: 8px 14px; font-size: 0.82rem; letter-spacing: 1px; }
     .hero-content { padding: 0 16px 40px; max-width: 100%; }
     .hero-title { font-size: clamp(2rem, 8vw, 3.5rem); }
     .hero-desc { font-size: 0.85rem; margin-bottom: 16px; }
@@ -564,22 +319,21 @@
     .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 100%; }
     .stat-card { padding: 16px 12px; }
     .stat-number { font-size: 2rem; }
-    .stat-label { font-size: 0.7rem; }
     .memories-section { padding: 8px 16px 32px; }
-    .section-title { font-size: 1rem; }
     .memory-card { flex: 0 0 150px; height: 105px; }
     .message-section { padding: 8px 16px 48px; }
     .message-card { padding: 24px 20px; }
     .message-text { font-size: 0.95rem; }
-    #phase-who h1, .who-title { font-size: 1.6rem; margin-bottom: 32px; }
-    .profiles-row, .profiles { gap: 28px; }
-    .profile-avatar, .avatar-wrap { width: 100px; height: 100px; font-size: 48px; border-radius: 8px; }
+    #phase-who h1 { font-size: 1.6rem; margin-bottom: 32px; }
+    .profiles-row { gap: 28px; }
+    .profile-avatar { width: 100px; height: 100px; font-size: 48px; border-radius: 8px; }
     .profile-name { font-size: 0.88rem; }
     #start-wall button { font-size: 1.4rem; padding: 16px 40px; }
     .start-sub { font-size: 0.72rem; }
-    .modal-box { padding: 28px 20px; }
-    .modal-title { font-size: 1.6rem; }
-    .modal-price { font-size: 3rem; }
+    .lb-close { top: 12px; right: 12px; width: 40px; height: 40px; font-size: 1.4rem; }
+    .lb-nav { width: 40px; height: 40px; font-size: 1.2rem; }
+    #lb-prev { left: 8px; }
+    #lb-next { right: 8px; }
   }
 </style>
 </head>
@@ -615,13 +369,6 @@
 
 <!-- Phase 3: Main -->
 <div id="phase-main">
-
-  <div id="watermark"></div>
-
-  <div id="preview-banner">
-    <div class="banner-text">⚠️ <span>PREVIEW MODE — Unlock to share with your bestie</span></div>
-    <button id="unlock-btn" onclick="openModal()">✦ Generate Shareable Link</button>
-  </div>
 
   <nav id="nav">
     <a href="#" class="nav-logo">NETFLIX</a>
@@ -689,7 +436,7 @@
 
 </div>
 
-<!-- Lightbox — z-index 10000, above watermark (9999) and banner (9998) -->
+<!-- Lightbox -->
 <div id="lightbox">
   <button class="lb-close" id="lb-close-btn">✕</button>
   <button class="lb-nav" id="lb-prev">‹</button>
@@ -698,31 +445,7 @@
   <div id="lb-caption"></div>
 </div>
 
-<!-- Payment Modal -->
-<div id="modal-overlay">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-title">Generate Your NETFLIX Link</div>
-    <div class="modal-subtitle">Share it with your bestie — they get the full experience 🎬</div>
-    <div class="modal-price" id="modal-price"><span>₹149</span></div>
-    <div class="coupon-row">
-      <input type="text" id="coupon-input" placeholder="Enter coupon code">
-      <button id="apply-coupon" onclick="applyCoupon()">Apply</button>
-    </div>
-    <div id="coupon-msg"></div>
-    <button id="pay-btn" onclick="handlePay()">✦ Generate My Link →</button>
-    <div id="share-result">
-      <div id="share-url-box"></div>
-      <button id="copy-btn" onclick="copyLink()">Copy Link</button>
-    </div>
-    <div id="save-error">
-      Something went wrong saving your link. Please try again or contact support.
-    </div>
-  </div>
-</div>
-
 <script>
-// ─── DECODE ───────────────────────────────────────────────────────────────────
 function safeDecode(raw) {
   try {
     const binary = atob(raw);
@@ -734,93 +457,55 @@ function safeDecode(raw) {
   }
 }
 
-// ─── DATA ─────────────────────────────────────────────────────────────────────
 let D = {};
 try {
   const raw = new URLSearchParams(location.search).get('data');
   if (raw) D = safeDecode(raw);
-} catch (e) {
-  console.error('Data parse error — using demo data:', e);
-  D = {
-    recipientName: 'Priya', recipientGender: 'female',
-    senderName: 'Arjun', senderGender: 'male',
-    paid: false, video: null, photos: [],
-    friendshipDuration: '5 Years',
-    groq: {
-      heroTagline: 'A Bond That Defies Time',
-      heroDescription: 'From late-night calls to forever memories.',
-      photoCaptions: [],
-      finalMessage: 'You are not just my best friend — you are the chapter I will always return to.'
-    }
-  };
-}
+} catch (e) { console.error('Data parse error:', e); }
 const groq = D.groq || {};
 
-// ─── AVATAR ───────────────────────────────────────────────────────────────────
 function getAvatar(gender) {
   if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
   if (gender === 'male')   return { emoji: '🥷', bg: '#1a1a2e' };
   return { emoji: '👽', bg: '#0d2b0d' };
 }
 
-// ─── PHASE 1: INTRO VIDEO ────────────────────────────────────────────────────
+// ── Phase 1: Intro video ──────────────────────────────────────────────────────
 (function initIntro() {
   const vid      = document.getElementById('intro-video');
   const wall     = document.getElementById('start-wall');
   const startBtn = document.getElementById('start-btn');
+  vid.src = 'intro.mp4'; vid.preload = 'auto';
 
-  vid.src     = 'intro.mp4';
-  vid.preload = 'auto';
-
-  vid.addEventListener('error', () => {
-    wall.style.display = 'none';
-    goToPhase2();
-  });
-
+  vid.addEventListener('error', () => { wall.style.display = 'none'; goToPhase2(); });
   vid.addEventListener('ended', goToPhase2);
 
   let safetyCutoff;
-
   startBtn.addEventListener('click', () => {
     wall.style.display = 'none';
-    vid.muted       = false;
-    vid.volume      = 1;
-    vid.currentTime = 0;
-
-    const playPromise = vid.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => { safetyCutoff = setTimeout(goToPhase2, 65000); })
-        .catch(err => {
-          console.warn('intro video play() rejected:', err);
-          clearTimeout(safetyCutoff);
-          goToPhase2();
-        });
+    vid.muted = false; vid.volume = 1; vid.currentTime = 0;
+    const p = vid.play();
+    if (p !== undefined) {
+      p.then(() => { safetyCutoff = setTimeout(goToPhase2, 65000); })
+       .catch(() => goToPhase2());
     }
   });
-
   vid.addEventListener('ended', () => clearTimeout(safetyCutoff));
 })();
 
-// ─── PHASE TRANSITIONS ────────────────────────────────────────────────────────
 function goToPhase2() {
   const introFade  = document.getElementById('intro-fade');
   const phaseIntro = document.getElementById('phase-intro');
   const phaseWho   = document.getElementById('phase-who');
-
-  introFade.style.opacity       = '1';
-  introFade.style.pointerEvents = 'auto';
-
+  introFade.style.opacity = '1'; introFade.style.pointerEvents = 'auto';
   setTimeout(() => {
-    phaseIntro.style.display      = 'none';
-    introFade.style.opacity       = '0';
-    introFade.style.pointerEvents = 'none';
-
+    phaseIntro.style.display = 'none';
+    introFade.style.opacity  = '0'; introFade.style.pointerEvents = 'none';
     phaseWho.classList.add('visible');
     requestAnimationFrame(() => requestAnimationFrame(() => {
       phaseWho.classList.add('faded-in');
       setTimeout(() => document.getElementById('card-recipient').classList.add('show'), 100);
-      setTimeout(() => document.getElementById('card-sender').classList.add('show'),    250);
+      setTimeout(() => document.getElementById('card-sender').classList.add('show'), 250);
     }));
   }, 600);
 }
@@ -828,61 +513,38 @@ function goToPhase2() {
 function goToPhase3() {
   const whoFade  = document.getElementById('who-fade');
   const phaseWho = document.getElementById('phase-who');
-
-  whoFade.style.opacity       = '1';
-  whoFade.style.pointerEvents = 'auto';
-
+  whoFade.style.opacity = '1'; whoFade.style.pointerEvents = 'auto';
   setTimeout(() => {
-    phaseWho.style.display      = 'none';
-    whoFade.style.opacity       = '0';
-    whoFade.style.pointerEvents = 'none';
+    phaseWho.style.display  = 'none';
+    whoFade.style.opacity   = '0'; whoFade.style.pointerEvents = 'none';
     document.getElementById('phase-main').classList.add('visible');
     initMain();
   }, 500);
 }
 
-// ─── PHASE 2: WHO'S WATCHING ──────────────────────────────────────────────────
+// ── Phase 2: Who's watching ───────────────────────────────────────────────────
 (function initWho() {
   const ra = getAvatar(D.recipientGender);
   const sa = getAvatar(D.senderGender);
-
   const avR = document.getElementById('avatar-recipient');
-  avR.style.background = ra.bg;
-  avR.textContent      = ra.emoji;
+  avR.style.background = ra.bg; avR.textContent = ra.emoji;
   document.getElementById('name-recipient').textContent = D.recipientName || 'Recipient';
-
   const avS = document.getElementById('avatar-sender');
-  avS.style.background = sa.bg;
-  avS.textContent      = sa.emoji;
+  avS.style.background = sa.bg; avS.textContent = sa.emoji;
   document.getElementById('name-sender').textContent = D.senderName || 'Sender';
-
   document.getElementById('card-recipient').addEventListener('click', goToPhase3);
   document.getElementById('card-sender').addEventListener('click',    goToPhase3);
 })();
 
-// ─── PHASE 3: MAIN ────────────────────────────────────────────────────────────
+// ── Phase 3: Main ─────────────────────────────────────────────────────────────
 function initMain() {
-  const isPaid = D.paid === true || D.paid === 'true';
-
-  if (isPaid) {
-    document.getElementById('watermark').style.display      = 'none';
-    document.getElementById('preview-banner').style.display = 'none';
-  } else {
-    buildWatermark();
-    document.getElementById('nav').style.top = '44px';
-  }
-
-  // Hero video or photo fallback
   if (D.video) {
     const hv = document.createElement('video');
-    hv.className = 'hero-video';
-    hv.src       = D.video;
-    hv.autoplay  = true;
-    hv.muted     = true;
-    hv.loop      = true;
+    hv.className = 'hero-video'; hv.src = D.video;
+    hv.autoplay = true; hv.muted = true; hv.loop = true;
     hv.setAttribute('playsinline', '');
-    const heroSection = document.getElementById('hero-section');
-    heroSection.insertBefore(hv, heroSection.firstChild);
+    const hs = document.getElementById('hero-section');
+    hs.insertBefore(hv, hs.firstChild);
     document.getElementById('hero-fallback').style.display = 'none';
   } else if (D.heroPhoto) {
     const hf = document.getElementById('hero-fallback');
@@ -895,7 +557,6 @@ function initMain() {
   document.getElementById('hero-year').textContent     = new Date().getFullYear();
   document.getElementById('hero-duration').textContent = D.friendshipDuration || '';
   document.getElementById('hero-desc').textContent     = groq.heroDescription || '';
-
   document.getElementById('stat-photos').textContent   = (D.photos && D.photos.length) || '0';
   document.getElementById('stat-duration').textContent = D.friendshipDuration || '—';
 
@@ -909,56 +570,23 @@ function initMain() {
   });
 }
 
-// ─── WATERMARK ────────────────────────────────────────────────────────────────
-function buildWatermark() {
-  const wm   = document.getElementById('watermark');
-  const text = 'NETFLIX PREVIEW';
-  const w    = window.innerWidth;
-  const h    = window.innerHeight;
-  const cols = Math.ceil(w / 200) + 2;
-  const rows = Math.ceil(h / 160) + 6;
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const el = document.createElement('div');
-      el.className   = 'wm-tile';
-      el.textContent = text;
-      el.style.left  = (c * 200 - 100) + 'px';
-      el.style.top   = (r * 120 - 100) + 'px';
-      wm.appendChild(el);
-    }
-  }
-}
-
-// ─── LIGHTBOX ────────────────────────────────────────────────────────────────
-// All functions exposed on window so they work from any call site
-let lbIndex      = 0;
-const lbPhotos   = [];
-const lbCaptions = [];
+// ── Lightbox ──────────────────────────────────────────────────────────────────
+let lbIndex = 0;
+const lbPhotos = [], lbCaptions = [];
 
 function buildMemories() {
   const scroll   = document.getElementById('memories-scroll');
-  const photos   = D.photos   || [];
+  const photos   = D.photos || [];
   const captions = groq.photoCaptions || [];
-
-  if (!photos.length) {
-    scroll.parentElement.style.display = 'none';
-    return;
-  }
-
+  if (!photos.length) { scroll.parentElement.style.display = 'none'; return; }
   photos.forEach((url, i) => {
     lbPhotos.push(url);
     lbCaptions.push((captions[i] && String(captions[i])) || '');
-
-    const card = document.createElement('div');
-    card.className = 'memory-card';
-    const img  = document.createElement('img');
-    img.src = url; img.alt = 'Memory ' + (i + 1); img.loading = 'lazy';
-    const cap  = document.createElement('div');
-    cap.className = 'memory-caption';
-    const span = document.createElement('span');
-    span.textContent = lbCaptions[i];
-    cap.appendChild(span);
-    card.appendChild(img); card.appendChild(cap);
+    const card = document.createElement('div'); card.className = 'memory-card';
+    const img  = document.createElement('img'); img.src = url; img.alt = 'Memory ' + (i+1); img.loading = 'lazy';
+    const cap  = document.createElement('div'); cap.className = 'memory-caption';
+    const span = document.createElement('span'); span.textContent = lbCaptions[i];
+    cap.appendChild(span); card.appendChild(img); card.appendChild(cap);
     card.addEventListener('click', () => openLightbox(i));
     scroll.appendChild(card);
   });
@@ -966,107 +594,45 @@ function buildMemories() {
 
 window.openLightbox = function(i) {
   lbIndex = i;
-  document.getElementById('lb-img').src                = lbPhotos[i];
-  document.getElementById('lb-caption').textContent   = lbCaptions[i] || '';
+  document.getElementById('lb-img').src              = lbPhotos[i];
+  document.getElementById('lb-caption').textContent  = lbCaptions[i] || '';
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 };
-
 window.closeLightbox = function() {
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow = '';
 };
-
 window.lbNav = function(dir) {
   lbIndex = (lbIndex + dir + lbPhotos.length) % lbPhotos.length;
   window.openLightbox(lbIndex);
 };
 
-// Wire lightbox buttons via JS (not inline onclick) for reliability
 document.getElementById('lb-close-btn').addEventListener('click', window.closeLightbox);
 document.getElementById('lb-prev').addEventListener('click', () => window.lbNav(-1));
 document.getElementById('lb-next').addEventListener('click', () => window.lbNav(1));
-
-// Close on backdrop click
 document.getElementById('lightbox').addEventListener('click', function(e) {
   if (e.target === this) window.closeLightbox();
 });
-
-// Keyboard navigation
-document.addEventListener('keydown', e => {
-  if (!document.getElementById('lightbox').classList.contains('open')) return;
-  if (e.key === 'Escape')     window.closeLightbox();
-  if (e.key === 'ArrowLeft')  window.lbNav(-1);
-  if (e.key === 'ArrowRight') window.lbNav(1);
-});
-
-// ─── MODAL / PAYMENT ─────────────────────────────────────────────────────────
-let currentPrice = 149;
-const COUPONS = { NATFREE: 0, BESTIE1: 1, NATFLIX79: 79, NATFLIX129: 129 };
-
-window.openModal  = function() { document.getElementById('modal-overlay').classList.add('open'); };
-window.closeModal = function() { document.getElementById('modal-overlay').classList.remove('open'); };
-document.getElementById('modal-overlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('modal-overlay')) window.closeModal();
-});
-
-
-window.applyCoupon = function() {
-  const code    = document.getElementById('coupon-input').value.trim().toUpperCase();
-  const msg     = document.getElementById('coupon-msg');
-  const priceEl = document.getElementById('modal-price');
-  if (code in COUPONS) {
-    currentPrice      = COUPONS[code];
-    msg.className     = 'success';
-    msg.textContent   = currentPrice === 0 ? '🎉 100% off! This one\'s on us.' : `✓ Coupon applied — ₹${currentPrice} only!`;
-    priceEl.innerHTML = `<span>₹${currentPrice}</span><span class="price-strike">₹149</span>`;
-  } else {
-    msg.className   = 'error';
-    msg.textContent = 'Invalid coupon code.';
-  }
-};
-
-window.handlePay = function() {
-  if (currentPrice === 0) { onPaymentSuccess(); return; }
-  const key = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.RAZORPAY_KEY) || '';
-  if (!key) { alert('Payment config not found. Please check config.js (RAZORPAY_KEY).'); return; }
-  const options = {
-    key, amount: currentPrice * 100, currency: 'INR',
-    name: 'NETFLIX', description: 'Generate Shareable Link',
-    theme: { color: '#E50914' }, handler: onPaymentSuccess,
-  };
-  try { const rzp = new Razorpay(options); rzp.open(); }
-  catch (e) { alert('Could not open payment. Please try again.'); }
-};
-
-async function onPaymentSuccess() {
-  D.paid = true;
-  const btn = document.getElementById('pay-btn');
-  const saveError = document.getElementById('save-error');
-  btn.textContent = 'Saving…'; btn.disabled = true;
-  saveError.style.display = 'none';
+// ── Auto-save when paid=true ─────────────────────────────────────────────────
+(async function autoSave() {
+  if (D.paid !== true && D.paid !== 'true') return;
   try {
     const resp = await fetch('/api/save', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(D),
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(D)
     });
-    if (!resp.ok) throw new Error(`Server responded with ${resp.status}`);
+    if (!resp.ok) throw new Error('Save failed');
     const data = await resp.json();
-    if (!data.id) throw new Error('No ID returned');
-    const shareUrl = `${window.location.origin}/watching?id=${data.id}`;
-    document.getElementById('share-url-box').textContent  = shareUrl;
-    document.getElementById('share-result').style.display = 'block';
-    btn.style.display = 'none';
-    const wm = document.getElementById('watermark');
-    if (wm) wm.remove();
-    const banner = document.getElementById('preview-banner');
-    if (banner) banner.style.display = 'none';
-    document.getElementById('nav').style.top = '';
+    if (!data.id) throw new Error('No ID');
+    const shareUrl = window.location.origin + '/watching?id=' + data.id;
+    document.getElementById('share-url-box').textContent = shareUrl;
+    const bar = document.getElementById('share-bar');
+    bar.style.display = 'flex';
   } catch (err) {
-    console.error('Save error:', err);
-    btn.textContent = '✦ Generate My Link →'; btn.disabled = false;
-    saveError.style.display = 'block';
+    console.error('Auto-save failed:', err);
   }
-}
+})();
 
 window.copyLink = function() {
   const url = document.getElementById('share-url-box').textContent;
@@ -1081,7 +647,21 @@ window.copyLink = function() {
     document.execCommand('copy'); document.body.removeChild(ta);
   });
 };
-</script>
 
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape')     window.closeLightbox();
+  if (e.key === 'ArrowLeft')  window.lbNav(-1);
+  if (e.key === 'ArrowRight') window.lbNav(1);
+});
+</script>
+<!-- Share Bar -->
+<div id="share-bar" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9000;background:#0d0d0d;border-top:1px solid #2a2a2a;padding:14px 24px;display:none;align-items:center;gap:12px;flex-wrap:wrap;">
+  <div style="flex:1;min-width:0;">
+    <div style="font-family:Bebas Neue,cursive;font-size:0.7rem;letter-spacing:0.2em;color:#E50914;margin-bottom:4px;">YOUR SHAREABLE LINK</div>
+    <div id="share-url-box" style="font-size:0.78rem;color:#888;word-break:break-all;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+  </div>
+  <button id="copy-btn" onclick="copyLink()" style="background:#E50914;color:#fff;border:none;border-radius:6px;padding:11px 24px;font-family:Bebas Neue,cursive;font-size:1rem;letter-spacing:2px;cursor:pointer;flex-shrink:0;white-space:nowrap;">Copy Link</button>
+</div>
 </body>
 </html>
