@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NATFLIX</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,9 +73,12 @@
     object-fit: cover;
   }
 
-  .hero-bg-fallback {
+  /* Hero background — works for both gradient fallback and photo */
+  #heroBgFallback {
     position: absolute; inset: 0;
     background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%);
+    background-size: cover;
+    background-position: center;
   }
 
   .hero-overlay {
@@ -97,12 +100,22 @@
     font-variant: small-caps; margin-bottom: 10px;
     opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.6s 0.1s forwards;
+    display: flex; align-items: center; gap: 8px;
   }
-  .hero-label span { font-family: 'Bebas Neue', sans-serif; color: var(--red); font-size: 1rem; }
+  .hero-label::before {
+    content: 'N';
+    display: inline-flex;
+    background: var(--red); color: #fff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    width: 20px; height: 20px;
+    align-items: center; justify-content: center;
+    border-radius: 3px;
+  }
 
   .hero-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(3rem, 7vw, 6rem);
+    font-size: clamp(2.2rem, 6vw, 5.5rem);
     line-height: 0.95; letter-spacing: 1px; margin-bottom: 16px;
     opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.6s 0.2s forwards;
@@ -123,7 +136,7 @@
   .meta-dot    { color: var(--grey); }
 
   .hero-desc {
-    font-size: 1rem; color: var(--text); line-height: 1.65;
+    font-size: 0.95rem; color: var(--text); line-height: 1.65;
     margin-bottom: 28px;
     opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.6s 0.4s forwards;
@@ -137,8 +150,8 @@
 
   .btn {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 28px; border-radius: 5px;
-    font-size: 1rem; font-weight: 700; cursor: pointer; border: none;
+    padding: 11px 24px; border-radius: 5px;
+    font-size: 0.95rem; font-weight: 700; cursor: pointer; border: none;
     font-family: 'DM Sans', sans-serif;
     transition: opacity 0.2s, transform 0.2s;
     text-decoration: none;
@@ -153,21 +166,23 @@
   .content {
     position: relative; z-index: 10;
     background: var(--bg);
-    margin-top: -120px; padding-bottom: 80px;
+    margin-top: -80px; padding-bottom: 80px;
   }
 
   /* STATS */
   .stats-row {
-    display: flex; gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
     padding: 0 48px; margin-bottom: 48px;
   }
   .stat-card {
-    flex: 1; background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; padding: 24px; text-align: center; min-width: 0;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; text-align: center;
   }
   .stat-number {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 3rem; color: var(--red); line-height: 1; margin-bottom: 8px;
+    font-size: 2.8rem; color: var(--red); line-height: 1; margin-bottom: 8px;
   }
   .stat-label {
     color: var(--grey); font-size: 0.72rem;
@@ -186,7 +201,7 @@
   .photos-scroll::-webkit-scrollbar { display: none; }
 
   .photo-card {
-    flex-shrink: 0; width: 220px; height: 150px;
+    flex-shrink: 0; width: 200px; height: 140px;
     border-radius: 5px; overflow: hidden;
     cursor: pointer; background: #222; position: relative;
   }
@@ -294,17 +309,45 @@
   }
   footer span { color: var(--red); }
 
-  /* MOBILE */
+  /* ── MOBILE ── */
   @media (max-width: 640px) {
-    nav { padding: 0 20px; }
+    nav { padding: 0 16px; height: 54px; }
     .nav-links { display: none; }
-    .hero-content { padding: 0 20px 60px; }
-    .content { margin-top: -80px; }
-    .stats-row { padding: 0 20px; flex-wrap: wrap; gap: 12px; }
-    .stat-card { min-width: calc(50% - 6px); flex: none; }
-    .row-section { padding: 0 20px; }
-    .photo-card { width: 160px; height: 115px; }
-    .final-message { margin: 20px 20px; padding: 36px 24px; }
+    .nav-avatar { width: 36px; height: 36px; font-size: 18px; }
+
+    .hero { height: 100svh; }
+    .hero-content { padding: 0 16px 36px; max-width: 100%; }
+    .hero-title { font-size: clamp(2rem, 9vw, 3rem); line-height: 1; }
+    .hero-desc { font-size: 0.85rem; margin-bottom: 18px; }
+    .hero-meta { font-size: 0.8rem; gap: 8px; }
+    .btn { padding: 10px 18px; font-size: 0.85rem; }
+
+    .content { margin-top: -60px; }
+
+    /* Stats: 2x2 grid on mobile */
+    .stats-row {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 0 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card { padding: 16px 12px; }
+    .stat-number { font-size: 2rem; }
+    .stat-label { font-size: 0.65rem; }
+
+    .row-section { padding: 0 16px; margin-bottom: 28px; }
+    .row-title { font-size: 0.95rem; }
+    .photo-card { width: 150px; height: 105px; }
+
+    .final-message {
+      margin: 16px 16px;
+      padding: 32px 20px;
+    }
+    .msg-text { font-size: 0.95rem; }
+    .deco-heart { font-size: 7rem; }
+    .deco-clap  { font-size: 5rem; }
+
+    footer { padding: 28px 16px; font-size: 0.75rem; }
   }
 </style>
 </head>
@@ -323,11 +366,11 @@
 
 <!-- HERO -->
 <section class="hero" id="hero">
-  <div class="hero-bg-fallback" id="heroBgFallback"></div>
+  <div id="heroBgFallback"></div>
   <video id="heroVideo" autoplay muted loop playsinline style="display:none"></video>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-label"><span>N</span> &nbsp;Friendship Special</div>
+    <div class="hero-label">Friendship Special</div>
     <div class="hero-title" id="heroTagline">A Story Worth Watching</div>
     <div class="hero-meta">
       <span class="meta-match">98% Match</span>
@@ -337,8 +380,8 @@
     </div>
     <div class="hero-desc" id="heroDesc">A beautiful friendship, crafted with care and curated just for you.</div>
     <div class="hero-btns">
-      <button class="btn btn-white" onclick="document.getElementById('memories').scrollIntoView({behavior:'smooth'})">▶ &nbsp;Play Memories</button>
-      <button class="btn btn-grey"  onclick="document.getElementById('final').scrollIntoView({behavior:'smooth'})">ⓘ &nbsp;Our Story</button>
+      <button class="btn btn-white" onclick="document.getElementById('memories').scrollIntoView({behavior:'smooth'})">▶ Play Memories</button>
+      <button class="btn btn-grey"  onclick="document.getElementById('final').scrollIntoView({behavior:'smooth'})">ⓘ Our Story</button>
     </div>
   </div>
 </section>
@@ -346,7 +389,7 @@
 <!-- CONTENT -->
 <div class="content">
 
-  <div class="stats-row fade-in" id="statsRow">
+  <div class="stats-row fade-in">
     <div class="stat-card">
       <div class="stat-number" id="statPhotos">0</div>
       <div class="stat-label">Memories Captured</div>
@@ -365,19 +408,16 @@
     </div>
   </div>
 
-  <!-- Memories row 1 (first 5) -->
   <div class="row-section fade-in" id="memories">
     <div class="row-title">📸 Our Memories</div>
     <div class="photos-scroll" id="photosRow1"></div>
   </div>
 
-  <!-- Memories row 2 (photos 6-10, hidden if not needed) -->
   <div class="row-section fade-in" id="row2Section" style="display:none">
     <div class="row-title">⭐ Best Moments</div>
     <div class="photos-scroll" id="photosRow2"></div>
   </div>
 
-  <!-- Final message -->
   <div class="final-message fade-in" id="final">
     <div class="deco-clap">🎬</div>
     <div class="deco-heart">❤️</div>
@@ -389,7 +429,6 @@
 
 </div>
 
-<!-- FOOTER -->
 <footer>Made with <span>♥</span> on NATFLIX · Streaming Friendship Since Forever</footer>
 
 <!-- LIGHTBOX -->
@@ -406,18 +445,13 @@
 <script>
 (function () {
 
-// ─── ENCODING HELPERS ─────────────────────────────────────────────────────────
-// FIX (Bug 3): decode must mirror safeEncode from index.html exactly.
-// index.html uses TextEncoder → btoa, so we decode with atob → TextDecoder.
 function safeDecode(raw) {
   try {
-    // Modern path — exact mirror of TextEncoder encode in index.html
     const binary = atob(raw);
     const bytes  = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
     return JSON.parse(new TextDecoder().decode(bytes));
   } catch (_) {
-    // Legacy fallback — mirror of unescape(encodeURIComponent()) in index.html
     return JSON.parse(decodeURIComponent(escape(atob(raw))));
   }
 }
@@ -426,23 +460,20 @@ function safeDecode(raw) {
 let D = {};
 try {
   const raw = new URLSearchParams(location.search).get('data');
-  if (raw) {
-    D = safeDecode(raw);
-  }
+  if (raw) D = safeDecode(raw);
 } catch (e) {
   console.error('home.html: data parse error:', e);
-  // Demo fallback
   D = {
-    recipientGender:    'female',
-    video:              '',
+    recipientGender: 'female',
+    video: '',
     friendshipDuration: '5 Years',
-    senderName:         'Your Best Friend',
-    photos:             [],
+    senderName: 'Your Best Friend',
+    photos: [],
     groq: {
-      heroTagline:     'The Greatest Story\nEver Told',
-      heroDescription: "A friendship so legendary, even Netflix couldn't make it up. This one's real, and it's all ours.",
-      photoCaptions:   [],
-      finalMessage:    "Every memory we've made together is a scene worth replaying. Here's to all the ones still ahead."
+      heroTagline: 'The Greatest Story\nEver Told',
+      heroDescription: "A friendship so legendary, even Netflix couldn't make it up.",
+      photoCaptions: [],
+      finalMessage: "Every memory we've made together is a scene worth replaying."
     }
   };
 }
@@ -455,8 +486,7 @@ function getAvatar(gender) {
   if (gender === 'male')   return { emoji: '🥷', bg: '#1a1a2e' };
   return { emoji: '👽', bg: '#0d2b0d' };
 }
-
-const av        = getAvatar(D.recipientGender);
+const av = getAvatar(D.recipientGender);
 const navAvatar = document.getElementById('navAvatar');
 navAvatar.textContent      = av.emoji;
 navAvatar.style.background = av.bg;
@@ -466,26 +496,31 @@ window.addEventListener('scroll', () => {
   document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
 });
 
-// ─── HERO VIDEO ───────────────────────────────────────────────────────────────
+// ─── HERO: video OR photo fallback ───────────────────────────────────────────
+const heroBg = document.getElementById('heroBgFallback');
+
 if (D.video) {
-  const vid         = document.getElementById('heroVideo');
-  vid.src           = D.video;
+  // Has video — play it, hide the fallback bg
+  const vid     = document.getElementById('heroVideo');
+  vid.src        = D.video;
   vid.style.display = 'block';
-  document.getElementById('heroBgFallback').style.display = 'none';
-}
-// After: if (D.video) { ... }
-// Add:
-if (!D.video && D.heroPhoto) {
-  const hf = document.getElementById('hero-fallback'); // or heroBgFallback
-  hf.style.backgroundImage = `url('${D.heroPhoto}')`;
-  hf.style.backgroundSize = 'cover';
-  hf.style.backgroundPosition = 'center';
+  heroBg.style.display = 'none';
+} else if (D.heroPhoto) {
+  // No video but has a photo — use it as hero background
+  heroBg.style.backgroundImage    = `url('${D.heroPhoto}')`;
+  heroBg.style.backgroundSize     = 'cover';
+  heroBg.style.backgroundPosition = 'center top';
+  // keep the dark gradient overlay so text stays readable
+} else if (D.photos && D.photos[0]) {
+  // Fallback: use first photo if heroPhoto wasn't set
+  heroBg.style.backgroundImage    = `url('${D.photos[0]}')`;
+  heroBg.style.backgroundSize     = 'cover';
+  heroBg.style.backgroundPosition = 'center top';
 }
 
 // ─── HERO CONTENT ─────────────────────────────────────────────────────────────
 if (groq.heroTagline)     document.getElementById('heroTagline').textContent = groq.heroTagline;
 if (groq.heroDescription) document.getElementById('heroDesc').textContent    = groq.heroDescription;
-
 document.getElementById('heroYear').textContent     = new Date().getFullYear();
 document.getElementById('heroDuration').textContent = D.friendshipDuration || '';
 
@@ -495,10 +530,8 @@ document.getElementById('statPhotos').textContent   = photos.length || '∞';
 document.getElementById('statDuration').textContent = D.friendshipDuration || '∞';
 
 // ─── PHOTO ROWS ───────────────────────────────────────────────────────────────
-// FIX (Bug 4): guard null/undefined captions
-const captions  = Array.isArray(groq.photoCaptions) ? groq.photoCaptions : [];
-const allPhotos   = photos;
-const allCaptions = allPhotos.map((_, i) =>
+const captions    = Array.isArray(groq.photoCaptions) ? groq.photoCaptions : [];
+const allCaptions = photos.map((_, i) =>
   (captions[i] && String(captions[i])) || `Memory #${i + 1}`
 );
 
@@ -522,15 +555,14 @@ const row1        = document.getElementById('photosRow1');
 const row2        = document.getElementById('photosRow2');
 const row2Section = document.getElementById('row2Section');
 
-allPhotos.forEach((src, i) => {
+photos.forEach((src, i) => {
   const card = makeCard(src, allCaptions[i], i);
   if (i < 5) row1.appendChild(card);
   else        row2.appendChild(card);
 });
 
-if (allPhotos.length > 5) row2Section.style.display = 'block';
-if (allPhotos.length === 0) {
-  // Hide memories section entirely if no photos
+if (photos.length > 5) row2Section.style.display = 'block';
+if (photos.length === 0) {
   document.getElementById('memories').style.display = 'none';
 }
 
@@ -538,9 +570,8 @@ if (allPhotos.length === 0) {
 if (groq.finalMessage) document.getElementById('finalMsg').textContent  = groq.finalMessage;
 if (D.senderName)      document.getElementById('senderName').textContent = `— ${D.senderName}`;
 
-// Dynamic date
-const now      = new Date();
-const dateStr  = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+const now     = new Date();
+const dateStr = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 document.getElementById('msgDate').textContent = dateStr;
 
 // ─── LIGHTBOX ─────────────────────────────────────────────────────────────────
@@ -550,25 +581,21 @@ function openLightbox(index) {
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
 function closeLightbox() {
   lightbox.classList.remove('open');
   document.body.style.overflow = '';
 }
-
 function updateLightbox() {
-  if (!allPhotos.length) return;
-  lbImg.src            = allPhotos[currentIndex];
+  if (!photos.length) return;
+  lbImg.src             = photos[currentIndex];
   lbCaption.textContent = allCaptions[currentIndex];
 }
-
 function prevPhoto() {
-  currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
+  currentIndex = (currentIndex - 1 + photos.length) % photos.length;
   updateLightbox();
 }
-
 function nextPhoto() {
-  currentIndex = (currentIndex + 1) % allPhotos.length;
+  currentIndex = (currentIndex + 1) % photos.length;
   updateLightbox();
 }
 
@@ -576,12 +603,11 @@ document.getElementById('lbClose').addEventListener('click', closeLightbox);
 document.getElementById('lbLeft').addEventListener('click',  prevPhoto);
 document.getElementById('lbRight').addEventListener('click', nextPhoto);
 lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
-
 document.addEventListener('keydown', e => {
   if (!lightbox.classList.contains('open')) return;
-  if (e.key === 'Escape')      closeLightbox();
-  if (e.key === 'ArrowLeft')   prevPhoto();
-  if (e.key === 'ArrowRight')  nextPhoto();
+  if (e.key === 'Escape')     closeLightbox();
+  if (e.key === 'ArrowLeft')  prevPhoto();
+  if (e.key === 'ArrowRight') nextPhoto();
 });
 
 // ─── SCROLL ANIMATIONS ────────────────────────────────────────────────────────
@@ -590,7 +616,6 @@ const observer = new IntersectionObserver(entries => {
     if (entry.isIntersecting) entry.target.classList.add('visible');
   });
 }, { threshold: 0.1 });
-
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
 })();
