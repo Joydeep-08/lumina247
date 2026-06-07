@@ -518,10 +518,14 @@
         <button id="copy-btn" onclick="copyLink()">Copy Link</button>
       </div>
       <div id="save-error">
-        Something went wrong. <span id="retry-hint">Tap below to retry uploading — you will <strong>not</strong> be charged again.</span>
+        <strong id="error-message">Something went wrong.</strong><br>
+        <span style="font-size:0.78rem;color:#888;">Tap below to retry — you will <strong>not</strong> be charged again.</span>
         <br><br>
         <button onclick="retryUpload()" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:10px 24px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;cursor:pointer;margin-top:4px;">Retry Upload</button>
       </div>
+
+      <!-- Debug log visible on screen -->
+      <div id="debug-log" style="display:none;margin-top:16px;background:#0a0a0a;border:1px solid #222;border-radius:8px;padding:12px 14px;font-size:0.72rem;color:#666;line-height:1.8;text-align:left;font-family:monospace;max-height:200px;overflow-y:auto;position:relative;z-index:1;word-break:break-all;"></div>
     </div>
   </div>
 
@@ -768,10 +772,13 @@ async function runUploadAndFinalise() {
     await uploadAllAssets();
   } catch (err) {
     console.error('Upload error:', err);
-    showToast('Upload failed — tap Retry Upload below. You will NOT be charged again.');
+    const errMsg = err.message || 'Unknown error';
+    debugLog('UPLOAD FAILED: ' + errMsg);
+    showToast('Upload failed — see error below. You will NOT be charged again.');
+    const em = document.getElementById('error-message');
+    if (em) em.textContent = 'Upload failed: ' + errMsg;
     btn.disabled = false;
     btn.innerHTML = '<span>↺</span> Retry Upload';
-    document.getElementById('retry-hint').style.display = '';
     saveError.style.display = 'block';
     return;
   }
@@ -878,61 +885,136 @@ window.retryUpload = function() {
 };
 
 // ─── UPLOAD ──────────────────────────────────────────────────────────────────
+function debugLog(msg) {
+  console.log('[NATFLIX]', msg);
+  const box = document.getElementById('debug-log');
+  if (box) {
+    const line = document.createElement('div');
+    line.textContent = new Date().toLocaleTimeString() + ' — ' + msg;
+    box.appendChild(line);
+    box.style.display = 'block';
+  }
+}
+
 async function uploadAllAssets() {
-  if (!CLOUDINARY_CLOUD || !PHOTO_PRESET) throw new Error('Cloudinary not configured.');
+  debugLog(`Starting upload. Cloud="${CLOUDINARY_CLOUD}" Preset="${PHOTO_PRESET}" Photos=${state.photos.length} Video=${!!state.video}`);
+
+  if (!CLOUDINARY_CLOUD) throw new Error('CLOUD_NAME is empty — check your config.js / env vars');
+  if (!PHOTO_PRESET)     throw new Error('UPLOAD_PRESET is empty — check your config.js / env vars');
+
   const progressWrap = document.getElementById('upload-progress');
   const bar          = document.getElementById('upo-bar');
   const label        = document.getElementById('upo-label');
   progressWrap.classList.add('active');
+
   const total = state.photos.length + (state.video ? 1 : 0);
   let done = 0;
   function setProgress(pct) { bar.style.width = pct + '%'; }
   function tick() { done++; setProgress(Math.round((done / total) * 100)); }
 
   for (let i = 0; i < state.photos.length; i++) {
-    // Skip already-uploaded photos (safe to retry)
-    if (state.photos[i].cloudUrl) { tick(); continue; }
+    if (state.photos[i].cloudUrl) {
+      debugLog(`Photo ${i+1} already uploaded — skipping`);
+      tick(); continue;
+    }
+
     label.textContent = `Uploading photo ${i + 1} of ${state.photos.length}…`;
     const maxBytes   = i === 0 ? HERO_PHOTO_BYTES : OTHER_PHOTO_BYTES;
     let   uploadFile = state.photos[i].file;
+    debugLog(`Photo ${i+1}: "${uploadFile.name}" size=${(uploadFile.size/1024).toFixed(0)}KB type=${uploadFile.type}`);
+
     if (uploadFile.size > maxBytes) {
       try {
+        debugLog(`Compressing photo ${i+1} (${(uploadFile.size/1024).toFixed(0)}KB → max ${(maxBytes/1024).toFixed(0)}KB)…`);
         const blob = await compressImage(uploadFile, maxBytes);
         uploadFile = new File([blob], uploadFile.name.replace(/\.[^.]+$/, '') + '_c.jpg', { type: 'image/jpeg' });
-      } catch (e) { console.warn('Compress failed:', e); }
+        debugLog(`Compressed to ${(blob.size/1024).toFixed(0)}KB`);
+      } catch (e) {
+        debugLog(`Compress failed: ${e.message} — uploading original`);
+      }
     }
+
     const fd = new FormData();
-    fd.append('file', uploadFile); fd.append('upload_preset', PHOTO_PRESET);
+    fd.append('file', uploadFile);
+    fd.append('upload_preset', PHOTO_PRESET);
+
     const result = await new Promise((res, rej) => {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
-      xhr.onload  = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error(`Photo upload failed: ${xhr.status}`));
-      xhr.onerror = () => rej(new Error('Network error uploading photo ' + (i+1)));
+      xhr.timeout = 60000; // 60s timeout per photo
+      xhr.ontimeout = () => rej(new Error(`Photo ${i+1} upload timed out after 60s`));
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          let parsed;
+          try { parsed = JSON.parse(xhr.responseText); } catch(_) {
+            rej(new Error(`Photo ${i+1} — bad JSON response`)); return;
+          }
+          if (parsed.secure_url) {
+            debugLog(`Photo ${i+1} uploaded ✓ → ${parsed.secure_url.slice(0,60)}…`);
+            res(parsed);
+          } else {
+            const errMsg = parsed.error?.message || JSON.stringify(parsed);
+            rej(new Error(`Photo ${i+1} Cloudinary error: ${errMsg}`));
+          }
+        } else {
+          let errDetail = xhr.responseText;
+          try { errDetail = JSON.parse(xhr.responseText).error?.message || errDetail; } catch(_) {}
+          rej(new Error(`Photo ${i+1} HTTP ${xhr.status}: ${errDetail}`));
+        }
+      };
+      xhr.onerror = () => rej(new Error(`Photo ${i+1}: network error (no internet or CORS blocked)`));
       xhr.send(fd);
     });
+
     state.photos[i].cloudUrl = result.secure_url;
     tick();
   }
 
   if (state.video && state.video.file && !state.video.cloudUrl) {
     label.textContent = 'Uploading video…';
+    debugLog(`Video: "${state.video.file.name}" size=${(state.video.file.size/1024).toFixed(0)}KB`);
+
     const fd = new FormData();
-    fd.append('file', state.video.file); fd.append('upload_preset', VIDEO_PRESET);
+    fd.append('file', state.video.file);
+    fd.append('upload_preset', VIDEO_PRESET);
+
     const result = await new Promise((res, rej) => {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
+      xhr.timeout = 120000;
+      xhr.ontimeout = () => rej(new Error('Video upload timed out after 120s'));
       xhr.upload.addEventListener('progress', e => {
         if (e.lengthComputable) setProgress(Math.round(((done + e.loaded / e.total) / total) * 100));
       });
-      xhr.onload  = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error(`Video upload failed: ${xhr.status}`));
-      xhr.onerror = () => rej(new Error('Network error uploading video'));
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          let parsed;
+          try { parsed = JSON.parse(xhr.responseText); } catch(_) {
+            rej(new Error('Video — bad JSON response')); return;
+          }
+          if (parsed.secure_url) {
+            debugLog(`Video uploaded ✓ → ${parsed.secure_url.slice(0,60)}…`);
+            res(parsed);
+          } else {
+            const errMsg = parsed.error?.message || JSON.stringify(parsed);
+            rej(new Error(`Video Cloudinary error: ${errMsg}`));
+          }
+        } else {
+          let errDetail = xhr.responseText;
+          try { errDetail = JSON.parse(xhr.responseText).error?.message || errDetail; } catch(_) {}
+          rej(new Error(`Video HTTP ${xhr.status}: ${errDetail}`));
+        }
+      };
+      xhr.onerror = () => rej(new Error('Video: network error (no internet or CORS blocked)'));
       xhr.send(fd);
     });
+
     state.video.cloudUrl = result.secure_url;
     tick();
   }
 
   setProgress(100);
+  debugLog('All uploads complete ✓');
   setTimeout(() => progressWrap.classList.remove('active'), 600);
 }
 
