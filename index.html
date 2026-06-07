@@ -275,7 +275,7 @@
   .pay-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   .pay-secure { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 16px; font-size: 0.72rem; color: #444; position: relative; z-index: 1; }
 
-  /* RECOVERY BANNER — shows if a session already exists */
+  /* RECOVERY BANNER */
   #recovery-banner {
     display: none; background: rgba(70,211,105,0.08); border: 1px solid rgba(70,211,105,0.2);
     border-radius: 10px; padding: 14px 20px; margin-bottom: 16px;
@@ -348,7 +348,7 @@
     </div>
   </div>
   <a class="example-btn" href="#" onclick="openExampleModal(); return false;">
-    <span class="example-btn-icon">▶</span> See Example
+    <span>▶</span> See Example
   </a>
 </div>
 
@@ -524,7 +524,6 @@
         <button onclick="retryUpload()" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:10px 24px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;cursor:pointer;margin-top:4px;">Retry Upload</button>
       </div>
 
-      <!-- Debug log visible on screen -->
       <div id="debug-log" style="display:none;margin-top:16px;background:#0a0a0a;border:1px solid #222;border-radius:8px;padding:12px 14px;font-size:0.72rem;color:#666;line-height:1.8;text-align:left;font-family:monospace;max-height:200px;overflow-y:auto;position:relative;z-index:1;word-break:break-all;"></div>
     </div>
   </div>
@@ -544,8 +543,8 @@ const MAX_VIDEO_BYTES   = 2.5 * 1024 * 1024;
 const COUPONS = { NALALATFREE: 0, BESTIE1: 1, NATFLAAIX79: 79, NATFLIX129: 129 };
 
 let currentPrice  = 149;
-let activeSession = null;   // { sessionId, formData } — set once payment is confirmed
-let postPayFormData = null; // form snapshot at payment time, for retry
+let activeSession = null;
+let postPayFormData = null;
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 const state = { photos: [], video: null };
@@ -694,14 +693,12 @@ function validateForm() {
 
 // ─── PAY ─────────────────────────────────────────────────────────────────────
 window.handlePay = function() {
-  // If we already have a session (payment went through but upload failed), go straight to retry
   if (activeSession) { retryUpload(); return; }
 
   const formData = validateForm();
   if (!formData) return;
 
   if (currentPrice === 0) {
-    // Free coupon — claim a session with a fake payment ID
     onPaymentSuccess('FREE_' + Date.now(), formData);
     return;
   }
@@ -716,7 +713,6 @@ window.handlePay = function() {
     name: 'NETFLIX',
     description: 'Generate Shareable Friendship Link',
     theme: { color: '#E50914' },
-    // *** handler fires EXACTLY ONCE per successful payment ***
     handler: (response) => {
       const paymentId = response.razorpay_payment_id;
       onPaymentSuccess(paymentId, formData);
@@ -726,7 +722,7 @@ window.handlePay = function() {
   catch (e) { alert('Could not open payment. Please try again.'); }
 };
 
-// ─── POST-PAYMENT: CLAIM → UPLOAD → AI → FINALISE ────────────────────────────
+// ─── POST-PAYMENT ────────────────────────────────────────────────────────────
 async function onPaymentSuccess(paymentId, formData) {
   const btn       = document.getElementById('pay-btn');
   const saveError = document.getElementById('save-error');
@@ -734,7 +730,6 @@ async function onPaymentSuccess(paymentId, formData) {
   btn.innerHTML   = '<span>⏳</span> Saving your session…';
   saveError.style.display = 'none';
 
-  // 1. CLAIM — save stub immediately so we have a session even if uploads fail
   try {
     const claimResp = await fetch('/api/claim', {
       method: 'POST',
@@ -745,7 +740,6 @@ async function onPaymentSuccess(paymentId, formData) {
     const { sessionId } = await claimResp.json();
     activeSession = { sessionId, formData };
     postPayFormData = formData;
-    // Store in sessionStorage so a page reload can recover
     try { sessionStorage.setItem('nf_session', JSON.stringify({ sessionId, paymentId, formData })); } catch(_) {}
   } catch (err) {
     console.error('Claim error:', err);
@@ -755,7 +749,6 @@ async function onPaymentSuccess(paymentId, formData) {
     return;
   }
 
-  // 2. UPLOAD + AI + FINALISE
   await runUploadAndFinalise();
 }
 
@@ -767,7 +760,6 @@ async function runUploadAndFinalise() {
   btn.innerHTML   = '<span>⏳</span> Uploading…';
   saveError.style.display = 'none';
 
-  // 2a. Upload assets to Cloudinary
   try {
     await uploadAllAssets();
   } catch (err) {
@@ -785,7 +777,6 @@ async function runUploadAndFinalise() {
 
   btn.innerHTML = '<span>⏳</span> Generating your film…';
 
-  // 2b. AI copy via Groq
   const uploadedPhotos = state.photos.filter(p => p.cloudUrl);
   const hasVideo       = state.video && state.video.cloudUrl;
   let tone = 'warm, genuine, heartfelt';
@@ -841,7 +832,6 @@ Return ONLY valid JSON:
     console.warn('Groq failed, using fallback:', err.message);
   }
 
-  // 2c. Finalise — merge full payload into the stub
   const payload = {
     sessionId,
     ...formData,
@@ -878,13 +868,12 @@ Return ONLY valid JSON:
   }
 }
 
-// Retry button — skips Razorpay, re-uses existing session
 window.retryUpload = function() {
   if (!activeSession) return;
   runUploadAndFinalise();
 };
 
-// ─── UPLOAD ──────────────────────────────────────────────────────────────────
+// ─── DEBUG LOG ────────────────────────────────────────────────────────────────
 function debugLog(msg) {
   console.log('[NATFLIX]', msg);
   const box = document.getElementById('debug-log');
@@ -893,9 +882,11 @@ function debugLog(msg) {
     line.textContent = new Date().toLocaleTimeString() + ' — ' + msg;
     box.appendChild(line);
     box.style.display = 'block';
+    box.scrollTop = box.scrollHeight;
   }
 }
 
+// ─── UPLOAD ALL ASSETS ────────────────────────────────────────────────────────
 async function uploadAllAssets() {
   debugLog(`Starting upload. Cloud="${CLOUDINARY_CLOUD}" Preset="${PHOTO_PRESET}" Photos=${state.photos.length} Video=${!!state.video}`);
 
@@ -909,9 +900,10 @@ async function uploadAllAssets() {
 
   const total = state.photos.length + (state.video ? 1 : 0);
   let done = 0;
-  function setProgress(pct) { bar.style.width = pct + '%'; }
+  function setProgress(pct) { bar.style.width = Math.min(pct, 100) + '%'; }
   function tick() { done++; setProgress(Math.round((done / total) * 100)); }
 
+  // ── PHOTOS ────────────────────────────────────────────────────────────────
   for (let i = 0; i < state.photos.length; i++) {
     if (state.photos[i].cloudUrl) {
       debugLog(`Photo ${i+1} already uploaded — skipping`);
@@ -938,38 +930,19 @@ async function uploadAllAssets() {
     fd.append('file', uploadFile);
     fd.append('upload_preset', PHOTO_PRESET);
 
-    const result = await new Promise((res, rej) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
-      xhr.timeout = 60000; // 60s timeout per photo
-      xhr.ontimeout = () => rej(new Error(`Photo ${i+1} upload timed out after 60s`));
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          let parsed;
-          try { parsed = JSON.parse(xhr.responseText); } catch(_) {
-            rej(new Error(`Photo ${i+1} — bad JSON response`)); return;
-          }
-          if (parsed.secure_url) {
-            debugLog(`Photo ${i+1} uploaded ✓ → ${parsed.secure_url.slice(0,60)}…`);
-            res(parsed);
-          } else {
-            const errMsg = parsed.error?.message || JSON.stringify(parsed);
-            rej(new Error(`Photo ${i+1} Cloudinary error: ${errMsg}`));
-          }
-        } else {
-          let errDetail = xhr.responseText;
-          try { errDetail = JSON.parse(xhr.responseText).error?.message || errDetail; } catch(_) {}
-          rej(new Error(`Photo ${i+1} HTTP ${xhr.status}: ${errDetail}`));
-        }
-      };
-      xhr.onerror = () => rej(new Error(`Photo ${i+1}: network error (no internet or CORS blocked)`));
-      xhr.send(fd);
-    });
+    const result = await xhrUploadWithRetry(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
+      fd,
+      { label: `Photo ${i+1}`, retries: 3, timeout: 60000,
+        onProgress: null }
+    );
 
     state.photos[i].cloudUrl = result.secure_url;
+    debugLog(`Photo ${i+1} uploaded ✓ → ${result.secure_url.slice(0,60)}…`);
     tick();
   }
 
+  // ── VIDEO ─────────────────────────────────────────────────────────────────
   if (state.video && state.video.file && !state.video.cloudUrl) {
     label.textContent = 'Uploading video…';
     debugLog(`Video: "${state.video.file.name}" size=${(state.video.file.size/1024).toFixed(0)}KB`);
@@ -978,44 +951,99 @@ async function uploadAllAssets() {
     fd.append('file', state.video.file);
     fd.append('upload_preset', VIDEO_PRESET);
 
-    const result = await new Promise((res, rej) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`);
-      xhr.timeout = 120000;
-      xhr.ontimeout = () => rej(new Error('Video upload timed out after 120s'));
-      xhr.upload.addEventListener('progress', e => {
-        if (e.lengthComputable) setProgress(Math.round(((done + e.loaded / e.total) / total) * 100));
-      });
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          let parsed;
-          try { parsed = JSON.parse(xhr.responseText); } catch(_) {
-            rej(new Error('Video — bad JSON response')); return;
-          }
-          if (parsed.secure_url) {
-            debugLog(`Video uploaded ✓ → ${parsed.secure_url.slice(0,60)}…`);
-            res(parsed);
-          } else {
-            const errMsg = parsed.error?.message || JSON.stringify(parsed);
-            rej(new Error(`Video Cloudinary error: ${errMsg}`));
-          }
-        } else {
-          let errDetail = xhr.responseText;
-          try { errDetail = JSON.parse(xhr.responseText).error?.message || errDetail; } catch(_) {}
-          rej(new Error(`Video HTTP ${xhr.status}: ${errDetail}`));
+    const result = await xhrUploadWithRetry(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`,
+      fd,
+      {
+        label: 'Video',
+        retries: 3,
+        timeout: 120000,
+        onProgress: (loaded, total_) => {
+          setProgress(Math.round(((done + loaded / total_) / total) * 100));
         }
-      };
-      xhr.onerror = () => rej(new Error('Video: network error (no internet or CORS blocked)'));
-      xhr.send(fd);
-    });
+      }
+    );
 
     state.video.cloudUrl = result.secure_url;
+    debugLog(`Video uploaded ✓ → ${result.secure_url.slice(0,60)}…`);
     tick();
   }
 
   setProgress(100);
   debugLog('All uploads complete ✓');
   setTimeout(() => progressWrap.classList.remove('active'), 600);
+}
+
+// ─── XHR WITH RETRY ──────────────────────────────────────────────────────────
+function xhrUploadWithRetry(url, fd, { label, retries = 3, timeout = 60000, onProgress } = {}) {
+  return new Promise((resolve, reject) => {
+    let attempt = 0;
+
+    function attempt_() {
+      attempt++;
+      debugLog(`${label} upload attempt ${attempt}/${retries}…`);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', url);
+      xhr.timeout = timeout;
+
+      xhr.ontimeout = () => {
+        debugLog(`${label} timed out (attempt ${attempt})`);
+        if (attempt < retries) {
+          setTimeout(attempt_, 1500);
+        } else {
+          reject(new Error(`${label} upload timed out after ${retries} attempts`));
+        }
+      };
+
+      if (onProgress) {
+        xhr.upload.addEventListener('progress', e => {
+          if (e.lengthComputable) onProgress(e.loaded, e.total);
+        });
+      }
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          let parsed;
+          try { parsed = JSON.parse(xhr.responseText); }
+          catch(_) {
+            if (attempt < retries) { setTimeout(attempt_, 1500); return; }
+            reject(new Error(`${label} — bad JSON response`)); return;
+          }
+          if (parsed.secure_url) {
+            resolve(parsed);
+          } else {
+            const errMsg = parsed.error?.message || JSON.stringify(parsed);
+            debugLog(`${label} Cloudinary error: ${errMsg}`);
+            if (attempt < retries) { setTimeout(attempt_, 1500); return; }
+            reject(new Error(`${label} Cloudinary error: ${errMsg}`));
+          }
+        } else {
+          let errDetail = xhr.responseText;
+          try { errDetail = JSON.parse(xhr.responseText).error?.message || errDetail; } catch(_) {}
+          debugLog(`${label} HTTP ${xhr.status} (attempt ${attempt}): ${errDetail.slice(0,120)}`);
+          if (attempt < retries) {
+            setTimeout(attempt_, 1500);
+          } else {
+            reject(new Error(`${label} HTTP ${xhr.status}: ${errDetail.slice(0,200)}`));
+          }
+        }
+      };
+
+      xhr.onerror = () => {
+        debugLog(`${label} network error (attempt ${attempt}) — ${attempt < retries ? 'retrying in 1.5s…' : 'giving up'}`);
+        if (attempt < retries) {
+          setTimeout(attempt_, 1500);
+        } else {
+          reject(new Error(`${label}: network error after ${retries} attempts. Check your connection and try again.`));
+        }
+      };
+
+      xhr.send(fd);
+    }
+
+    attempt_();
+  });
 }
 
 // ─── IMAGE COMPRESSION ───────────────────────────────────────────────────────
@@ -1025,7 +1053,7 @@ function compressImage(file, maxBytes) {
     reader.onerror = () => reject(new Error('FileReader error'));
     reader.onload = (e) => {
       const img = new Image();
-      img.onerror = () => reject(new Error('Image decode error'));
+      img.onerror = () => reject(new Error('Image load error'));
       img.onload = () => {
         const canvas = document.createElement('canvas');
         let w = img.naturalWidth, h = img.naturalHeight;
