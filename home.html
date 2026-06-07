@@ -89,7 +89,7 @@
   }
 
   .hero-content {
-    position: absolute; bottom: 0; left: 0; z-index: 2;
+    position: absolute; bottom: 0; left: 0; z-index: 20;
     padding: 0 48px 80px; max-width: 600px;
   }
 
@@ -145,6 +145,7 @@
     display: flex; gap: 12px; flex-wrap: wrap;
     opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.6s 0.5s forwards;
+    position: relative; z-index: 20;
   }
 
   .btn {
@@ -323,15 +324,15 @@
     .nav-links { display: none; }
     .nav-avatar { width: 36px; height: 36px; font-size: 18px; }
     .hero { height: 100svh; }
-    .hero-content { padding: 0 16px 100px; max-width: 100%; }
+    .hero-content { padding: 0 16px 36px; max-width: 100%; }
     .hero-title { font-size: clamp(2rem, 9vw, 3rem); line-height: 1; }
-    .hero-desc { font-size: 0.85rem; margin-bottom: 18px; }
-    .hero-meta { font-size: 0.8rem; gap: 8px; }
+    .hero-desc { font-size: 0.85rem; margin-bottom: 14px; }
+    .hero-meta { font-size: 0.8rem; gap: 8px; margin-bottom: 12px; }
     .btn { padding: 10px 18px; font-size: 0.85rem; }
-    .content { margin-top: 0; }
+    .content { margin-top: 0 !important; padding-top: 24px; }
     .stats-row {
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px; padding: 16px 16px 0; margin-bottom: 28px;
+      gap: 10px; padding: 0 16px; margin-bottom: 28px;
     }
     .stat-card { padding: 16px 12px; }
     .stat-number { font-size: 2rem; }
