@@ -23,7 +23,6 @@
   }
 
   html { scroll-behavior: smooth; }
-
   body {
     background: var(--black);
     color: var(--text);
@@ -31,165 +30,92 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
-
   body::before {
     content: '';
     position: fixed; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
     opacity: 0.03; pointer-events: none; z-index: 1000;
   }
-
   body::after {
     content: '';
     position: fixed; top: 0; left: 0; right: 0;
     height: 3px; background: var(--red); z-index: 999;
   }
 
-  /* ── EXAMPLE BANNER ── */
+  /* EXAMPLE BANNER */
   .example-banner {
-    position: sticky;
-    top: 0;
-    z-index: 500;
-    background: #0a0a0a;
-    border-bottom: 1px solid #1a1a1a;
+    position: sticky; top: 0; z-index: 500;
+    background: #0a0a0a; border-bottom: 1px solid #1a1a1a;
     padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
     height: 58px;
   }
-
-  .example-banner-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
+  .example-banner-left { display: flex; align-items: center; gap: 12px; }
   .example-pulse {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #46d369;
-    flex-shrink: 0;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #46d369; flex-shrink: 0;
     box-shadow: 0 0 0 0 rgba(70,211,105,0.4);
     animation: pulseGreen 2s ease-in-out infinite;
   }
-
   @keyframes pulseGreen {
     0%  { box-shadow: 0 0 0 0   rgba(70,211,105,0.5); }
     70% { box-shadow: 0 0 0 8px rgba(70,211,105,0); }
     100%{ box-shadow: 0 0 0 0   rgba(70,211,105,0); }
   }
-
-  .example-banner-text {
-    font-size: 0.82rem;
-    color: #888;
-    line-height: 1.3;
-  }
-  .example-banner-text strong {
-    color: #ccc;
-    font-weight: 500;
-  }
-
+  .example-banner-text { font-size: 0.82rem; color: #888; line-height: 1.3; }
+  .example-banner-text strong { color: #ccc; font-weight: 500; }
   .example-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: transparent;
-    border: 1px solid var(--red);
-    color: var(--red);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.95rem;
-    letter-spacing: 0.18em;
-    padding: 8px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none;
-    flex-shrink: 0;
-    transition: background 0.2s, color 0.2s;
+    display: inline-flex; align-items: center; gap: 7px;
+    background: transparent; border: 1px solid var(--red); color: var(--red);
+    font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 0.18em;
+    padding: 8px 20px; border-radius: 5px; cursor: pointer;
+    text-decoration: none; flex-shrink: 0; transition: background 0.2s, color 0.2s;
   }
-  .example-btn:hover {
-    background: var(--red);
-    color: #fff;
-  }
-  .example-btn-icon { font-size: 0.9rem; }
+  .example-btn:hover { background: var(--red); color: #fff; }
 
-  /* ── EXAMPLE MODAL ── */
+  /* EXAMPLE MODAL */
   .modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.92);
-    z-index: 9000;
-    align-items: center;
-    justify-content: center;
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92); z-index: 9000;
+    align-items: center; justify-content: center;
   }
   .modal-overlay.open { display: flex; }
-
   .modal-box {
-    position: relative;
-    width: 90vw; height: 90vh;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #2a2a2a;
+    position: relative; width: 90vw; height: 90vh;
+    border-radius: 12px; overflow: hidden; border: 1px solid #2a2a2a;
     animation: modalIn 0.25s ease both;
   }
-
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.96); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-
+  @keyframes modalIn { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:scale(1); } }
   .modal-close {
     position: absolute; top: 12px; right: 12px;
     width: 38px; height: 38px;
-    background: rgba(0,0,0,0.85);
-    border: 1px solid #555;
-    border-radius: 50%;
-    color: #fff; font-size: 15px;
-    cursor: pointer;
+    background: rgba(0,0,0,0.85); border: 1px solid #555; border-radius: 50%;
+    color: #fff; font-size: 15px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    z-index: 10;
-    transition: background 0.2s, border-color 0.2s;
+    z-index: 10; transition: background 0.2s, border-color 0.2s;
   }
   .modal-close:hover { background: var(--red); border-color: var(--red); }
+  .modal-box iframe { width: 100%; height: 100%; border: none; display: block; background: #000; }
 
-  .modal-box iframe {
-    width: 100%; height: 100%;
-    border: none; display: block;
-    background: #000;
-  }
-
-  /* ── HEADER ── */
-  header {
-    padding: 36px 24px 0; text-align: center;
-    position: relative; animation: fadeUp 0.6s 0s ease both;
-  }
-
+  /* HEADER */
+  header { padding: 36px 24px 0; text-align: center; animation: fadeUp 0.6s 0s ease both; }
   .logo {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(52px, 10vw, 88px);
-    letter-spacing: 0.04em; color: var(--red);
-    line-height: 1; display: inline-block; position: relative;
+    letter-spacing: 0.04em; color: var(--red); line-height: 1;
+    display: inline-block; position: relative;
   }
   .logo::after {
     content: 'NETFLIX'; position: absolute; inset: 0;
     color: transparent; -webkit-text-stroke: 1px rgba(229,9,20,0.2);
     transform: translate(3px, 3px); z-index: -1;
   }
-
-  .header-sub {
-    font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--muted); margin-top: 8px;
-  }
+  .header-sub { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
   .header-rule { width: 40px; height: 2px; background: var(--red); margin: 20px auto 0; }
 
-  main {
-    max-width: 720px; margin: 0 auto;
-    padding: 48px 24px 80px;
-    display: flex; flex-direction: column; gap: 20px;
-  }
+  main { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; display: flex; flex-direction: column; gap: 20px; }
 
-  /* ── CARDS ── */
+  /* CARDS */
   .card {
     background: var(--card); border: 1px solid var(--border);
     border-radius: 12px; padding: 40px 40px 36px;
@@ -202,34 +128,20 @@
   .card:nth-child(3) { animation-delay: 0.19s; }
   .card:nth-child(4) { animation-delay: 0.26s; }
   .card:nth-child(5) { animation-delay: 0.33s; }
-
   .card-step-bg {
     position: absolute; top: -10px; right: 16px;
     font-family: 'Bebas Neue', sans-serif; font-size: 140px;
     line-height: 1; color: #fff; opacity: 0.04;
     pointer-events: none; user-select: none; letter-spacing: -4px;
   }
-
   .card-header { margin-bottom: 32px; position: relative; z-index: 1; }
-  .step-label {
-    font-family: 'Bebas Neue', sans-serif; font-size: 11px;
-    letter-spacing: 0.28em; color: var(--red); text-transform: uppercase; margin-bottom: 4px;
-  }
-  .card-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: clamp(28px, 5vw, 38px);
-    letter-spacing: 0.03em; color: #fff; line-height: 1.05;
-  }
+  .step-label { font-family: 'Bebas Neue', sans-serif; font-size: 11px; letter-spacing: 0.28em; color: var(--red); text-transform: uppercase; margin-bottom: 4px; }
+  .card-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(28px, 5vw, 38px); letter-spacing: 0.03em; color: #fff; line-height: 1.05; }
   .card-subtitle { font-size: 12px; color: var(--muted); margin-top: 6px; font-style: italic; }
 
   .field { margin-bottom: 24px; position: relative; z-index: 1; }
   .field:last-child { margin-bottom: 0; }
-
-  label {
-    display: block; font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px; letter-spacing: 0.2em; color: var(--text-dim);
-    text-transform: uppercase; margin-bottom: 8px;
-  }
-
+  label { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
   input[type="text"], select, textarea {
     width: 100%; background: #0a0a0a; border: 1px solid var(--border);
     border-radius: 6px; color: var(--text); font-family: 'DM Sans', sans-serif;
@@ -241,329 +153,163 @@
     border-color: var(--red); box-shadow: 0 0 0 3px rgba(229,9,20,0.1);
   }
   input[type="text"]::placeholder, textarea::placeholder { color: #444; font-style: italic; }
-
   select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; cursor: pointer;
   }
   select option { background: #1a1a1a; color: var(--text); }
   textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
-
   .field-hint { font-size: 12px; color: var(--muted); margin-top: 7px; line-height: 1.5; }
-  .optional-tag {
-    font-size: 11px; color: #444; font-style: italic;
-    margin-left: 6px; font-family: 'DM Sans', sans-serif;
-    text-transform: none; letter-spacing: 0;
-  }
-
-  .field-row {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-    margin-bottom: 24px; position: relative; z-index: 1;
-  }
+  .optional-tag { font-size: 11px; color: #444; font-style: italic; margin-left: 6px; font-family: 'DM Sans', sans-serif; text-transform: none; letter-spacing: 0; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; position: relative; z-index: 1; }
   .field-row .field { margin-bottom: 0; }
+  .field-divider { height: 1px; background: var(--border); margin: 28px 0; position: relative; z-index: 1; }
 
-  /* ── UPLOAD ── */
+  /* UPLOAD */
   .upload-zone {
     border: 1.5px dashed var(--border); border-radius: 8px;
     padding: 40px 24px; text-align: center; cursor: pointer;
     transition: border-color 0.25s, background 0.25s;
     position: relative; z-index: 1; user-select: none;
   }
-  .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--red); background: rgba(229,9,20,0.03);
-  }
+  .upload-zone:hover, .upload-zone.drag-over { border-color: var(--red); background: rgba(229,9,20,0.03); }
   .upload-icon { font-size: 36px; margin-bottom: 10px; display: block; opacity: 0.5; }
   .upload-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.1em; color: #fff; margin-bottom: 4px; }
   .upload-sub { font-size: 12px; color: var(--muted); }
-
   .optional-pill {
     display: inline-block; background: #1e1e1e; border: 1px solid #333; color: #666;
     font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
-    letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 10px;
-    border-radius: 20px; margin-top: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; margin-top: 10px;
   }
-
   .hero-fallback-notice {
     display: flex; align-items: center; gap: 10px;
     background: rgba(229,9,20,0.06); border: 1px solid rgba(229,9,20,0.15);
-    border-radius: 8px; padding: 12px 16px; margin-top: 16px;
-    position: relative; z-index: 1;
+    border-radius: 8px; padding: 12px 16px; margin-top: 16px; position: relative; z-index: 1;
   }
   .hero-fallback-notice .notice-icon { font-size: 18px; flex-shrink: 0; }
   .hero-fallback-notice .notice-text { font-size: 12px; color: #888; line-height: 1.5; }
   .hero-fallback-notice .notice-text strong { color: #aaa; font-weight: 500; }
-
-  .thumb-grid {
-    display: grid; grid-template-columns: repeat(5, 1fr);
-    gap: 8px; margin-top: 16px; position: relative; z-index: 1;
-  }
-  .thumb-item {
-    position: relative; aspect-ratio: 1;
-    border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
-  }
+  .thumb-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 16px; position: relative; z-index: 1; }
+  .thumb-item { position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
   .thumb-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .thumb-item.hero-photo { border-color: var(--red); }
   .thumb-remove {
-    position: absolute; top: 4px; right: 4px;
-    width: 20px; height: 20px;
-    background: rgba(0,0,0,0.8); border: 1px solid var(--border);
-    border-radius: 50%; color: #fff; font-size: 11px; cursor: pointer;
+    position: absolute; top: 4px; right: 4px; width: 20px; height: 20px;
+    background: rgba(0,0,0,0.8); border: 1px solid var(--border); border-radius: 50%;
+    color: #fff; font-size: 11px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: background 0.2s, border-color 0.2s;
   }
   .thumb-remove:hover { background: var(--red); border-color: var(--red); }
-
   .photo-counter { font-size: 12px; color: var(--muted); margin-top: 10px; position: relative; z-index: 1; }
   .photo-counter span { color: var(--red); font-weight: 500; }
-
   #video-preview {
     width: 100%; border-radius: 8px; margin-top: 16px; display: none;
-    border: 1px solid var(--border); max-height: 280px; object-fit: cover;
-    position: relative; z-index: 1;
+    border: 1px solid var(--border); max-height: 280px; object-fit: cover; position: relative; z-index: 1;
   }
   .video-status { font-size: 12px; color: var(--muted); margin-top: 8px; position: relative; z-index: 1; }
   .video-status.success { color: #2ecc71; }
   .video-status.error   { color: var(--red); }
 
-  .field-divider { height: 1px; background: var(--border); margin: 28px 0; position: relative; z-index: 1; }
-
-  /* ── UPLOAD PROGRESS ── */
-  .upload-progress-overlay {
-    display: none; position: relative; z-index: 1; margin-top: 12px;
-  }
+  /* UPLOAD PROGRESS */
+  .upload-progress-overlay { display: none; position: relative; z-index: 1; margin-top: 12px; }
   .upload-progress-overlay.active { display: block; }
   .upo-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
   .upo-bar-wrap { height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
   .upo-bar { height: 100%; background: var(--red); width: 0%; transition: width 0.2s ease; border-radius: 2px; }
 
-  /* ── PAY SECTION ── */
-  .pay-section {
-    margin-top: 8px;
-    animation: fadeUp 0.5s 0.4s ease both;
-  }
-
+  /* PAY SECTION */
+  .pay-section { margin-top: 8px; animation: fadeUp 0.5s 0.4s ease both; }
   .pay-card {
     background: linear-gradient(135deg, #0d0d0d, #1a0505);
-    border: 1px solid #2a1010;
-    border-radius: 16px;
-    padding: 40px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+    border: 1px solid #2a1010; border-radius: 16px; padding: 40px; text-align: center;
+    position: relative; overflow: hidden;
   }
-
   .pay-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 2px;
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
     background: linear-gradient(90deg, transparent, var(--red), transparent);
   }
-
   .pay-deco {
-    position: absolute;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 10rem;
-    color: var(--red);
-    opacity: 0.03;
-    line-height: 1;
-    pointer-events: none;
-    user-select: none;
-    right: -10px;
-    bottom: -20px;
-    letter-spacing: -4px;
+    position: absolute; font-family: 'Bebas Neue', sans-serif; font-size: 10rem;
+    color: var(--red); opacity: 0.03; line-height: 1;
+    pointer-events: none; user-select: none; right: -10px; bottom: -20px; letter-spacing: -4px;
   }
-
-  .pay-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
-    color: var(--red);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .pay-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
-    color: #fff;
-    letter-spacing: 0.04em;
-    line-height: 1.1;
-    margin-bottom: 10px;
-  }
-
-  .pay-subtitle {
-    font-size: 0.85rem;
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 32px;
-    max-width: 380px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .pay-pricing {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-
-  .pay-price-main {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 4rem;
-    color: #fff;
-    line-height: 1;
-  }
-
-  .pay-price-strike {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    color: #444;
-    text-decoration: line-through;
-  }
-
-  .pay-price-note {
-    font-size: 0.75rem;
-    color: #555;
-    margin-bottom: 28px;
-    display: block;
-  }
-
-  /* Coupon inside pay card */
-  .coupon-row {
-    display: flex; gap: 10px;
-    margin-bottom: 16px;
-    position: relative; z-index: 1;
-  }
+  .pay-label { font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.3em; color: var(--red); text-transform: uppercase; margin-bottom: 12px; }
+  .pay-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.6rem, 4vw, 2.4rem); color: #fff; letter-spacing: 0.04em; line-height: 1.1; margin-bottom: 10px; }
+  .pay-subtitle { font-size: 0.85rem; color: #666; line-height: 1.6; margin-bottom: 32px; max-width: 380px; margin-left: auto; margin-right: auto; }
+  .pay-pricing { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin-bottom: 10px; }
+  .pay-price-main { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; color: #fff; line-height: 1; }
+  .pay-price-strike { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: #444; text-decoration: line-through; }
+  .pay-price-note { font-size: 0.75rem; color: #555; margin-bottom: 28px; display: block; }
+  .coupon-row { display: flex; gap: 10px; margin-bottom: 16px; position: relative; z-index: 1; }
   #coupon-input {
-    flex: 1; background: #111; border: 1px solid #2a2a2a;
-    border-radius: 8px; color: #fff;
-    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
-    padding: 12px 16px; letter-spacing: 0.1em; text-transform: uppercase;
-    outline: none; transition: border-color 0.2s;
+    flex: 1; background: #111; border: 1px solid #2a2a2a; border-radius: 8px; color: #fff;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; padding: 12px 16px;
+    letter-spacing: 0.1em; text-transform: uppercase; outline: none; transition: border-color 0.2s;
     -webkit-appearance: none; appearance: none;
   }
   #coupon-input:focus { border-color: var(--red); }
   #coupon-input::placeholder { text-transform: none; color: #444; letter-spacing: 0; }
   #apply-coupon {
-    background: #1e1e1e; color: #aaa; border: 1px solid #2a2a2a;
-    border-radius: 8px; padding: 12px 20px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    background: #1e1e1e; color: #aaa; border: 1px solid #2a2a2a; border-radius: 8px;
+    padding: 12px 20px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
     cursor: pointer; transition: background 0.2s, color 0.2s; white-space: nowrap;
   }
   #apply-coupon:hover { background: #2a2a2a; color: #fff; }
   #coupon-msg { font-size: 0.8rem; margin-bottom: 16px; min-height: 18px; text-align: center; }
   #coupon-msg.success { color: #46d369; }
   #coupon-msg.error   { color: var(--red); }
-
-  .pay-perks {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-    position: relative; z-index: 1;
-  }
-  .pay-perk {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.78rem;
-    color: #666;
-  }
+  .pay-perks { display: flex; justify-content: center; gap: 20px; margin-bottom: 28px; flex-wrap: wrap; position: relative; z-index: 1; }
+  .pay-perk { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: #666; }
   .pay-perk-icon { color: #46d369; font-size: 0.85rem; }
-
   .pay-btn {
-    width: 100%;
-    max-width: 360px;
-    background: var(--red);
-    border: none;
-    border-radius: 8px;
-    color: #fff;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
-    letter-spacing: 0.2em;
-    padding: 18px 24px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin: 0 auto;
+    width: 100%; max-width: 360px; background: var(--red); border: none; border-radius: 8px;
+    color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.2em;
+    padding: 18px 24px; cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    position: relative; overflow: hidden; z-index: 1;
+    display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 auto;
   }
-  .pay-btn::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.08), transparent);
-  }
-  .pay-btn:hover:not(:disabled) {
-    background: #ff0a16;
-    transform: translateY(-1px);
-    box-shadow: 0 10px 36px rgba(229,9,20,0.4);
-  }
+  .pay-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0.08), transparent); }
+  .pay-btn:hover:not(:disabled) { background: #ff0a16; transform: translateY(-1px); box-shadow: 0 10px 36px rgba(229,9,20,0.4); }
   .pay-btn:active:not(:disabled) { transform: translateY(0); }
   .pay-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .pay-secure { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 16px; font-size: 0.72rem; color: #444; position: relative; z-index: 1; }
 
-  .pay-secure {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 16px;
-    font-size: 0.72rem;
-    color: #444;
-    position: relative; z-index: 1;
+  /* RECOVERY BANNER — shows if a session already exists */
+  #recovery-banner {
+    display: none; background: rgba(70,211,105,0.08); border: 1px solid rgba(70,211,105,0.2);
+    border-radius: 10px; padding: 14px 20px; margin-bottom: 16px;
+    font-size: 0.82rem; color: #46d369; text-align: center; line-height: 1.6; position: relative; z-index: 1;
   }
+  #recovery-banner strong { color: #6fff99; }
 
-  /* ── SHARE RESULT ── */
-  #share-result {
-    display: none;
-    margin-top: 24px;
-    position: relative; z-index: 1;
-  }
+  /* SHARE RESULT */
+  #share-result { display: none; margin-top: 24px; position: relative; z-index: 1; }
   #share-url-box {
-    background: #0a0a0a; border: 1px solid #2a2a2a;
-    border-radius: 8px; padding: 14px 16px;
-    font-size: 0.78rem; color: #888;
-    word-break: break-all; margin-bottom: 12px; line-height: 1.6;
-    text-align: left;
+    background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 14px 16px;
+    font-size: 0.78rem; color: #888; word-break: break-all; margin-bottom: 12px; line-height: 1.6; text-align: left;
   }
   #copy-btn {
-    width: 100%; background: #1e1e1e; color: #fff; border: 1px solid #2a2a2a;
-    border-radius: 8px; padding: 13px;
-    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    width: 100%; background: #1e1e1e; color: #fff; border: 1px solid #2a2a2a; border-radius: 8px;
+    padding: 13px; font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
     letter-spacing: 2px; cursor: pointer; transition: background 0.2s;
     max-width: 360px; margin: 0 auto; display: block;
   }
   #copy-btn:hover { background: #2a2a2a; }
 
-  #save-error {
-    display: none; margin-top: 14px;
-    color: var(--red); font-size: 0.82rem; text-align: center; line-height: 1.5;
-    position: relative; z-index: 1;
-  }
+  #save-error { display: none; margin-top: 14px; color: var(--red); font-size: 0.82rem; text-align: center; line-height: 1.5; position: relative; z-index: 1; }
 
-  /* ── TOAST ── */
+  /* TOAST */
   #toast {
-    position: fixed; bottom: 28px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: #1a0a0a; border: 1px solid var(--red);
-    border-radius: 8px; padding: 12px 24px; font-size: 14px;
-    color: var(--text); opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1a0a0a; border: 1px solid var(--red); border-radius: 8px; padding: 12px 24px;
+    font-size: 14px; color: var(--text); opacity: 0; transition: opacity 0.3s, transform 0.3s;
     pointer-events: none; z-index: 9999; max-width: 360px; text-align: center;
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  @keyframes fadeUp  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes modalIn { from { opacity: 0; transform: scale(0.96); }      to { opacity: 1; transform: scale(1); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* ── MOBILE ── */
   @media (max-width: 540px) {
     .example-banner { height: auto; padding: 10px 16px; flex-wrap: wrap; gap: 10px; }
     .example-banner-text { font-size: 0.75rem; }
@@ -594,7 +340,6 @@
   </div>
 </div>
 
-<!-- EXAMPLE BANNER — sticky at top -->
 <div class="example-banner">
   <div class="example-banner-left">
     <div class="example-pulse"></div>
@@ -727,17 +472,16 @@
     </div>
   </div>
 
-  <!-- UPLOAD PROGRESS (shown during upload after payment) -->
+  <!-- UPLOAD PROGRESS -->
   <div class="upload-progress-overlay" id="upload-progress">
     <div class="upo-label" id="upo-label">Uploading…</div>
     <div class="upo-bar-wrap"><div class="upo-bar" id="upo-bar"></div></div>
   </div>
 
-  <!-- PAY TO CONTINUE -->
+  <!-- PAY -->
   <div class="pay-section">
     <div class="pay-card">
       <div class="pay-deco">N</div>
-
       <div class="pay-label">One-time · No subscription</div>
       <div class="pay-title">Generate Your<br>Shareable Link</div>
       <div class="pay-subtitle">Pay once, upload your memories, and get a forever link to share with your bestie.</div>
@@ -761,6 +505,8 @@
         <div class="pay-perk"><span class="pay-perk-icon">✓</span> Photos + video support</div>
       </div>
 
+      <div id="recovery-banner"></div>
+
       <button class="pay-btn" id="pay-btn" onclick="handlePay()">
         <span>✦</span> Pay & Generate Link
       </button>
@@ -772,7 +518,9 @@
         <button id="copy-btn" onclick="copyLink()">Copy Link</button>
       </div>
       <div id="save-error">
-        Something went wrong saving your link. Please try again or contact support.
+        Something went wrong. <span id="retry-hint">Tap below to retry uploading — you will <strong>not</strong> be charged again.</span>
+        <br><br>
+        <button onclick="retryUpload()" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:10px 24px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;cursor:pointer;margin-top:4px;">Retry Upload</button>
       </div>
     </div>
   </div>
@@ -786,18 +534,19 @@
 const CLOUDINARY_CLOUD = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.CLOUD_NAME)    || '';
 const PHOTO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || '';
 const VIDEO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || '';
-
 const HERO_PHOTO_BYTES  = 800 * 1024;
 const OTHER_PHOTO_BYTES = 400 * 1024;
 const MAX_VIDEO_BYTES   = 2.5 * 1024 * 1024;
-
 const COUPONS = { NALALATFREE: 0, BESTIE1: 1, NATFLAAIX79: 79, NATFLIX129: 129 };
-let currentPrice = 149;
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentPrice  = 149;
+let activeSession = null;   // { sessionId, formData } — set once payment is confirmed
+let postPayFormData = null; // form snapshot at payment time, for retry
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
 const state = { photos: [], video: null };
 
-// ─── TOAST ────────────────────────────────────────────────────────────────────
+// ─── TOAST ───────────────────────────────────────────────────────────────────
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -806,7 +555,7 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 3800);
 }
 
-// ─── EXAMPLE MODAL ────────────────────────────────────────────────────────────
+// ─── EXAMPLE MODAL ───────────────────────────────────────────────────────────
 function openExampleModal() {
   const iframe = document.getElementById('example-iframe');
   if (!iframe.src || iframe.src === window.location.href) {
@@ -815,30 +564,22 @@ function openExampleModal() {
   document.getElementById('example-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
 function closeExampleModal() {
   document.getElementById('example-modal').classList.remove('open');
   document.body.style.overflow = '';
 }
-
 function handleModalOverlayClick(e) {
-  if (e.target === document.getElementById('example-modal')) {
-    closeExampleModal();
-  }
+  if (e.target === document.getElementById('example-modal')) closeExampleModal();
 }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeExampleModal(); });
 
-// Close on Escape key
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeExampleModal();
-});
-
-// ─── COUPON ───────────────────────────────────────────────────────────────────
+// ─── COUPON ──────────────────────────────────────────────────────────────────
 window.applyCoupon = function() {
   const code    = document.getElementById('coupon-input').value.trim().toUpperCase();
   const msg     = document.getElementById('coupon-msg');
   const priceEl = document.getElementById('display-price');
   if (code in COUPONS) {
-    currentPrice    = COUPONS[code];
+    currentPrice = COUPONS[code];
     msg.className   = 'success';
     msg.textContent = currentPrice === 0 ? '🎉 100% off! This one\'s on us.' : `✓ Coupon applied — ₹${currentPrice} only!`;
     priceEl.textContent = `₹${currentPrice}`;
@@ -848,7 +589,7 @@ window.applyCoupon = function() {
   }
 };
 
-// ─── UPLOAD ZONES ─────────────────────────────────────────────────────────────
+// ─── UPLOAD ZONES ────────────────────────────────────────────────────────────
 const photoInput = document.getElementById('photo-input');
 const videoInput = document.getElementById('video-input');
 const photoZone  = document.getElementById('photo-zone');
@@ -912,9 +653,9 @@ function handleVideoFile(files) {
   }
   if (state.video && state.video.localUrl) URL.revokeObjectURL(state.video.localUrl);
   const localUrl = URL.createObjectURL(file);
-  state.video    = { file, localUrl, cloudUrl: null };
-  const preview  = document.getElementById('video-preview');
-  preview.src    = localUrl; preview.style.display = 'block';
+  state.video = { file, localUrl, cloudUrl: null };
+  const preview = document.getElementById('video-preview');
+  preview.src = localUrl; preview.style.display = 'block';
   status.className   = 'video-status success';
   status.textContent = '✓ Video ready — will upload after payment';
   updateFallbackNotice();
@@ -925,14 +666,13 @@ function updateFallbackNotice() {
   document.getElementById('hero-fallback-notice').style.display = state.video ? 'none' : 'flex';
 }
 
-// ─── VALIDATION ───────────────────────────────────────────────────────────────
+// ─── VALIDATION ──────────────────────────────────────────────────────────────
 function validateForm() {
   const senderName      = document.getElementById('sender-name').value.trim();
   const senderGender    = document.getElementById('sender-gender').value;
   const recipientName   = document.getElementById('recipient-name').value.trim();
   const recipientGender = document.getElementById('recipient-gender').value;
   const friendshipDur   = document.getElementById('friendship-duration').value.trim();
-
   if (!senderName)      { showToast('Please enter your name.');                    return null; }
   if (!senderGender)    { showToast('Please select your gender.');                 return null; }
   if (!recipientName)   { showToast("Please enter your bestie's name.");           return null; }
@@ -941,7 +681,6 @@ function validateForm() {
   if (state.photos.length < 1 && !state.video) {
     showToast('Please add at least 1 photo or a video.'); return null;
   }
-
   return {
     senderName, senderGender, recipientName, recipientGender,
     friendshipDuration: friendshipDur,
@@ -949,12 +688,19 @@ function validateForm() {
   };
 }
 
-// ─── PAY ──────────────────────────────────────────────────────────────────────
+// ─── PAY ─────────────────────────────────────────────────────────────────────
 window.handlePay = function() {
+  // If we already have a session (payment went through but upload failed), go straight to retry
+  if (activeSession) { retryUpload(); return; }
+
   const formData = validateForm();
   if (!formData) return;
 
-  if (currentPrice === 0) { onPaymentSuccess(formData); return; }
+  if (currentPrice === 0) {
+    // Free coupon — claim a session with a fake payment ID
+    onPaymentSuccess('FREE_' + Date.now(), formData);
+    return;
+  }
 
   const key = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.RAZORPAY_KEY) || '';
   if (!key) { alert('Payment config not found. Check config.js (RAZORPAY_KEY).'); return; }
@@ -966,61 +712,99 @@ window.handlePay = function() {
     name: 'NETFLIX',
     description: 'Generate Shareable Friendship Link',
     theme: { color: '#E50914' },
-    handler: () => onPaymentSuccess(formData),
+    // *** handler fires EXACTLY ONCE per successful payment ***
+    handler: (response) => {
+      const paymentId = response.razorpay_payment_id;
+      onPaymentSuccess(paymentId, formData);
+    },
   };
-
   try { const rzp = new Razorpay(options); rzp.open(); }
   catch (e) { alert('Could not open payment. Please try again.'); }
 };
 
-// ─── POST-PAYMENT: UPLOAD → GROQ → SAVE ──────────────────────────────────────
-async function onPaymentSuccess(formData) {
+// ─── POST-PAYMENT: CLAIM → UPLOAD → AI → FINALISE ────────────────────────────
+async function onPaymentSuccess(paymentId, formData) {
+  const btn       = document.getElementById('pay-btn');
+  const saveError = document.getElementById('save-error');
+  btn.disabled    = true;
+  btn.innerHTML   = '<span>⏳</span> Saving your session…';
+  saveError.style.display = 'none';
+
+  // 1. CLAIM — save stub immediately so we have a session even if uploads fail
+  try {
+    const claimResp = await fetch('/api/claim', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paymentId, formData }),
+    });
+    if (!claimResp.ok) throw new Error(`Claim failed: ${claimResp.status}`);
+    const { sessionId } = await claimResp.json();
+    activeSession = { sessionId, formData };
+    postPayFormData = formData;
+    // Store in sessionStorage so a page reload can recover
+    try { sessionStorage.setItem('nf_session', JSON.stringify({ sessionId, paymentId, formData })); } catch(_) {}
+  } catch (err) {
+    console.error('Claim error:', err);
+    showToast('Could not save session. Please contact support with your payment ID: ' + paymentId);
+    btn.disabled  = false;
+    btn.innerHTML = '<span>✦</span> Pay & Generate Link';
+    return;
+  }
+
+  // 2. UPLOAD + AI + FINALISE
+  await runUploadAndFinalise();
+}
+
+async function runUploadAndFinalise() {
+  const { sessionId, formData } = activeSession;
   const btn       = document.getElementById('pay-btn');
   const saveError = document.getElementById('save-error');
   btn.disabled    = true;
   btn.innerHTML   = '<span>⏳</span> Uploading…';
   saveError.style.display = 'none';
 
+  // 2a. Upload assets to Cloudinary
   try {
     await uploadAllAssets();
   } catch (err) {
     console.error('Upload error:', err);
-    showToast(err.message || 'Upload failed — please try again.');
-    btn.disabled  = false;
-    btn.innerHTML = '<span>✦</span> Pay & Generate Link';
+    showToast('Upload failed — tap Retry Upload below. You will NOT be charged again.');
+    btn.disabled = false;
+    btn.innerHTML = '<span>↺</span> Retry Upload';
+    document.getElementById('retry-hint').style.display = '';
+    saveError.style.display = 'block';
     return;
   }
 
-  btn.innerHTML = '<span>⏳</span> Generating…';
+  btn.innerHTML = '<span>⏳</span> Generating your film…';
 
+  // 2b. AI copy via Groq
   const uploadedPhotos = state.photos.filter(p => p.cloudUrl);
   const hasVideo       = state.video && state.video.cloudUrl;
-  const photoCount     = uploadedPhotos.length;
-
   let tone = 'warm, genuine, heartfelt';
   if (formData.senderGender === 'female' && formData.recipientGender === 'female') tone = 'warm, expressive, emotional, celebratory bestie energy';
   else if (formData.senderGender === 'male' && formData.recipientGender === 'male') tone = 'chill, genuine, funny but heartfelt bro energy';
 
-  const groqPrompt = `You are writing copy for a friendship tribute called NETFLIX".
+  const groqPrompt = `You are writing copy for a friendship tribute called "NETFLIX".
 Tone: ${tone}.
 Sender: ${formData.senderName} (${formData.senderGender}).
 Recipient: ${formData.recipientName} (${formData.recipientGender}).
 Friendship duration: ${formData.friendshipDuration}.
 ${formData.finalMessage ? `Personal message: "${formData.finalMessage}"` : ''}
-${photoCount > 0 ? `Photos: ${photoCount}.` : ''}
+${uploadedPhotos.length > 0 ? `Photos: ${uploadedPhotos.length}.` : ''}
 Return ONLY valid JSON:
 {
   "heroTagline": "4-6 word punchy friendship tagline",
   "heroDescription": "2 sentences, warm and specific",
   "finalMessage": "2-3 sentences heartfelt message from ${formData.senderName} to ${formData.recipientName}",
-  "photoCaptions": [${photoCount > 0 ? `${photoCount} short captions` : ''}]
+  "photoCaptions": [${uploadedPhotos.length > 0 ? `${uploadedPhotos.length} short captions` : ''}]
 }`;
 
   let groqData = {
-    heroTagline:   `${formData.senderName} & ${formData.recipientName} — Always`,
+    heroTagline:     `${formData.senderName} & ${formData.recipientName} — Always`,
     heroDescription: 'Some friendships are rare. Yours is one of them.',
-    finalMessage:  `Here's to ${formData.friendshipDuration} of memories. This one's for you, ${formData.recipientName}.`,
-    photoCaptions: uploadedPhotos.map((_, i) => `Memory ${i + 1}`),
+    finalMessage:    `Here's to ${formData.friendshipDuration} of memories. This one's for you, ${formData.recipientName}.`,
+    photoCaptions:   uploadedPhotos.map((_, i) => `Memory ${i + 1}`),
   };
 
   try {
@@ -1050,7 +834,9 @@ Return ONLY valid JSON:
     console.warn('Groq failed, using fallback:', err.message);
   }
 
+  // 2c. Finalise — merge full payload into the stub
   const payload = {
+    sessionId,
     ...formData,
     photos:    uploadedPhotos.map(p => p.cloudUrl),
     video:     hasVideo ? state.video.cloudUrl : null,
@@ -1060,12 +846,12 @@ Return ONLY valid JSON:
   };
 
   try {
-    const resp = await fetch('/api/save', {
+    const resp = await fetch('/api/finalise', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    if (!resp.ok) throw new Error(`Save failed: ${resp.status}`);
+    if (!resp.ok) throw new Error(`Finalise failed: ${resp.status}`);
     const data = await resp.json();
     if (!data.id) throw new Error('No ID returned');
 
@@ -1075,38 +861,45 @@ Return ONLY valid JSON:
     btn.style.display = 'none';
     document.querySelector('.pay-secure').style.display = 'none';
     document.getElementById('share-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    try { sessionStorage.removeItem('nf_session'); } catch(_) {}
 
   } catch (err) {
-    console.error('Save error:', err);
+    console.error('Finalise error:', err);
     btn.disabled  = false;
-    btn.innerHTML = '<span>✦</span> Pay & Generate Link';
+    btn.innerHTML = '<span>↺</span> Retry Upload';
     saveError.style.display = 'block';
   }
 }
 
-// ─── UPLOAD ───────────────────────────────────────────────────────────────────
+// Retry button — skips Razorpay, re-uses existing session
+window.retryUpload = function() {
+  if (!activeSession) return;
+  runUploadAndFinalise();
+};
+
+// ─── UPLOAD ──────────────────────────────────────────────────────────────────
 async function uploadAllAssets() {
   if (!CLOUDINARY_CLOUD || !PHOTO_PRESET) throw new Error('Cloudinary not configured.');
-
   const progressWrap = document.getElementById('upload-progress');
   const bar          = document.getElementById('upo-bar');
   const label        = document.getElementById('upo-label');
   progressWrap.classList.add('active');
-
   const total = state.photos.length + (state.video ? 1 : 0);
-  let done    = 0;
-
+  let done = 0;
   function setProgress(pct) { bar.style.width = pct + '%'; }
   function tick() { done++; setProgress(Math.round((done / total) * 100)); }
 
   for (let i = 0; i < state.photos.length; i++) {
+    // Skip already-uploaded photos (safe to retry)
+    if (state.photos[i].cloudUrl) { tick(); continue; }
     label.textContent = `Uploading photo ${i + 1} of ${state.photos.length}…`;
     const maxBytes   = i === 0 ? HERO_PHOTO_BYTES : OTHER_PHOTO_BYTES;
     let   uploadFile = state.photos[i].file;
     if (uploadFile.size > maxBytes) {
-      try { const blob = await compressImage(uploadFile, maxBytes);
-            uploadFile = new File([blob], uploadFile.name.replace(/\.[^.]+$/, '') + '_c.jpg', { type: 'image/jpeg' }); }
-      catch (e) { console.warn('Compress failed:', e); }
+      try {
+        const blob = await compressImage(uploadFile, maxBytes);
+        uploadFile = new File([blob], uploadFile.name.replace(/\.[^.]+$/, '') + '_c.jpg', { type: 'image/jpeg' });
+      } catch (e) { console.warn('Compress failed:', e); }
     }
     const fd = new FormData();
     fd.append('file', uploadFile); fd.append('upload_preset', PHOTO_PRESET);
@@ -1114,14 +907,14 @@ async function uploadAllAssets() {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
       xhr.onload  = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error(`Photo upload failed: ${xhr.status}`));
-      xhr.onerror = () => rej(new Error('Network error'));
+      xhr.onerror = () => rej(new Error('Network error uploading photo ' + (i+1)));
       xhr.send(fd);
     });
     state.photos[i].cloudUrl = result.secure_url;
     tick();
   }
 
-  if (state.video && state.video.file) {
+  if (state.video && state.video.file && !state.video.cloudUrl) {
     label.textContent = 'Uploading video…';
     const fd = new FormData();
     fd.append('file', state.video.file); fd.append('upload_preset', VIDEO_PRESET);
@@ -1132,7 +925,7 @@ async function uploadAllAssets() {
         if (e.lengthComputable) setProgress(Math.round(((done + e.loaded / e.total) / total) * 100));
       });
       xhr.onload  = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error(`Video upload failed: ${xhr.status}`));
-      xhr.onerror = () => rej(new Error('Network error'));
+      xhr.onerror = () => rej(new Error('Network error uploading video'));
       xhr.send(fd);
     });
     state.video.cloudUrl = result.secure_url;
@@ -1143,10 +936,10 @@ async function uploadAllAssets() {
   setTimeout(() => progressWrap.classList.remove('active'), 600);
 }
 
-// ─── IMAGE COMPRESSION ────────────────────────────────────────────────────────
+// ─── IMAGE COMPRESSION ───────────────────────────────────────────────────────
 function compressImage(file, maxBytes) {
   return new Promise((resolve, reject) => {
-    const img     = new Image();
+    const img = new Image();
     const blobUrl = URL.createObjectURL(file);
     img.onload = () => {
       URL.revokeObjectURL(blobUrl);
@@ -1168,7 +961,7 @@ function compressImage(file, maxBytes) {
   });
 }
 
-// ─── COPY LINK ────────────────────────────────────────────────────────────────
+// ─── COPY LINK ───────────────────────────────────────────────────────────────
 window.copyLink = function() {
   const url = document.getElementById('share-url-box').textContent;
   navigator.clipboard.writeText(url).then(() => {
@@ -1182,6 +975,23 @@ window.copyLink = function() {
     document.execCommand('copy'); document.body.removeChild(ta);
   });
 };
+
+// ─── SESSION RECOVERY ON RELOAD ──────────────────────────────────────────────
+(function checkRecovery() {
+  try {
+    const saved = sessionStorage.getItem('nf_session');
+    if (!saved) return;
+    const { sessionId, paymentId, formData } = JSON.parse(saved);
+    if (!sessionId) return;
+    activeSession  = { sessionId, formData };
+    postPayFormData = formData;
+    const banner = document.getElementById('recovery-banner');
+    banner.innerHTML = `<strong>Payment already received ✓</strong><br>Your session is saved (ID: ${sessionId}). Tap the button below to retry the upload — you will <strong>not</strong> be charged again.`;
+    banner.style.display = 'block';
+    const btn = document.getElementById('pay-btn');
+    btn.innerHTML = '<span>↺</span> Retry Upload';
+  } catch(_) {}
+})();
 </script>
 </body>
 </html>
