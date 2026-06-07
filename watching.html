@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NATFLIX</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,22 +24,69 @@
     font-family: 'DM Sans', sans-serif;
   }
 
-  /* ── LOADING SCREEN ── */
-  #loading-screen {
+  /* ── PORTRAIT GATE ── */
+  #rotate-gate {
+    display: none;
     position: fixed;
     inset: 0;
-    z-index: 50;
-    background: var(--black);
-    display: flex;
+    z-index: 9999;
+    background: #000;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
     gap: 20px;
+  }
+  #rotate-gate svg {
+    width: 72px; height: 72px;
+    animation: rotateHint 1.8s ease-in-out infinite;
+  }
+  #rotate-gate p {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    color: #fff;
+    text-align: center;
+  }
+  #rotate-gate small {
+    color: var(--grey);
+    font-size: 0.82rem;
+    text-align: center;
+    max-width: 240px;
+    line-height: 1.5;
+  }
+  @keyframes rotateHint {
+    0%   { transform: rotate(0deg); }
+    40%  { transform: rotate(90deg); }
+    60%  { transform: rotate(90deg); }
+    100% { transform: rotate(90deg); }
+  }
+
+  /* Show gate in portrait, hide all other UI */
+  @media screen and (max-width: 768px) and (orientation: portrait) {
+    #rotate-gate { display: flex; }
+    #loading-screen, #start-wall, #phase1, #phase2,
+    #fade, #click-overlay { display: none !important; }
+  }
+
+  /* Mobile landscape tweaks */
+  @media screen and (max-height: 500px) and (orientation: landscape) {
+    .who-title { font-size: 1.8rem; margin-bottom: 28px; }
+    .profiles  { gap: 32px; }
+    .avatar-wrap { width: 100px; height: 100px; font-size: 48px; }
+    #start-wall button { font-size: 1.4rem; padding: 14px 40px; }
+    .start-sub { font-size: 0.72rem; }
+  }
+
+  /* ── LOADING SCREEN ── */
+  #loading-screen {
+    position: fixed; inset: 0; z-index: 50;
+    background: var(--black);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 20px;
   }
   .loading-logo {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 3rem;
-    color: var(--red);
+    font-size: 3rem; color: var(--red);
     letter-spacing: 6px;
     animation: pulse 1.4s ease-in-out infinite;
   }
@@ -51,99 +98,90 @@
     animation: spin 0.8s linear infinite;
   }
   .loading-error {
-    display: none;
-    color: #666;
-    font-size: 0.85rem;
-    text-align: center;
-    max-width: 280px;
-    line-height: 1.6;
+    display: none; color: #666; font-size: 0.85rem;
+    text-align: center; max-width: 280px; line-height: 1.6;
   }
-  .loading-error a {
-    color: var(--red);
-    text-decoration: none;
-  }
+  .loading-error a { color: var(--red); text-decoration: none; }
 
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
   @keyframes spin   { to { transform: rotate(360deg); } }
 
+  /* ── START WALL ── interaction gate for audio */
+  #start-wall {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: #000;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px;
+  }
+  #start-wall.visible { display: flex; }
+
+  #start-wall button {
+    background: var(--red); border: none; color: #fff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; letter-spacing: 0.3em;
+    padding: 20px 60px; border-radius: 6px;
+    cursor: pointer; transition: opacity 0.2s, transform 0.1s;
+  }
+  #start-wall button:hover  { opacity: 0.88; }
+  #start-wall button:active { transform: scale(0.98); }
+  .start-sub {
+    color: var(--grey); font-size: 0.82rem;
+    letter-spacing: 0.06em; text-align: center;
+  }
+
   /* ── PHASE 1: VIDEO ── */
   #phase1 {
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    background: var(--black);
-    display: none;
+    position: fixed; inset: 0; z-index: 10;
+    background: var(--black); display: none;
   }
   #phase1.visible { display: block; }
 
   #intro-video {
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    display: block;
+    width: 100vw; height: 100vh;
+    object-fit: cover; display: block;
   }
 
   /* ── FADE OVERLAY ── */
   #fade {
-    position: fixed;
-    inset: 0;
-    background: var(--black);
-    z-index: 20;
-    opacity: 0;
-    pointer-events: none;
+    position: fixed; inset: 0; background: var(--black);
+    z-index: 20; opacity: 0; pointer-events: none;
     transition: opacity 0.6s ease;
   }
-  #fade.active {
-    opacity: 1;
-    pointer-events: all;
-  }
+  #fade.active { opacity: 1; pointer-events: all; }
 
   /* ── PHASE 2: WHO'S WATCHING ── */
   #phase2 {
-    position: fixed;
-    inset: 0;
-    z-index: 5;
+    position: fixed; inset: 0; z-index: 5;
     background: var(--black);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 56px;
-    opacity: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 56px; opacity: 0;
     transition: opacity 0.6s ease;
   }
   #phase2.visible { opacity: 1; }
 
   .who-title {
     font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 2.8rem;
-    color: var(--white);
-    letter-spacing: -0.01em;
+    font-weight: 500; font-size: 2.8rem;
+    color: var(--white); letter-spacing: -0.01em;
     text-align: center;
   }
 
   .profiles {
-    display: flex;
-    gap: 60px;
-    align-items: flex-start;
-    justify-content: center;
+    display: flex; gap: 60px;
+    align-items: flex-start; justify-content: center;
   }
 
   .profile-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    cursor: pointer;
-    opacity: 0;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 14px;
+    cursor: pointer; opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.45s ease, transform 0.45s ease;
   }
-  .profile-card.shown {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .profile-card.shown { opacity: 1; transform: translateY(0); }
 
   .avatar-wrap {
     width: 160px; height: 160px;
@@ -152,8 +190,6 @@
     font-size: 72px;
     border: 3px solid transparent;
     transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    position: relative;
-    overflow: hidden;
   }
   .profile-card:hover .avatar-wrap {
     border-color: var(--red);
@@ -163,51 +199,47 @@
 
   .profile-name {
     font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    font-weight: 400;
-    color: var(--grey);
-    letter-spacing: 0.02em;
-    transition: color 0.2s ease;
-    text-align: center;
+    font-size: 1rem; font-weight: 400;
+    color: var(--grey); letter-spacing: 0.02em;
+    transition: color 0.2s ease; text-align: center;
   }
   .profile-card:hover .profile-name { color: var(--white); }
 
-  /* ── MANAGE PROFILES ── */
   .manage-btn {
-    margin-top: 8px;
-    padding: 8px 20px;
-    border: 1px solid var(--grey);
-    background: transparent;
-    color: var(--grey);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    margin-top: 8px; padding: 8px 20px;
+    border: 1px solid var(--grey); background: transparent;
+    color: var(--grey); font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease;
   }
   .manage-btn:hover { border-color: var(--white); color: var(--white); }
 
   /* ── CLICK OVERLAY ── */
   #click-overlay {
-    position: fixed;
-    inset: 0;
-    background: var(--black);
-    z-index: 30;
-    opacity: 0;
-    pointer-events: none;
+    position: fixed; inset: 0; background: var(--black);
+    z-index: 30; opacity: 0; pointer-events: none;
     transition: opacity 0.5s ease;
   }
-  #click-overlay.active {
-    opacity: 1;
-    pointer-events: all;
-  }
+  #click-overlay.active { opacity: 1; pointer-events: all; }
 </style>
 </head>
 <body>
 
-<!-- Loading screen — shown while /api/page fetch is in-flight -->
+<!-- Portrait rotate gate -->
+<div id="rotate-gate">
+  <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="18" y="8" width="36" height="56" rx="6" stroke="#E50914" stroke-width="3"/>
+    <path d="M52 36 C52 36 58 30 58 36 C58 42 52 36 52 36" stroke="#E50914" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M20 36 C20 36 14 30 14 36 C14 42 20 36 20 36" stroke="#E50914" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="36" cy="36" r="8" stroke="#fff" stroke-width="2"/>
+    <path d="M36 28 L36 20 M28 36 L20 36" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+  <p>Rotate your phone</p>
+  <small>NATFLIX is best experienced in landscape mode</small>
+</div>
+
+<!-- Loading screen -->
 <div id="loading-screen">
   <div class="loading-logo">NATFLIX</div>
   <div class="loading-spinner"></div>
@@ -224,11 +256,15 @@
 <!-- Click-to-redirect overlay -->
 <div id="click-overlay"></div>
 
+<!-- START wall — shown after data loads, requires tap for sound -->
+<div id="start-wall">
+  <button id="start-btn">▶ START</button>
+  <span class="start-sub">Tap to begin with sound</span>
+</div>
+
 <!-- PHASE 1 -->
 <div id="phase1">
-  <video id="intro-video" autoplay muted playsinline>
-    <source src="intro.mp4" type="video/mp4">
-  </video>
+  <video id="intro-video" playsinline preload="auto"></video>
 </div>
 
 <!-- PHASE 2 -->
@@ -239,21 +275,16 @@
 </div>
 
 <script>
-// FIX (Bug 5): D starts empty — ALL card building happens inside initPage()
-// which only runs AFTER the async KV fetch completes.
 let D = {};
 let phase2Triggered = false;
 let hardCutoff      = null;
 
-// ─── AVATAR ───────────────────────────────────────────────────────────────────
 function getAvatar(gender) {
   if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
   if (gender === 'male')   return { emoji: '🥷', bg: '#1a1a2e' };
   return { emoji: '👽', bg: '#0d2b0d' };
 }
 
-// ─── ENCODING ─────────────────────────────────────────────────────────────────
-// Matches safeEncode in index.html exactly.
 function safeEncode(obj) {
   const json = JSON.stringify(obj);
   try {
@@ -266,7 +297,7 @@ function safeEncode(obj) {
   }
 }
 
-// ─── REDIRECT TO HOME ─────────────────────────────────────────────────────────
+// ─── REDIRECT on profile click ────────────────────────────────────────────────
 function handleCardClick() {
   const overlay = document.getElementById('click-overlay');
   overlay.classList.add('active');
@@ -277,17 +308,16 @@ function handleCardClick() {
 }
 
 // ─── BUILD PROFILE CARDS ─────────────────────────────────────────────────────
-// FIX (Bug 5): only called from initPage(), after D is populated
 function buildCards() {
   const profilesEl = document.getElementById('profiles');
-  profilesEl.innerHTML = ''; // clear any previous
+  profilesEl.innerHTML = '';
 
   const people = [
     { name: D.recipientName || 'You',    gender: D.recipientGender },
     { name: D.senderName    || 'Sender', gender: D.senderGender    },
   ];
 
-  people.forEach((p, i) => {
+  people.forEach((p) => {
     const av   = getAvatar(p.gender);
     const card = document.createElement('div');
     card.className = 'profile-card';
@@ -300,34 +330,59 @@ function buildCards() {
   });
 }
 
-// ─── START VIDEO PHASE ────────────────────────────────────────────────────────
-// Only called after data is loaded, so the cards are ready
+// ─── VIDEO + INTERACTION-GATED AUDIO ─────────────────────────────────────────
+// The START wall is shown after data loads. Clicking START is the user
+// interaction — browser policy then allows unmuted video play.
 function startVideoPhase() {
   const loadingScreen = document.getElementById('loading-screen');
+  const startWall     = document.getElementById('start-wall');
   const phase1        = document.getElementById('phase1');
+  const vid           = document.getElementById('intro-video');
+
   loadingScreen.style.display = 'none';
-  phase1.classList.add('visible');
 
-  const video = document.getElementById('intro-video');
+  vid.src     = 'intro.mp4';
+  vid.preload = 'auto';
 
-  // 10-second hard cutoff in case video never fires 'ended'
-  hardCutoff = setTimeout(goPhase2, 10000);
+  // Show START wall — user must tap before video plays
+  startWall.classList.add('visible');
 
-  video.addEventListener('ended', () => {
+  vid.addEventListener('ended', () => {
     clearTimeout(hardCutoff);
     goPhase2();
   });
 
-  // FIX (Bug 6): removed phase2Triggered = false reset — just call goPhase2
-  video.addEventListener('error', () => {
+  vid.addEventListener('error', () => {
     clearTimeout(hardCutoff);
+    startWall.classList.remove('visible');
     goPhase2();
+  });
+
+  document.getElementById('start-btn').addEventListener('click', () => {
+    // This click = user gesture → unmuted play is allowed
+    startWall.classList.remove('visible');
+    phase1.classList.add('visible');
+
+    vid.muted       = false;
+    vid.volume      = 1;
+    vid.currentTime = 0;
+
+    const playPromise = vid.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          hardCutoff = setTimeout(goPhase2, 65000);
+        })
+        .catch(err => {
+          console.warn('intro video play() rejected:', err);
+          goPhase2();
+        });
+    }
   });
 }
 
-// ─── PHASE TRANSITION ─────────────────────────────────────────────────────────
+// ─── PHASE TRANSITIONS ────────────────────────────────────────────────────────
 function goPhase2() {
-  // FIX (Bug 6): guard against double-fire — no reset anywhere else
   if (phase2Triggered) return;
   phase2Triggered = true;
 
@@ -342,7 +397,6 @@ function goPhase2() {
     fade.classList.remove('active');
     phase2.classList.add('visible');
 
-    // Stagger cards in
     const cardEls = document.querySelectorAll('.profile-card');
     const delays  = [150, 300];
     cardEls.forEach((c, i) => setTimeout(() => c.classList.add('shown'), delays[i] || 300));
@@ -350,29 +404,18 @@ function goPhase2() {
 }
 
 // ─── DATA LOADING ─────────────────────────────────────────────────────────────
-// FIX (Bug 5): initPage runs AFTER await — D is fully populated before cards are built
 async function loadData() {
   const id = new URLSearchParams(location.search).get('id');
 
-  if (!id) {
-    // No ?id= — show error
-    showLoadError();
-    return;
-  }
+  if (!id) { showLoadError(); return; }
 
   try {
     const resp = await fetch('/api/page?id=' + encodeURIComponent(id));
-
     if (!resp.ok) throw new Error(`API responded with ${resp.status}`);
-
     const data = await resp.json();
-
-    // Validate that we got something useful
-    if (!data || typeof data !== 'object') throw new Error('Invalid response from API');
-
+    if (!data || typeof data !== 'object') throw new Error('Invalid response');
     D = data;
     initPage();
-
   } catch (err) {
     console.error('Failed to load NATFLIX data:', err);
     showLoadError();
@@ -387,13 +430,10 @@ function showLoadError() {
 }
 
 function initPage() {
-  // Build cards with real data
   buildCards();
-  // Then start the video / intro sequence
   startVideoPhase();
 }
 
-// Kick off
 loadData();
 </script>
 </body>

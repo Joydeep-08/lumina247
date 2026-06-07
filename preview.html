@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NATFLIX</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <script src="config.js"></script>
@@ -27,6 +27,69 @@
     scrollbar-color: #333 #000;
   }
 
+  /* ═══════════ PORTRAIT GATE — shown only when phone is held portrait ═══════════ */
+  #rotate-gate {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  #rotate-gate svg {
+    width: 72px; height: 72px;
+    animation: rotateHint 1.8s ease-in-out infinite;
+  }
+  #rotate-gate p {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    color: #fff;
+    text-align: center;
+  }
+  #rotate-gate small {
+    color: var(--grey);
+    font-size: 0.82rem;
+    text-align: center;
+    max-width: 240px;
+    line-height: 1.5;
+  }
+  @keyframes rotateHint {
+    0%   { transform: rotate(0deg); }
+    40%  { transform: rotate(90deg); }
+    60%  { transform: rotate(90deg); }
+    100% { transform: rotate(90deg); }
+  }
+
+  /* On mobile portrait — show gate, hide everything else */
+  @media screen and (max-width: 768px) and (orientation: portrait) {
+    #rotate-gate { display: flex; }
+    #phase-intro, #phase-who, #phase-main,
+    #who-fade, #intro-fade, #start-wall { display: none !important; }
+  }
+
+  /* On mobile landscape — make everything fill properly */
+  @media screen and (max-height: 500px) and (orientation: landscape) {
+    .hero { height: 100dvh; }
+    .hero-content { padding: 0 24px 40px; max-width: 480px; }
+    .hero-title { font-size: clamp(1.8rem, 5vw, 3.5rem); }
+    .stats-section { padding: 24px 24px 20px; }
+    .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .stat-card { padding: 14px 12px; }
+    .stat-number { font-size: 1.8rem; }
+    .memories-section, .message-section { padding-left: 24px; padding-right: 24px; }
+    .memory-card { flex: 0 0 160px; height: 110px; }
+    nav { height: 52px; padding: 0 24px; }
+    .profiles-row { gap: 32px; }
+    .profile-avatar { width: 100px; height: 100px; font-size: 48px; }
+    #phase-who h1 { font-size: 1.8rem; margin-bottom: 32px; }
+    #preview-banner { padding: 7px 16px; font-size: 0.78rem; }
+    #start-wall button { font-size: 1.4rem; padding: 16px 48px; }
+  }
+
   /* ═══════════ PHASE 1 — INTRO VIDEO ═══════════ */
   #phase-intro {
     position: fixed; inset: 0; z-index: 100;
@@ -47,6 +110,7 @@
     position: fixed; inset: 0; z-index: 200;
     background: #000;
     display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 16px;
   }
   #start-wall button {
     background: var(--red);
@@ -62,6 +126,12 @@
   }
   #start-wall button:hover  { opacity: 0.88; }
   #start-wall button:active { transform: scale(0.98); }
+  #start-wall .start-sub {
+    color: var(--grey);
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
 
   /* ═══════════ PHASE 2 — WHO'S WATCHING ═══════════ */
   #phase-who {
@@ -440,12 +510,14 @@
     background: rgba(0,0,0,0.88);
     align-items: center; justify-content: center;
     padding: 20px;
+    overflow-y: auto;
   }
   #modal-overlay.open { display: flex; }
   .modal-box {
     background: #141414; border: 1px solid #2a2a2a;
     border-radius: 16px; padding: 40px 44px;
     width: 100%; max-width: 440px; position: relative;
+    margin: auto;
   }
   .modal-close {
     position: absolute; top: 16px; right: 20px;
@@ -496,7 +568,6 @@
   #pay-btn:active   { transform: scale(0.99); }
   #pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  /* Share result */
   #share-result { display: none; margin-top: 20px; }
   #share-url-box {
     background: #1a1a1a; border: 1px solid #2a2a2a;
@@ -512,7 +583,6 @@
   }
   #copy-btn:hover { background: #c0060f; }
 
-  /* SAVE ERROR */
   #save-error {
     display: none; margin-top: 14px;
     color: var(--red); font-size: 0.82rem; text-align: center; line-height: 1.5;
@@ -521,26 +591,42 @@
   /* RESPONSIVE */
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
+    .nav-links { display: none; }
     .hero-content { padding: 0 20px 60px; }
     .stats-section { padding: 32px 20px; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
     .memories-section, .message-section { padding-left: 20px; padding-right: 20px; }
     #preview-banner { font-size: 0.78rem; padding: 8px 12px; }
     #preview-banner .banner-text span { display: none; }
+    .message-card { padding: 28px 24px; }
   }
 </style>
 </head>
 <body>
 
+<!-- Rotate gate — only visible on mobile portrait -->
+<div id="rotate-gate">
+  <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="18" y="8" width="36" height="56" rx="6" stroke="#E50914" stroke-width="3"/>
+    <path d="M36 52 L36 20 M36 20 L28 28 M36 20 L44 28" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" transform-origin="36 36" transform="rotate(90)"/>
+    <path d="M52 36 C52 36 58 30 58 36 C58 42 52 36 52 36" stroke="#E50914" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M20 36 C20 36 14 30 14 36 C14 42 20 36 20 36" stroke="#E50914" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </svg>
+  <p>Rotate your phone</p>
+  <small>NATFLIX is best experienced in landscape mode</small>
+</div>
+
 <!-- Phase 1: Intro -->
 <div id="phase-intro">
-  <video id="intro-video" playsinline></video>
+  <!-- Video pre-loaded but NOT auto-played — requires START tap for sound -->
+  <video id="intro-video" playsinline preload="auto"></video>
 </div>
 <div id="intro-fade"></div>
 
-<!-- START wall — visible until user clicks -->
+<!-- START wall — the required interaction gate for audio -->
 <div id="start-wall">
   <button id="start-btn">▶ START</button>
+  <span class="start-sub">Tap to begin with sound</span>
 </div>
 
 <!-- Phase 2: Who's Watching -->
@@ -668,52 +754,38 @@
 </div>
 
 <script>
-// ─── ENCODING HELPERS ─────────────────────────────────────────────────────────
-// These MUST match the safeEncode in index.html exactly.
-
-// Decode: TextDecoder path (mirrors TextEncoder in index.html)
+// ─── DECODE ───────────────────────────────────────────────────────────────────
 function safeDecode(raw) {
   try {
-    // Modern path — mirror of TextEncoder encode in index.html
     const binary = atob(raw);
     const bytes  = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
     return JSON.parse(new TextDecoder().decode(bytes));
   } catch (_) {
-    // Legacy fallback — mirror of unescape(encodeURIComponent()) in index.html
     return JSON.parse(decodeURIComponent(escape(atob(raw))));
   }
 }
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 let D = {};
-
 try {
   const raw = new URLSearchParams(location.search).get('data');
-  if (raw) {
-    // FIX (Bug 3): use safeDecode — matches safeEncode in index.html
-    D = safeDecode(raw);
-  }
+  if (raw) D = safeDecode(raw);
 } catch (e) {
-  console.error('Data parse error — falling back to demo data:', e);
+  console.error('Data parse error — using demo data:', e);
   D = {
-    recipientName:      'Priya',
-    recipientGender:    'female',
-    senderName:         'Arjun',
-    senderGender:       'male',
-    paid:               false,
-    video:              null,
-    photos:             [],
+    recipientName: 'Priya', recipientGender: 'female',
+    senderName: 'Arjun', senderGender: 'male',
+    paid: false, video: null, photos: [],
     friendshipDuration: '5 Years',
     groq: {
-      heroTagline:     'A Bond That Defies Time',
-      heroDescription: 'From late-night calls to forever memories — a story of two souls that found each other and never let go.',
-      photoCaptions:   [],
-      finalMessage:    'You are not just my best friend — you are the chapter I will always return to.'
+      heroTagline: 'A Bond That Defies Time',
+      heroDescription: 'From late-night calls to forever memories.',
+      photoCaptions: [],
+      finalMessage: 'You are not just my best friend — you are the chapter I will always return to.'
     }
   };
 }
-
 const groq = D.groq || {};
 
 // ─── AVATAR ───────────────────────────────────────────────────────────────────
@@ -723,83 +795,97 @@ function getAvatar(gender) {
   return { emoji: '👽', bg: '#0d2b0d' };
 }
 
-// ─── PHASE CONTROL ────────────────────────────────────────────────────────────
-const phaseIntro = document.getElementById('phase-intro');
-const introFade  = document.getElementById('intro-fade');
-const phaseWho   = document.getElementById('phase-who');
-const whoFade    = document.getElementById('who-fade');
-const phaseMain  = document.getElementById('phase-main');
+// ─── PHASE 1: INTRO VIDEO with interaction-gated audio ────────────────────────
+// The START button IS the interaction — clicking it satisfies browser autoplay
+// policy so we can play the video unmuted. No autoplay without user gesture.
+(function initIntro() {
+  const vid      = document.getElementById('intro-video');
+  const wall     = document.getElementById('start-wall');
+  const startBtn = document.getElementById('start-btn');
 
-function showPhase2() {
-  phaseWho.classList.add('visible');
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    phaseWho.classList.add('faded-in');
-    setTimeout(() => document.getElementById('card-recipient').classList.add('show'), 100);
-    setTimeout(() => document.getElementById('card-sender').classList.add('show'),    250);
-  }));
-}
+  // Pre-load the video source (no autoplay, no muted here — we want sound)
+  vid.src     = 'intro.mp4';
+  vid.preload = 'auto';
 
+  // If the video file is missing or broken, skip straight to Phase 2
+  vid.addEventListener('error', () => {
+    wall.style.display  = 'none';
+    goToPhase2();
+  });
+
+  // When video finishes naturally, go to Phase 2
+  vid.addEventListener('ended', goToPhase2);
+
+  // Safety cutoff — if ended never fires (e.g. video hangs), advance after 60s
+  let safetyCutoff;
+
+  startBtn.addEventListener('click', () => {
+    // This click IS the user interaction — browser now allows unmuted play
+    wall.style.display = 'none';
+
+    vid.muted       = false;
+    vid.volume      = 1;
+    vid.currentTime = 0;
+
+    const playPromise = vid.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          // Playing with sound — set safety cutoff
+          safetyCutoff = setTimeout(goToPhase2, 65000);
+        })
+        .catch(err => {
+          // play() rejected (codec issue, permissions, etc.) — skip to Phase 2
+          console.warn('intro video play() rejected:', err);
+          clearTimeout(safetyCutoff);
+          goToPhase2();
+        });
+    }
+  });
+
+  vid.addEventListener('ended', () => clearTimeout(safetyCutoff));
+})();
+
+// ─── PHASE TRANSITIONS ────────────────────────────────────────────────────────
 function goToPhase2() {
-  introFade.style.opacity        = '1';
-  introFade.style.pointerEvents  = 'auto';
+  const introFade = document.getElementById('intro-fade');
+  const phaseIntro = document.getElementById('phase-intro');
+  const phaseWho  = document.getElementById('phase-who');
+
+  introFade.style.opacity       = '1';
+  introFade.style.pointerEvents = 'auto';
+
   setTimeout(() => {
-    phaseIntro.style.display       = 'none';
-    introFade.style.opacity        = '0';
-    introFade.style.pointerEvents  = 'none';
-    showPhase2();
+    phaseIntro.style.display      = 'none';
+    introFade.style.opacity       = '0';
+    introFade.style.pointerEvents = 'none';
+
+    phaseWho.classList.add('visible');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      phaseWho.classList.add('faded-in');
+      setTimeout(() => document.getElementById('card-recipient').classList.add('show'), 100);
+      setTimeout(() => document.getElementById('card-sender').classList.add('show'),    250);
+    }));
   }, 600);
 }
 
 function goToPhase3() {
-  whoFade.style.opacity        = '1';
-  whoFade.style.pointerEvents  = 'auto';
+  const whoFade  = document.getElementById('who-fade');
+  const phaseWho = document.getElementById('phase-who');
+
+  whoFade.style.opacity       = '1';
+  whoFade.style.pointerEvents = 'auto';
+
   setTimeout(() => {
-    phaseWho.style.display       = 'none';
-    whoFade.style.opacity        = '0';
-    whoFade.style.pointerEvents  = 'none';
-    phaseMain.classList.add('visible');
+    phaseWho.style.display      = 'none';
+    whoFade.style.opacity       = '0';
+    whoFade.style.pointerEvents = 'none';
+    document.getElementById('phase-main').classList.add('visible');
     initMain();
   }, 500);
 }
 
-// ─── PHASE 1 INIT ─────────────────────────────────────────────────────────────
-(function initIntro() {
-  const vid     = document.getElementById('intro-video');
-  const wall    = document.getElementById('start-wall');
-  const startBtn = document.getElementById('start-btn');
-
-  // Pre-load the video but do NOT autoplay — browser policy blocks unmuted autoplay
-  vid.preload = 'auto';
-  vid.src     = 'intro.mp4';
-
-  // If video fails to load at all, skip straight to Phase 2
-  vid.addEventListener('error', () => {
-    wall.style.display  = 'none';
-    phaseIntro.style.display = 'none';
-    showPhase2();
-  });
-
-  vid.addEventListener('ended', goToPhase2);
-
-  startBtn.addEventListener('click', () => {
-    wall.style.display = 'none';
-    vid.muted  = false;
-    vid.volume = 1;
-    vid.currentTime = 0;
-
-    // FIX (Bug 6): handle play() rejection gracefully
-    const playPromise = vid.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(err => {
-        console.warn('Video play() rejected:', err);
-        // If play fails (e.g. codec issue), go straight to Phase 2
-        goToPhase2();
-      });
-    }
-  });
-})();
-
-// ─── PHASE 2 INIT ─────────────────────────────────────────────────────────────
+// ─── PHASE 2: WHO'S WATCHING ──────────────────────────────────────────────────
 (function initWho() {
   const ra = getAvatar(D.recipientGender);
   const sa = getAvatar(D.senderGender);
@@ -818,19 +904,19 @@ function goToPhase3() {
   document.getElementById('card-sender').addEventListener('click',    goToPhase3);
 })();
 
-// ─── PHASE 3 INIT ─────────────────────────────────────────────────────────────
+// ─── PHASE 3: MAIN ────────────────────────────────────────────────────────────
 function initMain() {
   const isPaid = D.paid === true || D.paid === 'true';
 
   if (isPaid) {
-    document.getElementById('watermark').style.display     = 'none';
+    document.getElementById('watermark').style.display      = 'none';
     document.getElementById('preview-banner').style.display = 'none';
   } else {
     buildWatermark();
     document.getElementById('nav').style.top = '44px';
   }
 
-  // Hero video (optional)
+  // Hero video or photo fallback
   if (D.video) {
     const hv = document.createElement('video');
     hv.className = 'hero-video';
@@ -839,17 +925,15 @@ function initMain() {
     hv.muted     = true;
     hv.loop      = true;
     hv.setAttribute('playsinline', '');
-    document.getElementById('hero-section').insertBefore(hv, document.getElementById('hero-section').firstChild);
+    const heroSection = document.getElementById('hero-section');
+    heroSection.insertBefore(hv, heroSection.firstChild);
     document.getElementById('hero-fallback').style.display = 'none';
+  } else if (D.heroPhoto) {
+    const hf = document.getElementById('hero-fallback');
+    hf.style.backgroundImage    = `url('${D.heroPhoto}')`;
+    hf.style.backgroundSize     = 'cover';
+    hf.style.backgroundPosition = 'center';
   }
-  // After: if (D.video) { ... }
-// Add:
-if (!D.video && D.heroPhoto) {
-  const hf = document.getElementById('hero-fallback'); // or heroBgFallback
-  hf.style.backgroundImage = `url('${D.heroPhoto}')`;
-  hf.style.backgroundSize = 'cover';
-  hf.style.backgroundPosition = 'center';
-}
 
   document.getElementById('hero-tagline').textContent  = groq.heroTagline     || '';
   document.getElementById('hero-year').textContent     = new Date().getFullYear();
@@ -889,7 +973,7 @@ function buildWatermark() {
   }
 }
 
-// ─── MEMORIES ─────────────────────────────────────────────────────────────────
+// ─── MEMORIES + LIGHTBOX ─────────────────────────────────────────────────────
 let lbIndex   = 0;
 const lbPhotos   = [];
 const lbCaptions = [];
@@ -897,7 +981,7 @@ const lbCaptions = [];
 function buildMemories() {
   const scroll   = document.getElementById('memories-scroll');
   const photos   = D.photos   || [];
-  const captions = (groq.photoCaptions) || [];
+  const captions = groq.photoCaptions || [];
 
   if (!photos.length) {
     scroll.parentElement.style.display = 'none';
@@ -906,25 +990,18 @@ function buildMemories() {
 
   photos.forEach((url, i) => {
     lbPhotos.push(url);
-    // FIX (Bug 4): guard null/undefined captions
     lbCaptions.push((captions[i] && String(captions[i])) || '');
 
     const card = document.createElement('div');
     card.className = 'memory-card';
-
     const img  = document.createElement('img');
-    img.src     = url;
-    img.alt     = 'Memory ' + (i + 1);
-    img.loading = 'lazy';
-
+    img.src     = url; img.alt = 'Memory ' + (i + 1); img.loading = 'lazy';
     const cap  = document.createElement('div');
     cap.className = 'memory-caption';
     const span = document.createElement('span');
     span.textContent = lbCaptions[i];
     cap.appendChild(span);
-
-    card.appendChild(img);
-    card.appendChild(cap);
+    card.appendChild(img); card.appendChild(cap);
     card.addEventListener('click', () => openLightbox(i));
     scroll.appendChild(card);
   });
@@ -943,12 +1020,12 @@ function lbNav(dir) {
 }
 document.addEventListener('keydown', e => {
   if (!document.getElementById('lightbox').classList.contains('open')) return;
-  if (e.key === 'Escape')      closeLightbox();
-  if (e.key === 'ArrowLeft')   lbNav(-1);
-  if (e.key === 'ArrowRight')  lbNav(1);
+  if (e.key === 'Escape')     closeLightbox();
+  if (e.key === 'ArrowLeft')  lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
 });
 
-// ─── MODAL ────────────────────────────────────────────────────────────────────
+// ─── MODAL / PAYMENT ─────────────────────────────────────────────────────────
 let currentPrice = 149;
 const COUPONS = { NATFREE: 0, BESTIE1: 1, NATFLIX79: 79, NATFLIX129: 129 };
 
@@ -962,13 +1039,10 @@ function applyCoupon() {
   const code    = document.getElementById('coupon-input').value.trim().toUpperCase();
   const msg     = document.getElementById('coupon-msg');
   const priceEl = document.getElementById('modal-price');
-
   if (code in COUPONS) {
     currentPrice      = COUPONS[code];
     msg.className     = 'success';
-    msg.textContent   = currentPrice === 0
-      ? '🎉 100% off! This one\'s on us.'
-      : `✓ Coupon applied — ₹${currentPrice} only!`;
+    msg.textContent   = currentPrice === 0 ? '🎉 100% off! This one\'s on us.' : `✓ Coupon applied — ₹${currentPrice} only!`;
     priceEl.innerHTML = `<span>₹${currentPrice}</span><span class="price-strike">₹149</span>`;
   } else {
     msg.className   = 'error';
@@ -978,71 +1052,42 @@ function applyCoupon() {
 
 function handlePay() {
   if (currentPrice === 0) { onPaymentSuccess(); return; }
-
   const key = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.RAZORPAY_KEY) || '';
-  if (!key) {
-    alert('Payment config not found. Please check config.js (RAZORPAY_KEY).');
-    return;
-  }
-
+  if (!key) { alert('Payment config not found. Please check config.js (RAZORPAY_KEY).'); return; }
   const options = {
-    key,
-    amount:      currentPrice * 100,
-    currency:    'INR',
-    name:        'NATFLIX',
-    description: 'Generate Shareable Link',
-    theme:       { color: '#E50914' },
-    handler:     onPaymentSuccess,
+    key, amount: currentPrice * 100, currency: 'INR',
+    name: 'NATFLIX', description: 'Generate Shareable Link',
+    theme: { color: '#E50914' }, handler: onPaymentSuccess,
   };
-
-  try {
-    const rzp = new Razorpay(options);
-    rzp.open();
-  } catch (e) {
-    alert('Could not open payment. Please try again.');
-  }
+  try { const rzp = new Razorpay(options); rzp.open(); }
+  catch (e) { alert('Could not open payment. Please try again.'); }
 }
 
 async function onPaymentSuccess() {
   D.paid = true;
-
-  const btn       = document.getElementById('pay-btn');
+  const btn = document.getElementById('pay-btn');
   const saveError = document.getElementById('save-error');
-  btn.textContent = 'Saving…';
-  btn.disabled    = true;
+  btn.textContent = 'Saving…'; btn.disabled = true;
   saveError.style.display = 'none';
-
   try {
     const resp = await fetch('/api/save', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(D),
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(D),
     });
-
-    // FIX (Bug 5 / api/save): explicit error handling
     if (!resp.ok) throw new Error(`Server responded with ${resp.status}`);
-
     const data = await resp.json();
-    if (!data.id) throw new Error('No ID returned from /api/save');
-
-    // Share URL uses ?id= (the new KV-based path)
+    if (!data.id) throw new Error('No ID returned');
     const shareUrl = `${window.location.origin}/watching?id=${data.id}`;
-
     document.getElementById('share-url-box').textContent  = shareUrl;
     document.getElementById('share-result').style.display = 'block';
     btn.style.display = 'none';
-
-    // Remove preview watermark/banner now that payment succeeded
     const wm = document.getElementById('watermark');
     if (wm) wm.remove();
     const banner = document.getElementById('preview-banner');
     if (banner) banner.style.display = 'none';
     document.getElementById('nav').style.top = '';
-
   } catch (err) {
     console.error('Save error:', err);
-    btn.textContent  = '✦ Generate My Link →';
-    btn.disabled     = false;
+    btn.textContent = '✦ Generate My Link →'; btn.disabled = false;
     saveError.style.display = 'block';
   }
 }
@@ -1054,15 +1099,10 @@ function copyLink() {
     btn.textContent = '✓ Copied!';
     setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000);
   }).catch(() => {
-    // Fallback for browsers without clipboard API
     const ta = document.createElement('textarea');
-    ta.value = url;
-    ta.style.position = 'fixed';
-    ta.style.opacity  = '0';
-    document.body.appendChild(ta);
-    ta.focus(); ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
+    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
   });
 }
 </script>
