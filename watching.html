@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NATFLIX</title>
+<title>NETFLIX</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -185,10 +185,10 @@
 
 <!-- Loading screen -->
 <div id="loading-screen">
-  <div class="loading-logo">NATFLIX</div>
+  <div class="loading-logo">NETFLIX</div>
   <div class="loading-spinner"></div>
   <div class="loading-error" id="loading-error">
-    Could not load this NATFLIX film.<br>
+    Could not load this NETFLIX film.<br>
     The link may have expired or be invalid.<br><br>
     <a href="/">Create your own →</a>
   </div>
@@ -357,7 +357,7 @@ async function loadData() {
     D = data;
     initPage();
   } catch (err) {
-    console.error('Failed to load NATFLIX data:', err);
+    console.error('Failed to load NETFLIX data:', err);
     showLoadError();
   }
 }

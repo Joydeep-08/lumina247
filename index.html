@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NATFLIX — Create Your Friendship Film</title>
+<title>NETFLIX — Create Your Friendship Film</title>
 <script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,7 +68,7 @@
   }
 
   .logo::after {
-    content: 'NATFLIX';
+    content: 'NETFLIX';
     position: absolute;
     inset: 0;
     color: transparent;
@@ -405,7 +405,7 @@
 <input type="file" id="video-input" accept="video/*" style="display:none">
 
 <header>
-  <div class="logo">NATFLIX</div>
+  <div class="logo">NETFLIX</div>
   <p class="header-sub">Create Your Friendship Film</p>
   <div class="header-rule"></div>
 </header>
@@ -903,7 +903,7 @@ async function handleSubmit() {
   // If no video, first photo becomes the hero — note this in the prompt
   const heroSource = hasVideo ? 'video' : (photoCount > 0 ? 'first uploaded photo' : 'gradient fallback');
 
-  const groqPrompt = `You are writing copy for a friendship tribute video called "NATFLIX".
+  const groqPrompt = `You are writing copy for a friendship tribute video called "NETFLIX".
 Tone: ${tone}.
 Sender: ${senderName} (${senderGender}).
 Recipient: ${recipientName} (${recipientGender}).

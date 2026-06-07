@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NATFLIX</title>
+<title>NETFLIX</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <script src="config.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -624,7 +624,7 @@
   </div>
 
   <nav id="nav">
-    <a href="#" class="nav-logo">NATFLIX</a>
+    <a href="#" class="nav-logo">NETFLIX</a>
     <ul class="nav-links">
       <li><a href="#">Home</a></li>
       <li><a href="#">Memories</a></li>
@@ -702,7 +702,7 @@
 <div id="modal-overlay">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-title">Generate Your NATFLIX Link</div>
+    <div class="modal-title">Generate Your NETFLIX Link</div>
     <div class="modal-subtitle">Share it with your bestie — they get the full experience 🎬</div>
     <div class="modal-price" id="modal-price"><span>₹149</span></div>
     <div class="coupon-row">
@@ -912,7 +912,7 @@ function initMain() {
 // ─── WATERMARK ────────────────────────────────────────────────────────────────
 function buildWatermark() {
   const wm   = document.getElementById('watermark');
-  const text = 'NATFLIX PREVIEW';
+  const text = 'NETFLIX PREVIEW';
   const w    = window.innerWidth;
   const h    = window.innerHeight;
   const cols = Math.ceil(w / 200) + 2;
@@ -1032,7 +1032,7 @@ window.handlePay = function() {
   if (!key) { alert('Payment config not found. Please check config.js (RAZORPAY_KEY).'); return; }
   const options = {
     key, amount: currentPrice * 100, currency: 'INR',
-    name: 'NATFLIX', description: 'Generate Shareable Link',
+    name: 'NETFLIX', description: 'Generate Shareable Link',
     theme: { color: '#E50914' }, handler: onPaymentSuccess,
   };
   try { const rzp = new Razorpay(options); rzp.open(); }
