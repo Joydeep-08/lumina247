@@ -980,7 +980,7 @@ async function uploadAllAssets() {
 
     const result = await new Promise((res, rej) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`);
       xhr.timeout = 120000;
       xhr.ontimeout = () => rej(new Error('Video upload timed out after 120s'));
       xhr.upload.addEventListener('progress', e => {
@@ -1021,25 +1021,29 @@ async function uploadAllAssets() {
 // ─── IMAGE COMPRESSION ───────────────────────────────────────────────────────
 function compressImage(file, maxBytes) {
   return new Promise((resolve, reject) => {
-    const img = new Image();
-    const blobUrl = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(blobUrl);
-      const canvas = document.createElement('canvas');
-      let w = img.naturalWidth, h = img.naturalHeight;
-      const maxDim = 1920;
-      if (w > maxDim || h > maxDim) { const r = Math.min(maxDim/w, maxDim/h); w = Math.round(w*r); h = Math.round(h*r); }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const tryQ = q => canvas.toBlob(blob => {
-        if (!blob) { reject(new Error('Canvas export failed')); return; }
-        if (blob.size <= maxBytes || q <= 0.35) resolve(blob);
-        else tryQ(parseFloat((q - 0.1).toFixed(2)));
-      }, 'image/jpeg', q);
-      tryQ(0.85);
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('FileReader error'));
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Image decode error'));
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.naturalWidth, h = img.naturalHeight;
+        const maxDim = 1920;
+        if (w > maxDim || h > maxDim) { const r = Math.min(maxDim/w, maxDim/h); w = Math.round(w*r); h = Math.round(h*r); }
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const tryQ = q => canvas.toBlob(blob => {
+          if (!blob) { reject(new Error('Canvas export failed')); return; }
+          if (blob.size <= maxBytes || q <= 0.35) resolve(blob);
+          else tryQ(parseFloat((q - 0.1).toFixed(2)));
+        }, 'image/jpeg', q);
+        tryQ(0.85);
+      };
+      img.src = e.target.result;
     };
-    img.onerror = () => { URL.revokeObjectURL(blobUrl); reject(new Error('Image load error')); };
-    img.src = blobUrl;
+    reader.readAsDataURL(file);
   });
 }
 
