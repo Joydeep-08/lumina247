@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NETFLIX — Create Your Friendship Film</title>
+<title>NATFLIX — Create Your Friendship Film</title>
 <script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,83 +33,51 @@
 
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-    opacity: 0.03;
-    pointer-events: none;
-    z-index: 1000;
+    opacity: 0.03; pointer-events: none; z-index: 1000;
   }
 
   body::after {
     content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--red);
-    z-index: 999;
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px; background: var(--red); z-index: 999;
   }
 
   header {
-    padding: 36px 24px 0;
-    text-align: center;
-    position: relative;
-    animation: fadeUp 0.6s 0s ease both;
+    padding: 36px 24px 0; text-align: center;
+    position: relative; animation: fadeUp 0.6s 0s ease both;
   }
 
   .logo {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(52px, 10vw, 88px);
-    letter-spacing: 0.04em;
-    color: var(--red);
-    line-height: 1;
-    display: inline-block;
-    position: relative;
+    letter-spacing: 0.04em; color: var(--red);
+    line-height: 1; display: inline-block; position: relative;
   }
-
   .logo::after {
-    content: 'NETFLIX';
-    position: absolute;
-    inset: 0;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(229,9,20,0.2);
-    transform: translate(3px, 3px);
-    z-index: -1;
+    content: 'NATFLIX'; position: absolute; inset: 0;
+    color: transparent; -webkit-text-stroke: 1px rgba(229,9,20,0.2);
+    transform: translate(3px, 3px); z-index: -1;
   }
 
   .header-sub {
-    font-size: 13px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 8px;
+    font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted); margin-top: 8px;
   }
-
-  .header-rule {
-    width: 40px;
-    height: 2px;
-    background: var(--red);
-    margin: 20px auto 0;
-  }
+  .header-rule { width: 40px; height: 2px; background: var(--red); margin: 20px auto 0; }
 
   main {
-    max-width: 720px;
-    margin: 0 auto;
+    max-width: 720px; margin: 0 auto;
     padding: 48px 24px 80px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    display: flex; flex-direction: column; gap: 20px;
   }
 
   .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 40px 40px 36px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s ease;
-    animation: fadeUp 0.5s ease both;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 40px 40px 36px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s ease; animation: fadeUp 0.5s ease both;
   }
   .card:hover { border-color: #3a3a3a; }
   .card:nth-child(1) { animation-delay: 0.05s; }
@@ -119,93 +87,52 @@
   .card:nth-child(5) { animation-delay: 0.33s; }
 
   .card-step-bg {
-    position: absolute;
-    top: -10px; right: 16px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 140px;
-    line-height: 1;
-    color: #fff;
-    opacity: 0.04;
-    pointer-events: none;
-    user-select: none;
-    letter-spacing: -4px;
+    position: absolute; top: -10px; right: 16px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 140px;
+    line-height: 1; color: #fff; opacity: 0.04;
+    pointer-events: none; user-select: none; letter-spacing: -4px;
   }
 
   .card-header { margin-bottom: 32px; position: relative; z-index: 1; }
-
   .step-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.28em;
-    color: var(--red);
-    text-transform: uppercase;
-    margin-bottom: 4px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 11px;
+    letter-spacing: 0.28em; color: var(--red); text-transform: uppercase; margin-bottom: 4px;
   }
-
   .card-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(28px, 5vw, 38px);
-    letter-spacing: 0.03em;
-    color: #fff;
-    line-height: 1.05;
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(28px, 5vw, 38px);
+    letter-spacing: 0.03em; color: #fff; line-height: 1.05;
   }
-
-  .card-subtitle {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 6px;
-    font-style: italic;
-  }
+  .card-subtitle { font-size: 12px; color: var(--muted); margin-top: 6px; font-style: italic; }
 
   .field { margin-bottom: 24px; position: relative; z-index: 1; }
   .field:last-child { margin-bottom: 0; }
 
   label {
-    display: block;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
-    letter-spacing: 0.2em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    margin-bottom: 8px;
+    display: block; font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px; letter-spacing: 0.2em; color: var(--text-dim);
+    text-transform: uppercase; margin-bottom: 8px;
   }
 
   input[type="text"], select, textarea {
-    width: 100%;
-    background: #0a0a0a;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 400;
-    padding: 14px 16px;
-    outline: none;
+    width: 100%; background: #0a0a0a; border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 400; padding: 14px 16px; outline: none;
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    -webkit-appearance: none;
-    appearance: none;
+    -webkit-appearance: none; appearance: none;
   }
-
   input[type="text"]:focus, select:focus, textarea:focus {
-    border-color: var(--red);
-    box-shadow: 0 0 0 3px rgba(229,9,20,0.1);
+    border-color: var(--red); box-shadow: 0 0 0 3px rgba(229,9,20,0.1);
   }
-
   input[type="text"]::placeholder, textarea::placeholder { color: #444; font-style: italic; }
 
   select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 40px;
-    cursor: pointer;
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; cursor: pointer;
   }
   select option { background: #1a1a1a; color: var(--text); }
-
   textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
 
   .field-hint { font-size: 12px; color: var(--muted); margin-top: 7px; line-height: 1.5; }
-
   .optional-tag {
     font-size: 11px; color: #444; font-style: italic;
     margin-left: 6px; font-family: 'DM Sans', sans-serif;
@@ -213,101 +140,58 @@
   }
 
   .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-    position: relative;
-    z-index: 1;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-bottom: 24px; position: relative; z-index: 1;
   }
   .field-row .field { margin-bottom: 0; }
 
   .upload-zone {
-    border: 1.5px dashed var(--border);
-    border-radius: 8px;
-    padding: 40px 24px;
-    text-align: center;
-    cursor: pointer;
+    border: 1.5px dashed var(--border); border-radius: 8px;
+    padding: 40px 24px; text-align: center; cursor: pointer;
     transition: border-color 0.25s, background 0.25s;
-    position: relative;
-    z-index: 1;
-    user-select: none;
+    position: relative; z-index: 1; user-select: none;
   }
   .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--red);
-    background: rgba(229,9,20,0.03);
+    border-color: var(--red); background: rgba(229,9,20,0.03);
   }
-
   .upload-icon { font-size: 36px; margin-bottom: 10px; display: block; opacity: 0.5; }
   .upload-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.1em; color: #fff; margin-bottom: 4px; }
   .upload-sub { font-size: 12px; color: var(--muted); }
 
-  /* Optional video badge */
   .optional-pill {
-    display: inline-block;
-    background: #1e1e1e;
-    border: 1px solid #333;
-    color: #666;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-top: 10px;
+    display: inline-block; background: #1e1e1e; border: 1px solid #333; color: #666;
+    font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 10px;
+    border-radius: 20px; margin-top: 10px;
   }
 
-  /* Photo-as-hero notice */
   .hero-fallback-notice {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(229,9,20,0.06);
-    border: 1px solid rgba(229,9,20,0.15);
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-top: 16px;
-    position: relative;
-    z-index: 1;
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(229,9,20,0.06); border: 1px solid rgba(229,9,20,0.15);
+    border-radius: 8px; padding: 12px 16px; margin-top: 16px;
+    position: relative; z-index: 1;
   }
   .hero-fallback-notice .notice-icon { font-size: 18px; flex-shrink: 0; }
   .hero-fallback-notice .notice-text { font-size: 12px; color: #888; line-height: 1.5; }
   .hero-fallback-notice .notice-text strong { color: #aaa; font-weight: 500; }
 
-  .progress-wrap {
-    height: 2px; background: var(--border); border-radius: 2px;
-    margin-top: 12px; overflow: hidden; display: none; position: relative; z-index: 1;
-  }
-  .progress-wrap.active { display: block; }
-  .progress-bar { height: 100%; background: var(--red); width: 0%; transition: width 0.2s ease; border-radius: 2px; }
+  /* No progress bars needed — upload happens at submit */
 
   .thumb-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    display: grid; grid-template-columns: repeat(5, 1fr);
     gap: 8px; margin-top: 16px; position: relative; z-index: 1;
   }
-
   .thumb-item {
     position: relative; aspect-ratio: 1;
     border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
   }
   .thumb-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-  /* Hero photo indicator ring */
   .thumb-item.hero-photo { border-color: var(--red); }
   .thumb-item.hero-photo::after {
-    content: '🎬';
-    position: absolute;
-    bottom: 4px; left: 4px;
-    font-size: 12px;
-    background: rgba(229,9,20,0.85);
-    border-radius: 3px;
-    width: 22px; height: 18px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px;
+    content: '🎬'; position: absolute; bottom: 4px; left: 4px;
+    font-size: 10px; background: rgba(229,9,20,0.85); border-radius: 3px;
+    width: 22px; height: 18px; display: flex; align-items: center; justify-content: center;
   }
-
   .thumb-remove {
     position: absolute; top: 4px; right: 4px;
     width: 20px; height: 20px;
@@ -318,26 +202,6 @@
   }
   .thumb-remove:hover { background: var(--red); border-color: var(--red); }
 
-  .thumb-uploading {
-    position: absolute; inset: 0;
-    background: rgba(0,0,0,0.65);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .thumb-uploading .spinner {
-    width: 18px; height: 18px;
-    border: 2px solid rgba(255,255,255,0.2);
-    border-top-color: var(--red);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-
-  .thumb-compress-badge {
-    position: absolute; bottom: 4px; left: 4px;
-    background: rgba(229,9,20,0.85);
-    color: #fff; font-size: 9px; padding: 1px 5px;
-    border-radius: 3px; letter-spacing: 0.04em;
-  }
-
   .photo-counter { font-size: 12px; color: var(--muted); margin-top: 10px; position: relative; z-index: 1; }
   .photo-counter span { color: var(--red); font-weight: 500; }
 
@@ -346,15 +210,23 @@
     border: 1px solid var(--border); max-height: 280px; object-fit: cover;
     position: relative; z-index: 1;
   }
-
   .video-status { font-size: 12px; color: var(--muted); margin-top: 8px; position: relative; z-index: 1; }
   .video-status.success { color: #2ecc71; }
-  .video-status.error { color: var(--red); }
+  .video-status.error   { color: var(--red); }
+
+  /* Upload progress — shown at submit time */
+  .upload-progress-overlay {
+    display: none; position: relative; z-index: 1;
+    margin-top: 12px;
+  }
+  .upload-progress-overlay.active { display: block; }
+  .upo-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .upo-bar-wrap { height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .upo-bar { height: 100%; background: var(--red); width: 0%; transition: width 0.2s ease; border-radius: 2px; }
 
   .field-divider { height: 1px; background: var(--border); margin: 28px 0; position: relative; z-index: 1; }
 
   .submit-section { margin-top: 8px; animation: fadeUp 0.5s 0.4s ease both; }
-
   .submit-btn {
     width: 100%; background: var(--red); border: none; border-radius: 8px;
     color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 20px;
@@ -385,11 +257,8 @@
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes spin    { to { transform: rotate(360deg); } }
+  @keyframes fadeUp  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 
   @media (max-width: 540px) {
     .card { padding: 28px 20px 24px; }
@@ -405,7 +274,7 @@
 <input type="file" id="video-input" accept="video/*" style="display:none">
 
 <header>
-  <div class="logo">NETFLIX</div>
+  <div class="logo">NATFLIX</div>
   <p class="header-sub">Create Your Friendship Film</p>
   <div class="header-rule"></div>
 </header>
@@ -481,19 +350,16 @@
     <div class="card-header">
       <div class="step-label">Step 04</div>
       <div class="card-title">Your Memories Together</div>
-      <div class="card-subtitle">Photos over 1MB are auto-compressed before upload 🗜️</div>
+      <div class="card-subtitle">Up to 10 photos — previewed locally, uploaded only when you generate your link 🔒</div>
     </div>
     <div class="upload-zone" id="photo-zone">
       <span class="upload-icon">🖼</span>
       <div class="upload-title">Drag & Drop Photos Here</div>
-      <div class="upload-sub">Or tap to browse — up to 10 photos · max 1MB each (auto-compressed)</div>
-    </div>
-    <div class="progress-wrap" id="photo-progress-wrap">
-      <div class="progress-bar" id="photo-progress-bar"></div>
+      <div class="upload-sub">Or tap to browse — up to 10 photos</div>
     </div>
     <div class="thumb-grid" id="thumb-grid"></div>
     <div class="photo-counter" id="photo-counter" style="display:none">
-      <span id="photo-count">0</span> / 10 photos uploaded
+      <span id="photo-count">0</span> / 10 photos selected
     </div>
   </div>
 
@@ -505,26 +371,27 @@
         Your Friendship Video
         <span class="optional-pill">Optional</span>
       </div>
-      <div class="card-subtitle">Max 20MB · plays as the hero background in your film 🎬 · skip if you don't have one — we'll use your best photo instead</div>
+      <div class="card-subtitle">Max 10MB · MP4 / MOV / WebM · plays as the hero background 🎬 · skip to use your first photo instead</div>
     </div>
     <div class="upload-zone" id="video-zone">
       <span class="upload-icon">🎬</span>
       <div class="upload-title">Drag & Drop Your Video Here</div>
-      <div class="upload-sub">Or tap to browse · MP4 / MOV / WebM · max 20MB</div>
-    </div>
-    <div class="progress-wrap" id="video-progress-wrap">
-      <div class="progress-bar" id="video-progress-bar"></div>
+      <div class="upload-sub">Or tap to browse · max 10MB</div>
     </div>
     <video id="video-preview" controls></video>
     <div class="video-status" id="video-status"></div>
-
-    <!-- Notice shown when no video — explains photo fallback -->
     <div class="hero-fallback-notice" id="hero-fallback-notice">
       <span class="notice-icon">✨</span>
       <div class="notice-text">
-        <strong>No video? No problem.</strong> Your first uploaded photo will automatically become the hero background of your film — it still looks 🔥
+        <strong>No video? No problem.</strong> Your first photo will be the hero background — still looks 🔥
       </div>
     </div>
+  </div>
+
+  <!-- Upload progress shown at submit time -->
+  <div class="upload-progress-overlay" id="upload-progress">
+    <div class="upo-label" id="upo-label">Uploading photos…</div>
+    <div class="upo-bar-wrap"><div class="upo-bar" id="upo-bar"></div></div>
   </div>
 
   <div class="submit-section">
@@ -537,16 +404,33 @@
 
 <script>
 // ─── STATE ────────────────────────────────────────────────────────────────────
+// Photos and video are stored as File objects in RAM — NO upload until payment.
+// localUrl = blob URL for instant preview. cloudUrl = null until upload.
 const state = { photos: [], video: null };
+let uploadsDone = false;
 
 const CLOUDINARY_CLOUD = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.CLOUD_NAME)    || '';
 const PHOTO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || '';
 const VIDEO_PRESET     = (window.NATFLIX_CONFIG && window.NATFLIX_CONFIG.UPLOAD_PRESET) || '';
 
-const MAX_PHOTO_BYTES = 1  * 1024 * 1024;   // 1 MB
-const MAX_VIDEO_BYTES = 20 * 1024 * 1024;   // 20 MB  ← updated
+// ── Size limits ──────────────────────────────────────────────────────────────
+// Hero photo (index 0): 800KB  — shown full-screen, needs quality
+// All other photos:     400KB  — shown as thumbnails, 400KB is plenty
+// Video:               10MB   — capped hard
+const HERO_PHOTO_BYTES  = 800 * 1024;
+const OTHER_PHOTO_BYTES = 400 * 1024;
+const MAX_VIDEO_BYTES   = 10  * 1024 * 1024;
 
-// ─── ENCODING HELPERS ─────────────────────────────────────────────────────────
+// ─── BEFOREUNLOAD GUARD ───────────────────────────────────────────────────────
+// Warn user if they try to navigate away with files selected but not yet uploaded
+window.addEventListener('beforeunload', e => {
+  if (state.photos.length > 0 && !uploadsDone) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+// ─── ENCODING ─────────────────────────────────────────────────────────────────
 function safeEncode(obj) {
   const json = JSON.stringify(obj);
   try {
@@ -572,7 +456,7 @@ function showToast(msg) {
 // ─── IMAGE COMPRESSION ────────────────────────────────────────────────────────
 function compressImage(file, maxBytes) {
   return new Promise((resolve, reject) => {
-    const img    = new Image();
+    const img     = new Image();
     const blobUrl = URL.createObjectURL(file);
 
     img.onload = () => {
@@ -629,10 +513,10 @@ const photoZone  = document.getElementById('photo-zone');
 const videoZone  = document.getElementById('video-zone');
 
 function wireZone(zone, input, onFiles) {
-  zone.addEventListener('click',    ()  => input.click());
-  zone.addEventListener('dragover', e   => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave',()  => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop',     e   => {
+  zone.addEventListener('click',     ()  => input.click());
+  zone.addEventListener('dragover',  e   => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', ()  => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop',      e   => {
     e.preventDefault();
     zone.classList.remove('drag-over');
     onFiles([...e.dataTransfer.files]);
@@ -646,81 +530,22 @@ function wireZone(zone, input, onFiles) {
 wireZone(photoZone, photoInput, handlePhotoFiles);
 wireZone(videoZone, videoInput, handleVideoFile);
 
-// ─── PHOTOS ───────────────────────────────────────────────────────────────────
-async function handlePhotoFiles(files) {
+// ─── PHOTOS — local preview only, no upload ───────────────────────────────────
+function handlePhotoFiles(files) {
   const allowed = 10 - state.photos.length;
   if (allowed <= 0) { showToast('Maximum 10 photos allowed.'); return; }
   files = files.filter(f => f.type.startsWith('image/')).slice(0, allowed);
   if (!files.length) return;
 
-  for (const file of files) {
-    const idx      = state.photos.length;
-    const localUrl = URL.createObjectURL(file);
-    state.photos.push({ localUrl, cloudUrl: null, uploading: true, compressed: false });
-    renderThumbs();
-    await processAndUploadPhoto(file, idx);
-  }
-}
-
-async function processAndUploadPhoto(file, idx) {
-  if (!CLOUDINARY_CLOUD || !PHOTO_PRESET) {
-    showToast('Cloudinary not configured. Check config.js.');
-    state.photos.splice(idx, 1);
-    renderThumbs();
-    return;
-  }
-
-  const wrap = document.getElementById('photo-progress-wrap');
-  const bar  = document.getElementById('photo-progress-bar');
-  wrap.classList.add('active');
-  bar.style.width = '5%';
-
-  let uploadFile = file;
-
-  if (file.size > MAX_PHOTO_BYTES) {
-    try {
-      const blob = await compressImage(file, MAX_PHOTO_BYTES);
-      uploadFile = new File([blob], file.name.replace(/\.[^.]+$/, '') + '_compressed.jpg', { type: 'image/jpeg' });
-      const newUrl = URL.createObjectURL(uploadFile);
-      URL.revokeObjectURL(state.photos[idx].localUrl);
-      state.photos[idx].localUrl   = newUrl;
-      state.photos[idx].compressed = true;
-      renderThumbs();
-    } catch (e) {
-      console.warn('Compression failed, using original:', e);
-    }
-  }
-
-  bar.style.width = '25%';
-
-  const fd = new FormData();
-  fd.append('file',          uploadFile);
-  fd.append('upload_preset', PHOTO_PRESET);
-
-  try {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
-    xhr.upload.addEventListener('progress', e => {
-      if (e.lengthComputable)
-        bar.style.width = (25 + Math.round((e.loaded / e.total) * 70)) + '%';
+  files.forEach(file => {
+    state.photos.push({
+      file,                                // kept for upload at submit time
+      localUrl: URL.createObjectURL(file), // instant local preview
+      cloudUrl: null,
     });
-    const result = await new Promise((res, rej) => {
-      xhr.onload  = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error(`Upload failed: ${xhr.status}`));
-      xhr.onerror = () => rej(new Error('Network error'));
-      xhr.send(fd);
-    });
-    state.photos[idx].cloudUrl = result.secure_url;
-  } catch (err) {
-    console.error('Photo upload error:', err);
-    showToast('Photo upload failed — please try again.');
-    URL.revokeObjectURL(state.photos[idx] && state.photos[idx].localUrl);
-    state.photos.splice(idx, 1);
-  } finally {
-    if (state.photos[idx]) state.photos[idx].uploading = false;
-    bar.style.width = '100%';
-    setTimeout(() => wrap.classList.remove('active'), 600);
-    renderThumbs();
-  }
+  });
+
+  renderThumbs();
 }
 
 function removePhoto(idx) {
@@ -737,127 +562,137 @@ function renderThumbs() {
 
   state.photos.forEach((p, i) => {
     const item = document.createElement('div');
-    // Mark first photo as the hero fallback so user knows
     item.className = 'thumb-item' + (i === 0 && !state.video ? ' hero-photo' : '');
     item.innerHTML = `<img src="${p.localUrl}" alt="Photo ${i + 1}">`;
-
-    if (p.uploading) {
-      const ov = document.createElement('div');
-      ov.className = 'thumb-uploading';
-      ov.innerHTML = '<div class="spinner"></div>';
-      item.appendChild(ov);
-    } else {
-      const btn = document.createElement('button');
-      btn.className = 'thumb-remove';
-      btn.innerHTML = '✕';
-      btn.onclick = e => { e.stopPropagation(); removePhoto(i); };
-      item.appendChild(btn);
-
-      if (p.compressed) {
-        const badge = document.createElement('div');
-        badge.className = 'thumb-compress-badge';
-        badge.textContent = 'compressed';
-        item.appendChild(badge);
-      }
-    }
+    const btn = document.createElement('button');
+    btn.className = 'thumb-remove';
+    btn.innerHTML = '✕';
+    btn.onclick = e => { e.stopPropagation(); removePhoto(i); };
+    item.appendChild(btn);
     grid.appendChild(item);
   });
 
-  const uploaded = state.photos.filter(p => p.cloudUrl).length;
   counter.style.display = state.photos.length > 0 ? 'block' : 'none';
-  count.textContent = uploaded;
-
-  // Update hero-fallback-notice visibility
+  count.textContent     = state.photos.length;
   updateFallbackNotice();
 }
 
-// ─── FALLBACK NOTICE ─────────────────────────────────────────────────────────
-// Show the "no video → first photo used as hero" notice only when no video is set
-function updateFallbackNotice() {
-  const notice = document.getElementById('hero-fallback-notice');
-  if (state.video) {
-    notice.style.display = 'none';
-  } else {
-    notice.style.display = 'flex';
-  }
-}
-
-// ─── VIDEO ────────────────────────────────────────────────────────────────────
+// ─── VIDEO — local preview only, no upload ────────────────────────────────────
 function handleVideoFile(files) {
-  const file = files.find(f => f.type.startsWith('video/'));
-  if (!file) { showToast('Please select a valid video file.'); return; }
-
+  const file   = files.find(f => f.type.startsWith('video/'));
   const status = document.getElementById('video-status');
+  if (!file) { showToast('Please select a valid video file.'); return; }
 
   if (file.size > MAX_VIDEO_BYTES) {
     const mb = (file.size / 1024 / 1024).toFixed(1);
-    status.className = 'video-status error';
-    status.textContent = `✕ Video is ${mb}MB — max is 20MB. Please trim or compress it first.`;
-    showToast(`Video too large (${mb}MB). Max is 20MB.`);
+    status.className   = 'video-status error';
+    status.textContent = `✕ Video is ${mb}MB — max is 10MB. Please trim or compress it first.`;
+    showToast(`Video too large (${mb}MB). Max is 10MB.`);
     return;
   }
 
-  if (!CLOUDINARY_CLOUD || !VIDEO_PRESET) {
-    showToast('Cloudinary not configured. Check config.js.');
-    return;
-  }
+  // Revoke old preview if any
+  if (state.video && state.video.localUrl) URL.revokeObjectURL(state.video.localUrl);
 
   const localUrl = URL.createObjectURL(file);
-  const preview  = document.getElementById('video-preview');
-  preview.src    = localUrl;
+  state.video    = { file, localUrl, cloudUrl: null };
+
+  const preview = document.getElementById('video-preview');
+  preview.src   = localUrl;
   preview.style.display = 'block';
 
-  state.video = { localUrl, cloudUrl: null, uploading: true };
+  status.className   = 'video-status success';
+  status.textContent = '✓ Video selected — will upload when you generate your link';
 
-  // Hide the fallback notice once a video is selected & re-render thumbs to clear hero ring
   updateFallbackNotice();
   renderThumbs();
-
-  uploadVideo(file);
 }
 
-async function uploadVideo(file) {
-  const wrap   = document.getElementById('video-progress-wrap');
-  const bar    = document.getElementById('video-progress-bar');
-  const status = document.getElementById('video-status');
-  wrap.classList.add('active');
-  bar.style.width = '0%';
-  status.className = 'video-status';
-  status.textContent = 'Uploading video…';
+function updateFallbackNotice() {
+  document.getElementById('hero-fallback-notice').style.display = state.video ? 'none' : 'flex';
+}
 
-  const fd = new FormData();
-  fd.append('file',          file);
-  fd.append('upload_preset', VIDEO_PRESET);
+// ─── UPLOAD ALL ASSETS AT SUBMIT TIME ─────────────────────────────────────────
+// This is the key change: Cloudinary never sees files until payment is about to happen.
+async function uploadAllAssets() {
+  if (!CLOUDINARY_CLOUD || !PHOTO_PRESET) {
+    throw new Error('Cloudinary not configured. Check config.js.');
+  }
 
-  try {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
-    xhr.upload.addEventListener('progress', e => {
-      if (e.lengthComputable) bar.style.width = Math.round((e.loaded / e.total) * 100) + '%';
-    });
+  const progressWrap = document.getElementById('upload-progress');
+  const bar          = document.getElementById('upo-bar');
+  const label        = document.getElementById('upo-label');
+  progressWrap.classList.add('active');
+
+  const total    = state.photos.length + (state.video ? 1 : 0);
+  let   done     = 0;
+
+  function setProgress(pct) { bar.style.width = pct + '%'; }
+  function tick() { done++; setProgress(Math.round((done / total) * 100)); }
+
+  // ── Upload photos ──────────────────────────────────────────────────────────
+  for (let i = 0; i < state.photos.length; i++) {
+    label.textContent = `Uploading photo ${i + 1} of ${state.photos.length}…`;
+
+    const maxBytes  = i === 0 ? HERO_PHOTO_BYTES : OTHER_PHOTO_BYTES;
+    let   uploadFile = state.photos[i].file;
+
+    // Compress if over target size
+    if (uploadFile.size > maxBytes) {
+      try {
+        const blob = await compressImage(uploadFile, maxBytes);
+        uploadFile = new File([blob], uploadFile.name.replace(/\.[^.]+$/, '') + '_c.jpg', { type: 'image/jpeg' });
+      } catch (e) {
+        console.warn('Compression failed for photo', i, '— using original:', e);
+      }
+    }
+
+    const fd = new FormData();
+    fd.append('file',          uploadFile);
+    fd.append('upload_preset', PHOTO_PRESET);
+
     const result = await new Promise((res, rej) => {
-      xhr.onload  = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error(`Upload failed: ${xhr.status}`));
-      xhr.onerror = () => rej(new Error('Network error'));
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
+      xhr.onload  = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error(`Photo upload failed: ${xhr.status}`));
+      xhr.onerror = () => rej(new Error('Network error uploading photo'));
       xhr.send(fd);
     });
-    state.video.cloudUrl   = result.secure_url;
-    state.video.uploading  = false;
-    status.className       = 'video-status success';
-    status.textContent     = '✓ Video uploaded — it will play as your hero background 🎬';
-  } catch (err) {
-    console.error('Video upload error:', err);
-    showToast('Video upload failed — please try again.');
-    state.video = null;
-    status.className   = 'video-status error';
-    status.textContent = '✕ Upload failed — please try again';
-    // Restore fallback notice & hero ring on first photo
-    updateFallbackNotice();
-    renderThumbs();
-  } finally {
-    if (state.video) {} // only if not already nulled by error
-    bar.style.width = '100%';
-    setTimeout(() => wrap.classList.remove('active'), 600);
+
+    state.photos[i].cloudUrl = result.secure_url;
+    tick();
   }
+
+  // ── Upload video ───────────────────────────────────────────────────────────
+  if (state.video && state.video.file) {
+    label.textContent = 'Uploading video…';
+    setProgress(Math.round((done / total) * 100));
+
+    const fd = new FormData();
+    fd.append('file',          state.video.file);
+    fd.append('upload_preset', VIDEO_PRESET);
+
+    const result = await new Promise((res, rej) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
+      xhr.upload.addEventListener('progress', e => {
+        if (e.lengthComputable) {
+          const videoProgress = (done / total) + (e.loaded / e.total) * (1 / total);
+          setProgress(Math.round(videoProgress * 100));
+        }
+      });
+      xhr.onload  = () => xhr.status === 200 ? res(JSON.parse(xhr.responseText)) : rej(new Error(`Video upload failed: ${xhr.status}`));
+      xhr.onerror = () => rej(new Error('Network error uploading video'));
+      xhr.send(fd);
+    });
+
+    state.video.cloudUrl = result.secure_url;
+    tick();
+  }
+
+  setProgress(100);
+  setTimeout(() => progressWrap.classList.remove('active'), 600);
+  uploadsDone = true;
 }
 
 // ─── SUBMIT ───────────────────────────────────────────────────────────────────
@@ -871,39 +706,46 @@ async function handleSubmit() {
   const friendshipDur   = document.getElementById('friendship-duration').value.trim();
   const finalMsg        = document.getElementById('final-message').value.trim();
 
-  if (!senderName)      { showToast('Please enter your name.');                      return; }
-  if (!senderGender)    { showToast('Please select your gender.');                   return; }
-  if (!recipientName)   { showToast("Please enter your bestie's name.");             return; }
-  if (!recipientGender) { showToast("Please select your bestie's gender.");          return; }
-  if (!friendshipDur)   { showToast("Please share how long you've been friends.");   return; }
+  if (!senderName)      { showToast('Please enter your name.');                    return; }
+  if (!senderGender)    { showToast('Please select your gender.');                 return; }
+  if (!recipientName)   { showToast("Please enter your bestie's name.");           return; }
+  if (!recipientGender) { showToast("Please select your bestie's gender.");        return; }
+  if (!friendshipDur)   { showToast("Please share how long you've been friends."); return; }
 
-  const uploadedPhotos = state.photos.filter(p => p.cloudUrl);
-  const hasVideo       = state.video && state.video.cloudUrl;
-
-  if (uploadedPhotos.length < 1 && !hasVideo) {
-    showToast('Please upload at least 1 photo or a video.');
+  if (state.photos.length < 1 && !state.video) {
+    showToast('Please add at least 1 photo or a video.');
     return;
   }
 
-  const stillUploading = state.photos.some(p => p.uploading) || (state.video && state.video.uploading);
-  if (stillUploading) { showToast('Please wait for uploads to finish.'); return; }
-
   const btn = document.getElementById('submit-btn');
   btn.disabled    = true;
+  btn.textContent = 'Uploading…';
+
+  // ── Step 1: Upload everything to Cloudinary ────────────────────────────────
+  try {
+    await uploadAllAssets();
+  } catch (err) {
+    console.error('Upload error:', err);
+    showToast(err.message || 'Upload failed — please try again.');
+    btn.disabled    = false;
+    btn.textContent = 'Generate Preview →';
+    return;
+  }
+
   btn.textContent = 'Generating…';
 
-  // AI tone selection
+  // ── Step 2: Call Groq for AI copy ──────────────────────────────────────────
+  const uploadedPhotos = state.photos.filter(p => p.cloudUrl);
+  const hasVideo       = state.video && state.video.cloudUrl;
+  const photoCount     = uploadedPhotos.length;
+
   let tone = 'warm, genuine, heartfelt';
   if (senderGender === 'female' && recipientGender === 'female') tone = 'warm, expressive, emotional, celebratory bestie energy';
   else if (senderGender === 'male' && recipientGender === 'male') tone = 'chill, genuine, funny but heartfelt bro energy';
 
-  const photoCount = uploadedPhotos.length;
-
-  // ── Determine hero source for AI context ──────────────────────────────────
-  // If no video, first photo becomes the hero — note this in the prompt
   const heroSource = hasVideo ? 'video' : (photoCount > 0 ? 'first uploaded photo' : 'gradient fallback');
 
-  const groqPrompt = `You are writing copy for a friendship tribute video called "NETFLIX".
+  const groqPrompt = `You are writing copy for a friendship tribute video called "NATFLIX".
 Tone: ${tone}.
 Sender: ${senderName} (${senderGender}).
 Recipient: ${recipientName} (${recipientGender}).
@@ -920,12 +762,11 @@ Return ONLY valid JSON (no markdown, no backticks, no preamble):
   "photoCaptions": [${photoCount > 0 ? `${photoCount} short captions, one per photo` : ''}]
 }`;
 
-  // Default fallback in case Groq fails
   let groqData = {
-    heroTagline:     `${senderName} & ${recipientName} — Always`,
-    heroDescription: `Some friendships are rare. Yours is one of them.`,
-    finalMessage:    `Here's to ${friendshipDur} of memories, laughs, and everything in between. This one's for you, ${recipientName}.`,
-    photoCaptions:   uploadedPhotos.map((_, i) => `Memory ${i + 1}`),
+    heroTagline:   `${senderName} & ${recipientName} — Always`,
+    heroDescription: 'Some friendships are rare. Yours is one of them.',
+    finalMessage:  `Here's to ${friendshipDur} of memories, laughs, and everything in between. This one's for you, ${recipientName}.`,
+    photoCaptions: uploadedPhotos.map((_, i) => `Memory ${i + 1}`),
   };
 
   try {
@@ -933,16 +774,11 @@ Return ONLY valid JSON (no markdown, no backticks, no preamble):
     if (!groqKey) throw new Error('No Groq API key in config.js');
 
     const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method:  'POST',
-      headers: {
-        'Content-Type':  'application/json',
-        'Authorization': `Bearer ${groqKey}`,
-      },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${groqKey}` },
       body: JSON.stringify({
-        model:       'llama-3.1-8b-instant',
-        max_tokens:  800,
-        temperature: 0.8,
-        messages:    [{ role: 'user', content: groqPrompt }],
+        model: 'llama-3.1-8b-instant', max_tokens: 800, temperature: 0.8,
+        messages: [{ role: 'user', content: groqPrompt }],
       }),
     });
 
@@ -964,25 +800,23 @@ Return ONLY valid JSON (no markdown, no backticks, no preamble):
     console.warn('Groq call failed, using fallback copy:', err.message);
   }
 
-  // ── heroPhoto: first uploaded photo URL (used when no video) ─────────────
+  // ── Step 3: Build payload and navigate ────────────────────────────────────
   const heroPhoto = uploadedPhotos.length > 0 ? uploadedPhotos[0].cloudUrl : null;
 
   const payload = {
-    senderName,
-    senderGender,
-    recipientName,
-    recipientGender,
+    senderName, senderGender, recipientName, recipientGender,
     friendshipDuration: friendshipDur,
     finalMessage:       finalMsg,
     photos:             uploadedPhotos.map(p => p.cloudUrl),
     video:              hasVideo ? state.video.cloudUrl : null,
-    heroPhoto,          // ← new: consumed by preview.html & home.html for the bg image fallback
+    heroPhoto,
     groq:               groqData,
     paid:               false,
   };
 
-  const encoded = safeEncode(payload);
-  window.location.href = `preview.html?data=${encoded}`;
+  // Safe to navigate — uploads are done, blob URLs no longer needed
+  uploadsDone = true;
+  window.location.href = 'preview.html?data=' + safeEncode(payload);
 }
 </script>
 </body>

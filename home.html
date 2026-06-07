@@ -320,164 +320,58 @@
 
   /* ============================================================
      MOBILE — max-width 640px
-     Desktop is completely untouched above this line.
      ============================================================ */
   @media (max-width: 640px) {
-
-    /* NAV */
     nav { padding: 0 16px; height: 54px; }
     .nav-links { display: none; }
     .nav-avatar { width: 36px; height: 36px; font-size: 18px; }
 
-    /* ── HERO ──────────────────────────────────────────────── */
-
-    /* svh = small viewport height — excludes mobile browser chrome.
-       100svh means the hero fills exactly the visible screen,
-       nothing hidden behind the address bar. */
     .hero { height: 100svh; }
-
-    /* Tighter gutters matching real Netflix mobile (20px side padding).
-       pb: 28px gives the CTA buttons room to breathe above the fold edge. */
-    .hero-content {
-      padding: 0 20px 28px;
-      max-width: 100%;
+    .hero-content { padding: 0 20px 28px; max-width: 100%; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; }
+    .hero-title { font-size: clamp(1.75rem, 8.5vw, 2.8rem); line-height: 1; margin-bottom: 10px; }
+    .hero-meta  { font-size: 0.78rem; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .hero-desc  {
+      font-size: 0.82rem; line-height: 1.5; margin-bottom: 16px;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
 
-    /* Label row */
-    .hero-label {
-      font-size: 0.7rem;
-      letter-spacing: 2px;
-      margin-bottom: 8px;
-    }
-
-    /* Fluid title — scales naturally from 375px to 640px.
-       line-height 1 prevents clipping on descenders. */
-    .hero-title {
-      font-size: clamp(1.75rem, 8.5vw, 2.8rem);
-      line-height: 1;
-      margin-bottom: 10px;
-    }
-
-    /* Metadata row — tighter, wraps cleanly on 375px */
-    .hero-meta {
-      font-size: 0.78rem;
-      gap: 8px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    /* Description — 3-line clamp keeps it brief and hierarchy clear.
-       Netflix mobile does this — never full paragraphs in hero. */
-    .hero-desc {
-      font-size: 0.82rem;
-      line-height: 1.5;
-      margin-bottom: 16px;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    /* ── CTA BUTTONS ───────────────────────────────────────── */
-
-    /* Side-by-side. Stacking = cheap. Netflix never stacks on mobile hero. */
-    .hero-btns {
-      flex-wrap: nowrap;
-      gap: 8px;
-      width: 100%;
-    }
-
-    /* 40px is Netflix's actual mobile button height.
-       flex + min-width 0 prevents overflow on tight screens. */
+    .hero-btns { flex-wrap: nowrap; gap: 8px; width: 100%; }
     .hero-btns .btn {
-      flex: 1;
-      min-width: 0;
-      padding: 0 12px;
-      height: 40px;
-      font-size: 0.82rem;
-      justify-content: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      flex: 1; min-width: 0; padding: 0 12px; height: 40px;
+      font-size: 0.82rem; justify-content: center;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-
-    /* Play gets slightly more visual weight — it's the primary CTA */
     .hero-btns .btn-white { flex: 1.3; }
     .hero-btns .btn-grey  { flex: 1; }
 
-    /* ── CONTENT BLOCK ─────────────────────────────────────── */
+    .content { margin-top: 0 !important; padding-top: 0; padding-bottom: 48px; }
 
-    /* Hero bleeds into content seamlessly — no gap, no hard edge.
-       The hero overlay already fades to pure black at bottom,
-       so content at margin-top: 0 feels like one continuous canvas. */
-    .content {
-      margin-top: 0 !important;
-      padding-top: 0;
-      padding-bottom: 48px;
-    }
-
-    /* ── STATS CARDS ───────────────────────────────────────── */
-
-    /* Reduced padding top because the hero→content transition is now seamless.
-       The stats section opens with breathing room via padding-top instead. */
     .stats-row {
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      padding: 20px 16px 0;
-      margin-bottom: 24px;
+      gap: 8px; padding: 20px 16px 0; margin-bottom: 24px;
     }
+    .stat-card   { padding: 14px 10px; border-radius: 8px; }
+    .stat-number { font-size: 1.75rem; margin-bottom: 5px; }
+    .stat-label  { font-size: 0.62rem; letter-spacing: 0.5px; line-height: 1.3; }
 
-    /* ~30% reduction in vertical padding — cards feel compact, not crushed.
-       12px horizontal is enough for 2-col at 375px. */
-    .stat-card {
-      padding: 14px 10px;
-      border-radius: 8px;
-    }
+    .row-section { padding: 0 16px; margin-bottom: 24px; }
+    .row-title   { font-size: 0.95rem; }
+    .photo-card  { width: 148px; height: 104px; }
 
-    /* Reduced from 2.8rem — still bold and legible, no longer dominating. */
-    .stat-number {
-      font-size: 1.75rem;
-      margin-bottom: 5px;
-    }
-
-    /* Slightly tighter tracking — reads cleaner at this size */
-    .stat-label {
-      font-size: 0.62rem;
-      letter-spacing: 0.5px;
-      line-height: 1.3;
-    }
-
-    /* ── MEMORIES SECTION ──────────────────────────────────── */
-    .row-section {
-      padding: 0 16px;
-      margin-bottom: 24px;
-    }
-    .row-title { font-size: 0.95rem; }
-
-    /* Photo cards: slightly smaller to hint at horizontal scroll */
-    .photo-card { width: 148px; height: 104px; }
-
-    /* ── FINAL MESSAGE ─────────────────────────────────────── */
-    .final-message {
-      margin: 0 16px 24px;
-      padding: 32px 20px;
-    }
-    .msg-text { font-size: 0.92rem; line-height: 1.7; }
+    .final-message { margin: 0 16px 24px; padding: 32px 20px; }
+    .msg-text   { font-size: 0.92rem; line-height: 1.7; }
     .deco-heart { font-size: 7rem; }
     .deco-clap  { font-size: 5rem; }
 
-    /* ── FOOTER ────────────────────────────────────────────── */
     footer { padding: 28px 16px; font-size: 0.75rem; }
-
-    /* ── LIGHTBOX ──────────────────────────────────────────── */
     .lb-close { top: 12px; right: 12px; width: 38px; height: 38px; font-size: 1.2rem; }
-    .lb-arrow { width: 40px; height: 60px; font-size: 1.8rem; }
+    .lb-arrow  { width: 40px; height: 60px; font-size: 1.8rem; }
   }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav id="mainNav">
   <a class="nav-logo" href="#">NATFLIX</a>
   <ul class="nav-links">
@@ -488,7 +382,6 @@
   <div class="nav-avatar" id="navAvatar"></div>
 </nav>
 
-<!-- HERO -->
 <section class="hero" id="hero">
   <div id="heroBgFallback"></div>
   <video id="heroVideo" autoplay muted loop playsinline style="display:none"></video>
@@ -510,7 +403,6 @@
   </div>
 </section>
 
-<!-- CONTENT -->
 <div class="content">
 
   <div class="stats-row fade-in">
@@ -553,9 +445,8 @@
 
 </div>
 
-<footer>Made with <span>♥</span> on NETFLIX · Streaming Friendship Since Forever</footer>
+<footer>Made with <span>♥</span> on NATFLIX · Streaming Friendship Since Forever</footer>
 
-<!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
   <button class="lb-close" id="lbClose">✕</button>
   <button class="lb-arrow left"  id="lbLeft">‹</button>
@@ -580,21 +471,16 @@ function safeDecode(raw) {
   }
 }
 
-// ─── PARSE DATA ───────────────────────────────────────────────────────────────
 let D = {};
 try {
   const raw = new URLSearchParams(location.search).get('data');
   if (raw) D = safeDecode(raw);
 } catch (e) {
-  console.error('home.html: data parse error:', e);
   D = {
-    recipientGender: 'female',
-    video: '',
-    friendshipDuration: '5 Years',
-    senderName: 'Your Best Friend',
-    photos: [],
+    recipientGender: 'female', video: '', friendshipDuration: '5 Years',
+    senderName: 'Your Best Friend', photos: [],
     groq: {
-      heroTagline: 'The Greatest Story\nEver Told',
+      heroTagline: 'The Greatest Story Ever Told',
       heroDescription: "A friendship so legendary, even Netflix couldn't make it up.",
       photoCaptions: [],
       finalMessage: "Every memory we've made together is a scene worth replaying."
@@ -604,7 +490,6 @@ try {
 
 const groq = D.groq || {};
 
-// ─── AVATAR ───────────────────────────────────────────────────────────────────
 function getAvatar(gender) {
   if (gender === 'female') return { emoji: '🧚', bg: '#1a001a' };
   if (gender === 'male')   return { emoji: '🥷', bg: '#1a1a2e' };
@@ -615,18 +500,14 @@ const navAvatar = document.getElementById('navAvatar');
 navAvatar.textContent      = av.emoji;
 navAvatar.style.background = av.bg;
 
-// ─── NAV SCROLL ───────────────────────────────────────────────────────────────
 window.addEventListener('scroll', () => {
   document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
 });
 
-// ─── HERO: video OR photo fallback ───────────────────────────────────────────
 const heroBg = document.getElementById('heroBgFallback');
-
 if (D.video) {
-  const vid          = document.getElementById('heroVideo');
-  vid.src            = D.video;
-  vid.style.display  = 'block';
+  const vid = document.getElementById('heroVideo');
+  vid.src = D.video; vid.style.display = 'block';
   heroBg.style.display = 'none';
 } else if (D.heroPhoto) {
   heroBg.style.backgroundImage    = `url('${D.heroPhoto}')`;
@@ -638,22 +519,17 @@ if (D.video) {
   heroBg.style.backgroundPosition = 'center top';
 }
 
-// ─── HERO CONTENT ─────────────────────────────────────────────────────────────
 if (groq.heroTagline)     document.getElementById('heroTagline').textContent = groq.heroTagline;
 if (groq.heroDescription) document.getElementById('heroDesc').textContent    = groq.heroDescription;
 document.getElementById('heroYear').textContent     = new Date().getFullYear();
 document.getElementById('heroDuration').textContent = D.friendshipDuration || '';
 
-// ─── STATS ────────────────────────────────────────────────────────────────────
 const photos = D.photos || [];
 document.getElementById('statPhotos').textContent   = photos.length || '∞';
 document.getElementById('statDuration').textContent = D.friendshipDuration || '∞';
 
-// ─── PHOTO ROWS ───────────────────────────────────────────────────────────────
 const captions    = Array.isArray(groq.photoCaptions) ? groq.photoCaptions : [];
-const allCaptions = photos.map((_, i) =>
-  (captions[i] && String(captions[i])) || `Memory #${i + 1}`
-);
+const allCaptions = photos.map((_, i) => (captions[i] && String(captions[i])) || `Memory #${i + 1}`);
 
 let currentIndex = 0;
 const lightbox   = document.getElementById('lightbox');
@@ -663,16 +539,13 @@ const lbCaption  = document.getElementById('lbCaption');
 function makeCard(src, caption, index) {
   const card = document.createElement('div');
   card.className = 'photo-card';
-  card.innerHTML = `
-    <img src="${src}" alt="${caption}" loading="lazy">
-    <div class="photo-caption">${caption}</div>
-  `;
+  card.innerHTML = `<img src="${src}" alt="${caption}" loading="lazy"><div class="photo-caption">${caption}</div>`;
   card.addEventListener('click', () => openLightbox(index));
   return card;
 }
 
-const row1        = document.getElementById('photosRow1');
-const row2        = document.getElementById('photosRow2');
+const row1 = document.getElementById('photosRow1');
+const row2 = document.getElementById('photosRow2');
 const row2Section = document.getElementById('row2Section');
 
 photos.forEach((src, i) => {
@@ -682,55 +555,36 @@ photos.forEach((src, i) => {
 });
 
 if (photos.length > 5) row2Section.style.display = 'block';
-if (photos.length === 0) {
-  document.getElementById('memories').style.display = 'none';
-}
+if (photos.length === 0) document.getElementById('memories').style.display = 'none';
 
-// ─── FINAL MESSAGE ────────────────────────────────────────────────────────────
-if (groq.finalMessage) document.getElementById('finalMsg').textContent  = groq.finalMessage;
+if (groq.finalMessage) document.getElementById('finalMsg').textContent   = groq.finalMessage;
 if (D.senderName)      document.getElementById('senderName').textContent = `— ${D.senderName}`;
 
-const now     = new Date();
-const dateStr = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-document.getElementById('msgDate').textContent = dateStr;
+const now = new Date();
+document.getElementById('msgDate').textContent = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 
-// ─── LIGHTBOX ─────────────────────────────────────────────────────────────────
 function openLightbox(index) {
   currentIndex = index;
   updateLightbox();
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
 function closeLightbox() {
   lightbox.classList.remove('open');
   document.body.style.overflow = '';
 }
-
 function updateLightbox() {
   if (!photos.length) return;
   lbImg.src             = photos[currentIndex];
   lbCaption.textContent = allCaptions[currentIndex];
 }
-
-function prevPhoto() {
-  currentIndex = (currentIndex - 1 + photos.length) % photos.length;
-  updateLightbox();
-}
-
-function nextPhoto() {
-  currentIndex = (currentIndex + 1) % photos.length;
-  updateLightbox();
-}
+function prevPhoto() { currentIndex = (currentIndex - 1 + photos.length) % photos.length; updateLightbox(); }
+function nextPhoto() { currentIndex = (currentIndex + 1) % photos.length; updateLightbox(); }
 
 document.getElementById('lbClose').addEventListener('click', closeLightbox);
 document.getElementById('lbLeft').addEventListener('click',  prevPhoto);
 document.getElementById('lbRight').addEventListener('click', nextPhoto);
-
-lightbox.addEventListener('click', e => {
-  if (e.target === lightbox) closeLightbox();
-});
-
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
 document.addEventListener('keydown', e => {
   if (!lightbox.classList.contains('open')) return;
   if (e.key === 'Escape')     closeLightbox();
@@ -738,11 +592,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') nextPhoto();
 });
 
-// ─── SCROLL ANIMATIONS ────────────────────────────────────────────────────────
 const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
-  });
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
