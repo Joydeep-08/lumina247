@@ -24,10 +24,6 @@
     font-family: 'DM Sans', sans-serif;
   }
 
-  
-
-  
-
   /* ── LOADING SCREEN ── */
   #loading-screen {
     position: fixed; inset: 0; z-index: 50;
@@ -57,7 +53,7 @@
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
   @keyframes spin   { to { transform: rotate(360deg); } }
 
-  /* ── START WALL ── interaction gate for audio */
+  /* ── START WALL ── */
   #start-wall {
     display: none;
     position: fixed; inset: 0; z-index: 200;
@@ -174,54 +170,18 @@
   }
   #click-overlay.active { opacity: 1; pointer-events: all; }
 
-  /* ── MOBILE RESPONSIVE (portrait + landscape) ── */
+  /* ── MOBILE ── */
   @media screen and (max-width: 768px) {
-    nav { padding: 0 16px; height: 52px; }
-    .nav-links { display: none; }
-    #preview-banner { padding: 8px 12px; font-size: 0.75rem; }
-    #preview-banner .banner-text span { display: none; }
-    #unlock-btn { padding: 8px 14px; font-size: 0.82rem; letter-spacing: 1px; }
-
-    .hero-content { padding: 0 16px 40px; max-width: 100%; }
-    .hero-title { font-size: clamp(2rem, 8vw, 3.5rem); }
-    .hero-desc { font-size: 0.85rem; margin-bottom: 16px; }
-    .btn-play, .btn-info { padding: 10px 18px; font-size: 0.88rem; }
-
-    .stats-section { padding: 24px 16px; }
-    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 100%; }
-    .stat-card { padding: 16px 12px; }
-    .stat-number { font-size: 2rem; }
-    .stat-label { font-size: 0.7rem; }
-
-    .memories-section { padding: 8px 16px 32px; }
-    .section-title { font-size: 1rem; }
-    .memory-card { flex: 0 0 150px; height: 105px; }
-
-    .message-section { padding: 8px 16px 48px; }
-    .message-card { padding: 24px 20px; }
-    .message-text { font-size: 0.95rem; }
-
-    /* Who's watching */
-    #phase-who h1, .who-title { font-size: 1.6rem; margin-bottom: 32px; }
-    .profiles-row, .profiles { gap: 28px; }
-    .profile-avatar, .avatar-wrap { width: 100px; height: 100px; font-size: 48px; border-radius: 8px; }
+    .who-title { font-size: 1.6rem; }
+    .profiles { gap: 28px; }
+    .avatar-wrap { width: 100px; height: 100px; font-size: 48px; border-radius: 8px; }
     .profile-name { font-size: 0.88rem; }
-
-    /* Start wall */
     #start-wall button { font-size: 1.4rem; padding: 16px 40px; }
     .start-sub { font-size: 0.72rem; }
-
-    /* Modal */
-    .modal-box { padding: 28px 20px; }
-    .modal-title { font-size: 1.6rem; }
-    .modal-price { font-size: 3rem; }
   }
-
 </style>
 </head>
 <body>
-
-
 
 <!-- Loading screen -->
 <div id="loading-screen">
@@ -240,7 +200,7 @@
 <!-- Click-to-redirect overlay -->
 <div id="click-overlay"></div>
 
-<!-- START wall — shown after data loads, requires tap for sound -->
+<!-- START wall -->
 <div id="start-wall">
   <button id="start-btn">▶ START</button>
   <span class="start-sub">Tap to begin with sound</span>
@@ -315,8 +275,6 @@ function buildCards() {
 }
 
 // ─── VIDEO + INTERACTION-GATED AUDIO ─────────────────────────────────────────
-// The START wall is shown after data loads. Clicking START is the user
-// interaction — browser policy then allows unmuted video play.
 function startVideoPhase() {
   const loadingScreen = document.getElementById('loading-screen');
   const startWall     = document.getElementById('start-wall');
@@ -328,7 +286,6 @@ function startVideoPhase() {
   vid.src     = 'intro.mp4';
   vid.preload = 'auto';
 
-  // Show START wall — user must tap before video plays
   startWall.classList.add('visible');
 
   vid.addEventListener('ended', () => {
@@ -343,7 +300,6 @@ function startVideoPhase() {
   });
 
   document.getElementById('start-btn').addEventListener('click', () => {
-    // This click = user gesture → unmuted play is allowed
     startWall.classList.remove('visible');
     phase1.classList.add('visible');
 
@@ -420,8 +376,6 @@ function initPage() {
 
 loadData();
 </script>
-
-
 
 </body>
 </html>

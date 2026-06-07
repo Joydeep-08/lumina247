@@ -73,7 +73,6 @@
     object-fit: cover;
   }
 
-  /* Hero background — works for both gradient fallback and photo */
   #heroBgFallback {
     position: absolute; inset: 0;
     background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%);
@@ -256,11 +255,12 @@
     margin-top: 6px; position: relative; z-index: 1;
   }
 
-  /* LIGHTBOX */
+  /* ═══ LIGHTBOX — z-index 10000, above everything ═══ */
   .lightbox {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.94); z-index: 1000;
+    background: rgba(0,0,0,0.94);
+    z-index: 10000;
     align-items: center; justify-content: center; flex-direction: column;
   }
   .lightbox.open { display: flex; }
@@ -268,6 +268,7 @@
   .lightbox-img-wrap {
     position: relative; max-width: 90vw; max-height: 75vh;
     display: flex; align-items: center; justify-content: center;
+    z-index: 10002;
   }
   .lightbox-img-wrap img {
     max-width: 90vw; max-height: 75vh;
@@ -276,22 +277,29 @@
   .lightbox-caption {
     color: var(--grey); font-size: 0.9rem;
     margin-top: 16px; text-align: center; max-width: 80vw;
+    z-index: 10002; position: relative;
   }
   .lb-close {
     position: fixed; top: 20px; right: 24px;
-    font-size: 2rem; cursor: pointer; color: #fff;
-    background: none; border: none; line-height: 1; z-index: 1001;
+    font-size: 1.5rem; cursor: pointer; color: #fff;
+    background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%; width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1; z-index: 10003;
+    transition: background 0.2s, border-color 0.2s;
   }
+  .lb-close:hover { background: rgba(229,9,20,0.7); border-color: var(--red); }
   .lb-arrow {
     position: fixed; top: 50%; transform: translateY(-50%);
     font-size: 2.5rem; cursor: pointer;
-    color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.4);
-    border: none; width: 52px; height: 72px;
+    color: rgba(255,255,255,0.8); background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.15);
+    width: 52px; height: 72px;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s, color 0.2s; z-index: 1001; padding: 0;
+    transition: background 0.2s, color 0.2s; z-index: 10003; padding: 0;
   }
   .lb-arrow:hover  { background: rgba(255,255,255,0.15); color: #fff; }
-  .lb-arrow.right  { left: auto; right: 0; border-radius: 36px 0 0 36px; }
+  .lb-arrow.right  { right: 0; border-radius: 36px 0 0 36px; }
   .lb-arrow.left   { left: 0; border-radius: 0 36px 36px 0; }
 
   /* FADE-IN ON SCROLL */
@@ -309,45 +317,35 @@
   }
   footer span { color: var(--red); }
 
-  /* ── MOBILE ── */
+  /* MOBILE */
   @media (max-width: 640px) {
     nav { padding: 0 16px; height: 54px; }
     .nav-links { display: none; }
     .nav-avatar { width: 36px; height: 36px; font-size: 18px; }
-
     .hero { height: 100svh; }
     .hero-content { padding: 0 16px 36px; max-width: 100%; }
     .hero-title { font-size: clamp(2rem, 9vw, 3rem); line-height: 1; }
     .hero-desc { font-size: 0.85rem; margin-bottom: 18px; }
     .hero-meta { font-size: 0.8rem; gap: 8px; }
     .btn { padding: 10px 18px; font-size: 0.85rem; }
-
     .content { margin-top: -60px; }
-
-    /* Stats: 2x2 grid on mobile */
     .stats-row {
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      padding: 0 16px;
-      margin-bottom: 28px;
+      gap: 10px; padding: 0 16px; margin-bottom: 28px;
     }
     .stat-card { padding: 16px 12px; }
     .stat-number { font-size: 2rem; }
     .stat-label { font-size: 0.65rem; }
-
     .row-section { padding: 0 16px; margin-bottom: 28px; }
     .row-title { font-size: 0.95rem; }
     .photo-card { width: 150px; height: 105px; }
-
-    .final-message {
-      margin: 16px 16px;
-      padding: 32px 20px;
-    }
+    .final-message { margin: 16px 16px; padding: 32px 20px; }
     .msg-text { font-size: 0.95rem; }
     .deco-heart { font-size: 7rem; }
     .deco-clap  { font-size: 5rem; }
-
     footer { padding: 28px 16px; font-size: 0.75rem; }
+    .lb-close { top: 12px; right: 12px; width: 38px; height: 38px; font-size: 1.2rem; }
+    .lb-arrow { width: 40px; height: 60px; font-size: 1.8rem; }
   }
 </style>
 </head>
@@ -431,7 +429,7 @@
 
 <footer>Made with <span>♥</span> on NATFLIX · Streaming Friendship Since Forever</footer>
 
-<!-- LIGHTBOX -->
+<!-- LIGHTBOX — z-index 10000, above all fixed overlays -->
 <div class="lightbox" id="lightbox">
   <button class="lb-close" id="lbClose">✕</button>
   <button class="lb-arrow left"  id="lbLeft">‹</button>
@@ -500,19 +498,15 @@ window.addEventListener('scroll', () => {
 const heroBg = document.getElementById('heroBgFallback');
 
 if (D.video) {
-  // Has video — play it, hide the fallback bg
-  const vid     = document.getElementById('heroVideo');
-  vid.src        = D.video;
-  vid.style.display = 'block';
+  const vid          = document.getElementById('heroVideo');
+  vid.src            = D.video;
+  vid.style.display  = 'block';
   heroBg.style.display = 'none';
 } else if (D.heroPhoto) {
-  // No video but has a photo — use it as hero background
   heroBg.style.backgroundImage    = `url('${D.heroPhoto}')`;
   heroBg.style.backgroundSize     = 'cover';
   heroBg.style.backgroundPosition = 'center top';
-  // keep the dark gradient overlay so text stays readable
 } else if (D.photos && D.photos[0]) {
-  // Fallback: use first photo if heroPhoto wasn't set
   heroBg.style.backgroundImage    = `url('${D.photos[0]}')`;
   heroBg.style.backgroundSize     = 'cover';
   heroBg.style.backgroundPosition = 'center top';
@@ -575,34 +569,46 @@ const dateStr = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long',
 document.getElementById('msgDate').textContent = dateStr;
 
 // ─── LIGHTBOX ─────────────────────────────────────────────────────────────────
+// z-index is 10000 in CSS — above all fixed overlays
 function openLightbox(index) {
   currentIndex = index;
   updateLightbox();
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
+
 function closeLightbox() {
   lightbox.classList.remove('open');
   document.body.style.overflow = '';
 }
+
 function updateLightbox() {
   if (!photos.length) return;
   lbImg.src             = photos[currentIndex];
   lbCaption.textContent = allCaptions[currentIndex];
 }
+
 function prevPhoto() {
   currentIndex = (currentIndex - 1 + photos.length) % photos.length;
   updateLightbox();
 }
+
 function nextPhoto() {
   currentIndex = (currentIndex + 1) % photos.length;
   updateLightbox();
 }
 
+// Wire buttons via addEventListener (more reliable than onclick attributes)
 document.getElementById('lbClose').addEventListener('click', closeLightbox);
 document.getElementById('lbLeft').addEventListener('click',  prevPhoto);
 document.getElementById('lbRight').addEventListener('click', nextPhoto);
-lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+
+// Close on backdrop click
+lightbox.addEventListener('click', e => {
+  if (e.target === lightbox) closeLightbox();
+});
+
+// Keyboard navigation
 document.addEventListener('keydown', e => {
   if (!lightbox.classList.contains('open')) return;
   if (e.key === 'Escape')     closeLightbox();
@@ -617,7 +623,6 @@ const observer = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
 
 })();
 </script>
