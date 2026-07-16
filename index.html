@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💜 I'm Sorry — An Apology Made Just For Her</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,400;1,500&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:       #FDF0F7;
+  --paper-2:     #FBE1EF;
+  --paper-line:  #F3C6E3;
+  --ink:         #3A1740;
+  --ink-soft:    #6B3563;
+  --muted:       #A6739B;
+
+  --walnut:      #2A0E3D;
+  --walnut-2:    #3D1354;
+  --walnut-3:    #551A6E;
+
+  --brass:       #E8579E;
+  --brass-light: #FFC1E0;
+  --brass-dark:  #B23E86;
+  --rust:        #9B5DE5;
+  --moss:        #C77DFF;
+  --coral:       #FF5C8A;
+
+  --card-shadow: 0 1px 3px rgba(60,20,60,.08), 0 8px 24px rgba(155,93,229,.12), 0 32px 64px rgba(232,87,158,.10);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Work Sans', sans-serif;
+  background:var(--paper);
+  min-height:100vh;
+  overflow-x:hidden;
+  color:var(--ink);
+}
+
+body::after{
+  content:'';
+  position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+  opacity:.5;
+}
+
+.orb{ position:fixed; border-radius:50%; filter:blur(80px); pointer-events:none; z-index:0; }
+.orb-1{ width:480px; height:480px; background:rgba(201,154,82,.16); top:-100px; right:-80px; animation:orbDrift 18s ease-in-out infinite; }
+.orb-2{ width:360px; height:360px; background:rgba(181,101,29,.10); bottom:50px; left:-100px; animation:orbDrift 14s ease-in-out infinite reverse; }
+.orb-3{ width:260px; height:260px; background:rgba(91,106,77,.10); top:40%; left:30%; animation:orbDrift 22s ease-in-out infinite 3s; }
+@keyframes orbDrift{ 0%,100%{ transform:translate(0,0) scale(1); } 33%{ transform:translate(20px,-30px) scale(1.05); } 66%{ transform:translate(-15px,20px) scale(.97); } }
+
+.page{ position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:64px 20px 120px; }
+
+.header{ text-align:center; margin-bottom:52px; max-width:520px; }
+.header-eyebrow{ display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:.68rem; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--brass-dark); margin-bottom:18px; }
+.eyebrow-line{ height:1px; width:32px; background:linear-gradient(90deg, transparent, var(--brass)); }
+.eyebrow-line.right{ background:linear-gradient(90deg, var(--brass), transparent); }
+.header h1{ font-family:'Fraunces', serif; font-size:clamp(2.6rem, 7vw, 4rem); font-weight:600; color:var(--ink); line-height:1.08; letter-spacing:-.02em; margin-bottom:14px; }
+.header h1 em{ font-style:italic; font-weight:400; color:var(--brass-dark); }
+.header-sub{ font-size:.9rem; color:var(--ink-soft); line-height:1.65; font-weight:400; }
+
+.tie-icon{ display:block; font-size:3rem; margin-bottom:18px; animation:tieFloat 4s ease-in-out infinite; filter:drop-shadow(0 8px 24px rgba(201,154,82,.35)); }
+@keyframes tieFloat{ 0%,100%{ transform:translateY(0) rotate(-3deg); } 50%{ transform:translateY(-10px) rotate(3deg); } }
+
+.card{ width:100%; max-width:540px; background:var(--paper-2); border-radius:24px; border:1px solid var(--paper-line); padding:48px 44px; box-shadow:var(--card-shadow); position:relative; overflow:hidden; }
+.card::before{ content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--brass), var(--rust), var(--coral), var(--rust), var(--brass)); background-size:300% 100%; animation:shimmer 6s linear infinite; }
+@keyframes shimmer{ 0%{ background-position:0%; } 100%{ background-position:300%; } }
+
+.section-label{ font-family:'IBM Plex Mono',monospace; font-size:.66rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+.section-label::after{ content:''; flex:1; height:1px; background:var(--paper-line); }
+.section-gap{ margin-bottom:32px; }
+
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+.chip{ font-family:'Work Sans', sans-serif; font-size:.86rem; font-weight:500; padding:10px 17px; border-radius:999px; border:1.5px solid var(--paper-line); background:var(--paper); color:var(--ink); cursor:pointer; transition:all .15s ease; }
+.chip:hover{ border-color:var(--brass); }
+.chip.selected{ background:var(--ink); border-color:var(--ink); color:var(--paper-2); }
+
+.field{ margin-bottom:14px; }
+.field label{ display:block; font-family:'IBM Plex Mono',monospace; font-size:.67rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+.field input, .field textarea{
+  width:100%; padding:12px 15px; border:1.5px solid var(--paper-line); border-radius:10px;
+  background:var(--paper); font-family:'Work Sans', sans-serif; font-size:.92rem; color:var(--ink);
+  outline:none; transition:all .18s ease;
+}
+.field input:focus, .field textarea:focus{ border-color:var(--brass); background:#FBF7EC; box-shadow:0 0 0 4px rgba(201,154,82,.16); }
+.field textarea{ resize:none; height:108px; font-family:'Fraunces', serif; font-style:italic; font-size:1.05rem; line-height:1.7; }
+.two-col{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.char-count{ text-align:right; font-family:'IBM Plex Mono',monospace; font-size:.63rem; color:var(--muted); margin-top:4px; }
+
+.years-hint{ font-size:.68rem; color:var(--muted); margin-top:5px; line-height:1.5; }
+.field input[type="number"]{ -moz-appearance:textfield; appearance:textfield; max-width:160px; }
+.field input[type="number"]::-webkit-outer-spin-button, .field input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; appearance:none; margin:0; }
+
+.tone-row{ display:flex; flex-wrap:wrap; gap:7px; }
+.tone-chip{ padding:7px 14px; border:1.5px solid var(--paper-line); border-radius:100px; background:var(--paper-2); font-family:'Work Sans', sans-serif; font-size:.76rem; font-weight:500; color:var(--ink-soft); cursor:pointer; transition:all .15s ease; }
+.tone-chip:hover, .tone-chip.active{ background:var(--ink); border-color:var(--ink); color:var(--paper-2); transform:translateY(-1px); }
+
+.ai-box{ margin-top:10px; background:linear-gradient(135deg, var(--brass-light), #F3E2C2); border:1.5px solid rgba(201,154,82,.35); border-radius:14px; padding:16px; }
+.ai-box-head{ display:flex; align-items:center; gap:8px; margin-bottom:11px; }
+.ai-pill{ display:inline-flex; align-items:center; gap:4px; padding:3px 10px; background:var(--brass-dark); border-radius:100px; font-family:'IBM Plex Mono',monospace; font-size:.62rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#FBF3E2; }
+.ai-hint{ font-size:.77rem; color:var(--ink-soft); }
+.ai-gen-btn{
+  margin-top:11px; width:100%; padding:11px; border:none; border-radius:10px;
+  background:var(--brass-dark); color:#FBF3E2; font-family:'Work Sans', sans-serif; font-size:.83rem; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; transition:all .2s ease;
+}
+.ai-gen-btn:hover{ background:var(--ink); transform:translateY(-1px); }
+.ai-gen-btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+.ai-dots span{ display:inline-block; width:5px; height:5px; border-radius:50%; background:#FBF3E2; margin:0 2px; animation:aiDot 1.1s ease-in-out infinite; }
+.ai-dots span:nth-child(2){ animation-delay:.18s; }
+.ai-dots span:nth-child(3){ animation-delay:.36s; }
+@keyframes aiDot{ 0%,100%{ transform:translateY(0); opacity:.5; } 50%{ transform:translateY(-4px); opacity:1; } }
+
+/* ---------- Photo upload ---------- */
+.photo-drop{
+  position:relative; border:1.6px dashed var(--paper-line); border-radius:16px;
+  padding:26px 18px; text-align:center; cursor:pointer; background:var(--paper);
+  transition:all .2s ease; overflow:hidden;
+}
+.photo-drop:hover{ border-color:var(--brass); background:#FBF7EC; }
+.photo-drop input[type="file"]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+.photo-drop-icon{ font-size:1.7rem; margin-bottom:6px; display:block; }
+.photo-drop-text{ font-size:.83rem; color:var(--ink-soft); line-height:1.5; }
+.photo-drop-text b{ color:var(--ink); }
+.photo-preview-wrap{ display:none; }
+.photo-preview-wrap.show{ display:block; }
+.photo-preview{ width:100%; max-height:230px; object-fit:cover; border-radius:14px; display:block; box-shadow:0 8px 24px rgba(28,20,10,.18); }
+.photo-actions{ display:flex; justify-content:center; margin-top:10px; }
+.photo-remove-btn{
+  font-family:'IBM Plex Mono',monospace; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--rust); background:none; border:1px solid var(--paper-line); border-radius:100px;
+  padding:6px 16px; cursor:pointer; display:none; align-items:center; gap:6px;
+}
+.photo-remove-btn:hover{ border-color:var(--rust); }
+.photo-skip-hint{ font-size:.68rem; color:var(--muted); margin-top:8px; text-align:center; }
+
+.submit-wrap{ margin-top:42px; text-align:center; }
+.btn-submit{
+  display:inline-flex; align-items:center; gap:12px; padding:18px 48px; border:none; border-radius:14px;
+  background:var(--ink); color:var(--paper-2); font-family:'Work Sans', sans-serif; font-size:1.04rem; font-weight:600;
+  letter-spacing:-.01em; cursor:pointer; box-shadow:0 4px 20px rgba(28,20,10,.3); transition:all .22s ease;
+  position:relative; overflow:hidden;
+}
+.btn-submit::after{ content:''; position:absolute; inset:0; background:linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent); animation:sheen 2.5s linear infinite; }
+@keyframes sheen{ 0%{ transform:translateX(-100%); } 100%{ transform:translateX(200%); } }
+.btn-submit:hover{ transform:translateY(-3px); box-shadow:0 12px 40px rgba(28,20,10,.4); }
+.btn-icon{ font-size:1.1rem; animation:iconWiggle 2.5s ease-in-out infinite; }
+@keyframes iconWiggle{ 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-8deg); } 75%{ transform:rotate(8deg); } }
+.submit-note{ margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:.66rem; color:var(--muted); letter-spacing:.03em; }
+
+@media(max-width:500px){
+  .card{ padding:30px 20px; }
+  .header h1{ font-size:2.3rem; }
+  .two-col{ grid-template-columns:1fr; }
+  .btn-submit{ padding:16px 32px; font-size:.95rem; }
+}
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="page">
+  <div class="header">
+    <span class="tie-icon">💌</span>
+    <div class="header-eyebrow">
+      <span class="eyebrow-line"></span>
+      An apology · Made with love
+      <span class="eyebrow-line right"></span>
+    </div>
+    <h1>Say sorry in a way<br><em>she'll actually melt for.</em></h1>
+    <p class="header-sub">A letter, a few balloons, a cuteness meter that breaks — preview it exactly as she'll see it, then send a link. No app, no login, just opens in her browser.</p>
+  </div>
+
+  <div class="card">
+
+    <!-- Who -->
+    <div class="section-gap">
+      <div class="section-label">What do you call her</div>
+      <div class="chips" id="relationChips">
+        <button type="button" class="chip selected" data-value="Babe">Babe</button>
+        <button type="button" class="chip" data-value="Baby">Baby</button>
+        <button type="button" class="chip" data-value="Jaan">Jaan</button>
+        <button type="button" class="chip" data-value="My Love">My Love</button>
+        <button type="button" class="chip" data-value="Sweetheart">Sweetheart</button>
+        <button type="button" class="chip" data-value="__custom">Other</button>
+      </div>
+      <input type="text" id="relationCustom" placeholder="Type what you call her" style="display:none; margin-bottom:14px;">
+
+      <div class="two-col">
+        <div class="field">
+          <label>Your name</label>
+          <input type="text" id="senderName" placeholder="So she knows it's from you" maxlength="40">
+        </div>
+        <div class="field">
+          <label>How sorry are you (out of 10) 🥺</label>
+          <input type="number" id="papaYears" placeholder="e.g. 11" min="1" max="80">
+        </div>
+      </div>
+      <div class="years-hint">Doesn't really matter what you put — the cuteness meter breaks either way. Leave blank and we'll pick a dramatic number for you.</div>
+    </div>
+
+    <!-- Message -->
+    <div class="section-gap" style="margin-top:28px;">
+      <div class="section-label">Your apology</div>
+      <div class="field">
+        <label>Write from the heart</label>
+        <textarea id="mainMessage" placeholder="Say what you actually want to say. It reads better when it sounds like you, sorry and all." maxlength="600" oninput="countChars(this)"></textarea>
+        <div class="char-count"><span id="charCount">0</span>/600</div>
+      </div>
+
+      <!-- AI Assist -->
+      <div class="ai-box">
+        <div class="ai-box-head">
+          <div class="ai-pill">✦ AI Write</div>
+          <span class="ai-hint">Pick a tone and let AI go</span>
+        </div>
+        <div class="tone-row" id="toneRow">
+          <button class="tone-chip active" data-tone="warm" onclick="pickTone(this)">🥺 Soft & sincere</button>
+          <button class="tone-chip" data-tone="funny" onclick="pickTone(this)">😂 Cute & silly</button>
+          <button class="tone-chip" data-tone="hype" onclick="pickTone(this)">💗 Full romantic</button>
+          <button class="tone-chip" data-tone="poetic" onclick="pickTone(this)">🌸 Poetic</button>
+        </div>
+        <button class="ai-gen-btn" id="aiBtn" onclick="generateMsg()">
+          <span id="aiNormal" style="display:flex;align-items:center;gap:6px;">✦ Write it for me</span>
+          <span id="aiLoader" style="display:none;align-items:center;gap:6px;">
+            <span class="ai-dots"><span></span><span></span><span></span></span>
+            Crafting something real...
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Photo -->
+    <div class="section-gap" style="margin-top:28px;">
+      <div class="section-label">A photo of her (optional)</div>
+
+      <div class="photo-drop" id="photoDrop">
+        <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoFile(this.files[0])">
+        <span class="photo-drop-icon">📷</span>
+        <div class="photo-drop-text"><b>Tap to add a photo</b><br>Shows up big on the final surprise page</div>
+      </div>
+
+      <div class="photo-preview-wrap" id="photoPreviewWrap">
+        <img class="photo-preview" id="photoPreview" alt="preview">
+        <div class="photo-actions">
+          <button type="button" class="photo-remove-btn" id="photoRemoveBtn" onclick="removePhoto()">✕ Remove photo</button>
+        </div>
+      </div>
+
+      <div class="photo-skip-hint">No photo? No worries — we'll use a sweet little animation instead.</div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-wrap">
+      <button class="btn-submit" onclick="goPreview()">
+        <span class="btn-icon">🎁</span>
+        <span>Preview the Surprise</span>
+        <span class="btn-icon" style="animation-delay:.5s">🎈</span>
+      </button>
+      <div class="submit-note">Takes 2 seconds · Free preview · Pay only to share</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let relation = 'Babe';
+let tone = 'warm';
+let photoDataUrl = null;
+
+document.getElementById('relationChips').addEventListener('click', (e) => {
+  const btn = e.target.closest('.chip');
+  if(!btn) return;
+  document.querySelectorAll('#relationChips .chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  const customInput = document.getElementById('relationCustom');
+  if(btn.dataset.value === '__custom'){
+    customInput.style.display = 'block';
+    customInput.focus();
+    relation = customInput.value.trim() || 'Babe';
+  } else {
+    customInput.style.display = 'none';
+    relation = btn.dataset.value;
+  }
+});
+document.getElementById('relationCustom').addEventListener('input', (e) => {
+  relation = e.target.value.trim() || 'Babe';
+});
+
+function pickTone(el) {
+  document.querySelectorAll('.tone-chip').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  tone = el.dataset.tone;
+}
+function countChars(el) {
+  document.getElementById('charCount').textContent = el.value.length;
+}
+
+/* ---------- Photo handling ---------- */
+function handlePhotoFile(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const maxDim = 900;
+      let w = img.width, h = img.height;
+      if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+      else if(h >= w && h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      photoDataUrl = canvas.toDataURL('image/jpeg', 0.78);
+
+      document.getElementById('photoPreview').src = photoDataUrl;
+      document.getElementById('photoPreviewWrap').classList.add('show');
+      document.getElementById('photoDrop').style.display = 'none';
+      document.getElementById('photoRemoveBtn').style.display = 'inline-flex';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function removePhoto(){
+  photoDataUrl = null;
+  document.getElementById('photoInput').value = '';
+  document.getElementById('photoPreviewWrap').classList.remove('show');
+  document.getElementById('photoDrop').style.display = 'block';
+}
+
+const FALLBACKS = {
+  warm:   `I'm sorry, {R}. Not the quick kind of sorry, the kind that actually sat with me. I keep replaying it and wishing I'd said it differently, been kinder, listened more. You didn't deserve that. I don't say this enough, but you are the softest, safest part of my life, and I hate that I made it feel otherwise, even for a second. 🥺💜`,
+  funny:  `Okay so. I was wrong, you were right, and I will be saying that sentence in my head on a loop for the rest of the week. You're still the cutest person I've ever managed to upset, {R}, and I promise to be less of a menace. Forgive your favourite disaster? 😂💕`,
+  hype:   `{R}, YOU are the best thing that has ever happened to me, and I dropped the ball. So here's me, loudly and unapologetically obsessed with you, promising to do better, love louder, and never make you doubt it again. You're it for me. Every version of it. 💗🔥`,
+  poetic: `Some people fill a room just by existing in it — you do that to my whole world, {R}. I'm sorry for the words that landed wrong and the silence that followed. If I could rewind the hurt out of it, I would. What's left is just this: I adore you, completely, and I'm not done showing it. 🌸`,
+};
+
+async function generateMsg() {
+  const btn = document.getElementById('aiBtn');
+  const normal = document.getElementById('aiNormal');
+  const loader = document.getElementById('aiLoader');
+  btn.disabled = true;
+  normal.style.display = 'none';
+  loader.style.display = 'flex';
+
+  await new Promise(r => setTimeout(r, 900));
+
+  const msg = (FALLBACKS[tone] || FALLBACKS.warm).replace(/\{R\}/g, relation);
+  const ta = document.getElementById('mainMessage');
+  ta.value = msg;
+  countChars(ta);
+  ta.style.transition = 'box-shadow 0.4s, background 0.4s';
+  ta.style.boxShadow = '0 0 0 4px rgba(201,154,82,.25)';
+  ta.style.background = '#FBF3E2';
+  setTimeout(() => { ta.style.boxShadow = ''; ta.style.background = ''; }, 1200);
+
+  btn.disabled = false;
+  normal.style.display = 'flex';
+  loader.style.display = 'none';
+}
+
+function getBalloons(relationWord) {
+  return [
+    `I'm sorry for what I said. I didn't mean it, and I definitely didn't think it through 🥺`,
+    `You are, objectively, unfairly cute, and I miss you already 🌸`,
+    `Still the softest laugh I've ever heard. I want to hear it again 💕`,
+    `I was wrong. You were right. Please let the record show that 📜`,
+    `Here's to us, ${relationWord.toLowerCase()}, and to me actually learning this time 🥂`,
+  ];
+}
+
+function goPreview() {
+  const senderName  = document.getElementById('senderName').value.trim() || 'Someone who loves you, a lot';
+  const mainMessage = document.getElementById('mainMessage').value.trim()
+    || `I'm sorry, ${relation}. You deserve so much better than that, and so much better than most days I give you. I love you. 💜`;
+  const papaYears = parseInt(document.getElementById('papaYears').value, 10) || 0;
+
+  const msgs = getBalloons(relation);
+
+  sessionStorage.setItem('papaData', JSON.stringify({
+    relation,
+    senderName,
+    mainMessage,
+    msgs,
+    papaYears,
+    photo: photoDataUrl,
+  }));
+  window.location.href = 'view.html';
+}
+</script>
+</body>
+</html>
