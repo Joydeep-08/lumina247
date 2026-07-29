@@ -3,14 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Happy Friendship Day 🎀</title>
+<title>Happy Girlfriend's Day 💕</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Caveat:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Dancing+Script:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  // shared-link viewers never see the intake form flash on screen
+  // runs immediately, before the body paints — if this is a shared link
+  // (?id=... or ?d=...) mark <html> so CSS can hide the edit form and show
+  // a loader instead of ever letting it flash on screen
   (function(){
     var params = new URLSearchParams(location.search);
     if(params.get('id') || params.get('d')){
@@ -19,211 +22,217 @@
   })();
 </script>
 <style>
-  :root{
-    --paper:#FFF7E8;
-    --butter:#FFE07D;
-    --mint:#9FE8CF;
-    --lav:#CDBBF5;
-    --bubblegum:#FF9FC0;
-    --accent:#FF5C8A;
-    --ink:#191722;
-    --sticker:#7FCBEA;
-    --blush-1:#FBE0E6;
-    --blush-2:#F6C7D1;
-    --blush-3:#EDA9BB;
-    --maroon:#7A1B32;
-    --maroon-shadow:rgba(122,27,50,.28);
-  }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   body{
-    font-family:'Space Grotesk',sans-serif;
-    background:
-      radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.55), transparent 55%),
-      radial-gradient(ellipse at 85% 90%, rgba(255,255,255,.35), transparent 50%),
-      linear-gradient(160deg,var(--blush-1),var(--blush-2) 55%,var(--blush-3));
-    background-attachment:fixed;
+    font-family:'Inter',sans-serif;
+    background:#f6c9d6;
     min-height:100vh;
     display:flex;align-items:flex-start;justify-content:center;
     padding:28px 14px 80px;
   }
-  .font-display{font-family:'Baloo 2',sans-serif}
-  .font-script{font-family:'Caveat',cursive}
+  .font-display{font-family:'Playfair Display',serif}
+  .font-script{font-family:'Dancing Script',cursive}
 
+  /* ---- outer frame w/ bow+heart pattern ---- */
   .frame{
-    width:100%;max-width:440px;
-    background:var(--maroon);
-    border-radius:26px;
-    padding:14px;
+    width:100%;max-width:460px;
+    background:#7d1730;
+    border-radius:22px;
+    padding:16px;
     position:relative;
-    box-shadow:8px 8px 0 rgba(122,27,50,.35);
+    box-shadow:0 24px 60px -20px rgba(90,10,30,.55);
   }
+  .frame-pattern{
+    position:absolute;inset:0;border-radius:22px;
+    background-image:
+      radial-gradient(circle at 8% 12%, rgba(255,255,255,.05) 0 3px, transparent 4px),
+      radial-gradient(circle at 32% 30%, rgba(255,255,255,.05) 0 3px, transparent 4px),
+      radial-gradient(circle at 58% 10%, rgba(255,255,255,.05) 0 3px, transparent 4px),
+      radial-gradient(circle at 84% 26%, rgba(255,255,255,.05) 0 3px, transparent 4px),
+      radial-gradient(circle at 14% 54%, rgba(255,255,255,.05) 0 3px, transparent 4px),
+      radial-gradient(circle at 44% 68%, rgba(255,255,255,.05) 0 3px, transparent 4px),
+      radial-gradient(circle at 70% 52%, rgba(255,255,255,.05) 0 3px, transparent 4px),
+      radial-gradient(circle at 92% 74%, rgba(255,255,255,.05) 0 3px, transparent 4px),
+      radial-gradient(circle at 20% 88%, rgba(255,255,255,.05) 0 3px, transparent 4px),
+      radial-gradient(circle at 62% 92%, rgba(255,255,255,.05) 0 3px, transparent 4px);
+    pointer-events:none;
+  }
+  .frame-icons{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:22px}
+  .frame-icons svg{position:absolute;opacity:.16}
+
   .card{
     position:relative;z-index:1;
-    background:var(--paper);
-    border-radius:18px;
-    border:3px solid var(--ink);
-    min-height:580px;
+    background:#fffaf5;
+    border-radius:16px;
+    min-height:560px;
     display:flex;flex-direction:column;
     overflow:hidden;
   }
 
-  .sticker{position:absolute;z-index:3;filter:drop-shadow(1px 2px 1px rgba(0,0,0,.2))}
+  /* corner cherries */
+  .corner-deco{position:absolute;width:46px;height:52px;z-index:2;opacity:.92}
+  .corner-tr{top:14px;right:16px}
+  .corner-bl{bottom:14px;left:16px;transform:scaleX(-1)}
 
   @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   @keyframes spin{to{transform:rotate(360deg)}}
   @keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
-  .fade-up{animation:fadeUp .45s ease both}
-  .spinner{width:26px;height:26px;border-radius:50%;border:4px solid var(--lav);border-top-color:var(--accent);animation:spin .8s linear infinite}
+  .fade-up{animation:fadeUp .5s ease both}
+  .spinner{width:26px;height:26px;border-radius:50%;border:3px solid #ecc3cf;border-top-color:#b83b5e;animation:spin .8s linear infinite}
 
   .btn{
-    padding:12px 26px;border-radius:999px;font-size:13px;font-weight:700;
-    letter-spacing:.4px;cursor:pointer;font-family:'Space Grotesk',sans-serif;
-    border:3px solid var(--ink);background:var(--accent);color:#fff;
-    box-shadow:4px 4px 0 var(--ink);
-    transition:transform .1s,box-shadow .1s,opacity .15s;
+    padding:10px 26px;border-radius:24px;font-size:12px;font-weight:600;
+    letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
+    border:1.5px solid #b83b5e;background:#b83b5e;color:#fff;font-family:'Inter',sans-serif;
+    transition:transform .15s,opacity .15s;
   }
-  .btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
-  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:4px 4px 0 var(--ink)}
+  .btn:hover{transform:translateY(-1px)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
   .btn-ghost{
-    padding:12px 26px;border-radius:999px;font-size:13px;font-weight:700;
-    letter-spacing:.4px;cursor:pointer;font-family:'Space Grotesk',sans-serif;
-    border:3px solid var(--ink);background:#fff;color:var(--ink);
-    box-shadow:4px 4px 0 var(--ink);
-    transition:transform .1s,box-shadow .1s;
+    padding:10px 26px;border-radius:24px;font-size:12px;font-weight:600;
+    letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
+    border:1.5px solid #b83b5e;background:transparent;color:#b83b5e;font-family:'Inter',sans-serif;
   }
-  .btn-ghost:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
-  .btn-ghost:disabled{opacity:.4;cursor:not-allowed;transform:none}
-  .btn-sm{padding:9px 16px;font-size:11.5px}
+  .btn-sm{padding:8px 16px;font-size:11px}
 
   .inp{
-    width:100%;padding:11px 13px;border-radius:12px;border:3px solid var(--ink);
-    font-size:14px;font-family:'Space Grotesk',sans-serif;outline:none;background:#fff;
-    box-shadow:3px 3px 0 rgba(25,23,34,.18);
+    width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid #ecc3cf;
+    font-size:14px;font-family:'Inter',sans-serif;outline:none;background:#fffdfb;
   }
-  .inp:focus{box-shadow:3px 3px 0 var(--accent)}
+  .inp:focus{border-color:#b83b5e}
 
   .photo-slot{
-    border:3px solid var(--ink);border-radius:12px;aspect-ratio:1/1;
+    border:1.5px dashed #ecc3cf;border-radius:12px;aspect-ratio:1/1;
     display:flex;align-items:center;justify-content:center;cursor:pointer;
-    overflow:hidden;position:relative;background:#fff;
-    box-shadow:3px 3px 0 rgba(25,23,34,.18);
+    overflow:hidden;position:relative;background:#fffdfb;
   }
   .photo-slot img{width:100%;height:100%;object-fit:cover}
 
   ::-webkit-scrollbar{width:0}
 
-  html.viewer-boot #step-intake{display:none !important}
-  html.viewer-boot #step-bootload{display:flex !important}
+  .write-cursor{
+    display:inline-block;width:1.5px;height:12px;background:#b83b5e;
+    margin-left:2px;vertical-align:-1px;animation:blinkCursor .9s steps(1) infinite;
+  }
+  @keyframes blinkCursor{50%{opacity:0}}
 
-  /* ---------- notifications (phone lock-screen intro) ---------- */
+  /* ---- phone lock-screen notifications (step 0.5) ---- */
   .phone-bg{
     flex:1;display:flex;flex-direction:column;align-items:center;
-    background:linear-gradient(180deg,var(--blush-2),var(--blush-3));
+    background:linear-gradient(180deg,#f6c9d6,#f3b4c8);
     padding:26px 18px 30px;
   }
-  .phone-time{color:#fff;text-align:center;margin-bottom:22px;text-shadow:0 2px 0 rgba(0,0,0,.15)}
-  .phone-time .hh{font-family:'Baloo 2',sans-serif;font-size:46px;font-weight:700;line-height:1}
-  .phone-time .dd{font-size:12px;letter-spacing:1px;margin-top:4px;opacity:.9}
+  .phone-time{color:#fff;text-align:center;margin-bottom:22px;text-shadow:0 2px 6px rgba(120,20,50,.25)}
+  .phone-time .hh{font-family:'Playfair Display',serif;font-size:44px;font-weight:700;line-height:1}
+  .phone-time .dd{font-size:12px;letter-spacing:1px;margin-top:4px;opacity:.9;font-family:'Inter',sans-serif}
   .notif{
-    width:100%;max-width:320px;background:#fff;border:3px solid var(--ink);border-radius:16px;
-    padding:11px 13px;display:flex;gap:10px;margin-bottom:10px;box-shadow:3px 3px 0 rgba(25,23,34,.3);
+    width:100%;max-width:320px;background:#fffaf5;border-radius:16px;
+    padding:11px 13px;display:flex;gap:10px;margin-bottom:10px;
+    box-shadow:0 10px 20px -10px rgba(120,20,50,.35);
   }
-  .notif-ico{width:34px;height:34px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid var(--ink)}
+  .notif-ico{width:34px;height:34px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px}
   .notif-body{flex:1;min-width:0}
-  .notif-top{display:flex;justify-content:space-between;font-size:9.5px;color:#8a8496;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
-  .notif-sender{font-size:12.5px;font-weight:700;color:var(--ink)}
-  .notif-msg{font-size:11.5px;color:#514c5e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .notif-top{display:flex;justify-content:space-between;font-size:9.5px;color:#b8718a;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;font-family:'Inter',sans-serif}
+  .notif-sender{font-size:12.5px;font-weight:600;color:#3a0f1a;font-family:'Inter',sans-serif}
+  .notif-msg{font-size:11.5px;color:#6b3648;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Inter',sans-serif}
   .notif-target{
-    cursor:pointer;border-color:var(--ink);background:var(--butter);
+    cursor:pointer;background:#fdeef0;border:1.5px solid #e28aa3;
     animation:pop 1.6s ease-in-out infinite;
   }
-  .notif-target .notif-ico{background:var(--accent);color:#fff}
-  .phone-hint{color:#fff;font-size:11.5px;margin-top:14px;text-shadow:0 1px 0 rgba(0,0,0,.15)}
+  .notif-target .notif-ico{background:#b83b5e;color:#fff}
+  .phone-hint{color:#fff;font-size:13px;margin-top:14px;text-shadow:0 1px 4px rgba(120,20,50,.25);font-family:'Dancing Script',cursive}
 
-  /* ---------- envelope ---------- */
-  .env-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 26px;text-align:center;position:relative}
-
-  /* ---------- letter being typed ---------- */
-  .letter-row{display:flex;gap:14px;align-items:stretch;flex:1;flex-wrap:wrap}
-  .letter-paper{
-    flex:1 1 190px;background:#fff;border:3px solid var(--ink);border-radius:14px;
-    padding:18px 16px;box-shadow:5px 5px 0 rgba(25,23,34,.2);
-    font-family:'Caveat',cursive;font-size:19px;line-height:1.5;color:var(--ink);
-    min-height:200px;text-align:left;position:relative;
+  /* ---- certification / agreement page ---- */
+  .agree-card{
+    background:#fffaf5;border:1.5px solid #ecc3cf;border-radius:16px;
+    padding:18px 18px 20px;box-shadow:0 14px 28px -14px rgba(184,59,94,.35);
   }
-  .letter-cursor{display:inline-block;width:2px;background:var(--ink);margin-left:1px;animation:blink 1s step-end infinite}
-  @keyframes blink{50%{opacity:0}}
-  .letter-photo-wrap{flex:0 0 100px;display:flex;flex-direction:column;align-items:center}
-  .letter-photo{
-    width:100px;height:130px;object-fit:cover;border:3px solid var(--maroon);border-radius:6px;
-    box-shadow:4px 4px 0 var(--maroon-shadow);transform:rotate(4deg);background:#fff;padding:5px 5px 14px;
-  }
-  .letter-photo-cap{font-family:'Caveat',cursive;font-size:13px;color:var(--accent);margin-top:6px;transform:rotate(4deg)}
+  .agree-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed #f3d3da;font-size:12px;color:#4a2530;line-height:1.4;font-family:'Inter',sans-serif}
+  .agree-item:last-child{border-bottom:none}
+  .agree-check{width:20px;height:20px;border:1.5px solid #ecc3cf;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;margin-top:1px;font-size:13px;font-weight:700;color:#b83b5e}
+  .agree-check.locked{background:#fdeef0;color:#e28aa3;border-color:#f3d3da}
+  .agree-check.final{cursor:pointer}
+  .agree-check.final.checked{background:#e8f5ea;color:#4a8a5c;border-color:#c8e6cb}
+  .agree-final-row{cursor:pointer}
+  .agree-terms{display:flex;justify-content:space-between;font-size:10.5px;color:#b8718a;margin-top:12px;padding-top:10px;border-top:1px solid #ecc3cf;font-family:'Inter',sans-serif}
 
-  /* ---------- vision board (final page) ---------- */
-  .board-masonry{column-count:2;column-gap:12px;padding:4px 2px 2px}
-  .board-item{break-inside:avoid;margin-bottom:14px}
+  /* ---- pinterest-style vision board (final step) ---- */
+  .board-masonry{column-count:2;column-gap:14px;padding:6px 4px 4px}
+  .board-item{break-inside:avoid;margin-bottom:16px}
   .board-item.full-span{column-span:all}
-  .board-photo{background:#fff;border:3px solid var(--maroon);padding:7px 7px 20px;border-radius:6px;box-shadow:4px 4px 0 var(--maroon-shadow);position:relative}
-  .board-photo img{width:100%;object-fit:cover;border-radius:2px;display:block;background:#eee}
+  .board-photo{background:#fffefd;padding:8px 8px 22px;border-radius:3px;box-shadow:0 12px 24px -10px rgba(184,59,94,.45);position:relative}
+  .board-photo img{width:100%;object-fit:cover;border-radius:1px;display:block;background:#f3d3da}
   .board-photo.focus img{aspect-ratio:4/5}
-  .board-photo.side{width:82%;margin:0 auto}
+  .board-photo.side{width:80%;margin:0 auto}
   .board-photo.side img{aspect-ratio:1/1}
-  .board-caption{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);font-family:'Caveat',cursive;font-size:13px;font-weight:600;color:var(--accent);white-space:nowrap}
-  .board-note{background:#fff;border:3px solid var(--maroon);border-radius:10px;padding:12px 11px;box-shadow:4px 4px 0 var(--maroon-shadow);font-size:10px;color:#3a344a;line-height:1.55;text-align:left}
-  .board-note h4{font-family:'Caveat',cursive;font-size:16px;color:var(--accent);margin-bottom:6px;font-weight:600;text-align:center}
+  .board-caption{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);font-family:'Dancing Script',cursive;font-size:13px;font-weight:600;color:#b83b5e;white-space:nowrap}
+  .board-note{background:#fff8f4;border:1px solid #f3d3da;border-radius:10px;padding:13px 12px;box-shadow:0 10px 20px -12px rgba(184,59,94,.4);font-size:10.5px;color:#6b3648;line-height:1.6;text-align:left}
+  .board-note h4{font-family:'Dancing Script',cursive;font-size:16px;color:#b83b5e;margin-bottom:6px;font-weight:600;text-align:center}
   .board-note ul{list-style:none;text-align:left}
   .board-note li{margin-bottom:4px;padding-left:13px;position:relative}
-  .board-note li::before{content:'♥';position:absolute;left:0;top:1px;font-size:8px;color:var(--accent)}
-  .board-tape{position:absolute;width:40px;height:14px;background:rgba(255,224,125,.9);border:2px solid var(--maroon);top:-8px;left:50%;transform:translateX(-50%) rotate(-3deg);border-radius:2px;z-index:2}
-  .board-clip{position:absolute;top:-12px;right:12px;font-size:19px;transform:rotate(14deg);z-index:2}
-  .board-quote{font-family:'Baloo 2',sans-serif;font-weight:600;font-size:12.5px;color:var(--maroon);padding:14px 16px;background:var(--butter);border:3px solid var(--maroon);border-radius:12px;line-height:1.55}
-  .board-ribbon{background:var(--accent);color:#fff;border:3px solid var(--maroon);border-radius:10px;padding:11px 10px;font-size:11px;text-align:center;line-height:1.6}
+  .board-note li::before{content:'♥';position:absolute;left:0;top:1px;font-size:8px;color:#e28aa3}
+  .board-tape{position:absolute;width:44px;height:15px;background:rgba(247,214,222,.9);border:1px solid rgba(184,59,94,.15);top:-8px;left:50%;transform:translateX(-50%) rotate(-3deg);border-radius:2px;box-shadow:0 2px 3px rgba(0,0,0,.08);z-index:2}
+  .board-clip{position:absolute;top:-12px;right:14px;font-size:20px;transform:rotate(14deg);z-index:2;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
+  .board-heart{position:absolute;font-size:15px;z-index:2;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+  .board-quote{font-family:'Playfair Display',serif;font-style:italic;font-size:13px;color:#3a0f1a;padding:16px 18px;background:#fdeef0;border-radius:12px;line-height:1.65;position:relative}
+  .board-quote::before,.board-quote::after{content:'"';font-family:'Playfair Display',serif;font-size:26px;color:#e28aa3;position:absolute}
+  .board-quote::before{top:2px;left:8px}
+  .board-quote::after{bottom:-14px;right:10px}
+  .board-ribbon{background:#b83b5e;color:#fff;border-radius:10px;padding:12px 10px;font-size:11px;letter-spacing:.3px;text-align:center;line-height:1.6}
   .board-ribbon .font-script{font-size:16px;display:block;margin-top:2px}
+
+  /* shared-link boot state — kills the form flash before JS decides what to show */
+  html.viewer-boot #step-intake{display:none !important}
+  html.viewer-boot #step-bootload{display:flex !important}
 </style>
 </head>
 <body>
 
 <div class="frame" id="frame">
+  <div class="frame-pattern"></div>
+  <div class="frame-icons" id="frame-icons"></div>
   <div class="card" id="card">
 
-    <!-- ============ BOOT — SHARED LINK LOADING / ERROR ============ -->
+    <!-- ============ STEP BOOT — SHARED LINK LOADING / ERROR ============ -->
     <section id="step-bootload" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:36px 26px;text-align:center">
       <div class="spinner" id="bootload-spinner"></div>
-      <div style="margin-top:16px;font-size:12.5px;color:#8a8496" id="bootload-text">Opening your surprise…</div>
+      <div style="margin-top:16px;font-size:12.5px;color:#b8718a" id="bootload-text">Opening your surprise…</div>
       <button id="bootload-retry" class="btn btn-sm" style="display:none;margin-top:18px" onclick="location.reload()">Retry</button>
     </section>
 
     <!-- ============ STEP 0 — INTAKE ============ -->
-    <section id="step-intake" class="fade-up" style="padding:30px 24px;flex:1;display:flex;flex-direction:column">
-      <div id="resume-banner" style="display:none;background:var(--butter);border:3px solid var(--ink);border-radius:14px;padding:12px 14px;margin-bottom:16px;font-size:12px;box-shadow:3px 3px 0 rgba(25,23,34,.2)">
-        <div style="margin-bottom:8px">You already paid for a surprise that didn't finish generating. Pick up where it left off?</div>
+    <section id="step-intake" class="fade-up" style="padding:34px 26px;flex:1;display:flex;flex-direction:column">
+      <div id="resume-banner" style="display:none;background:#fff2f5;border:1.5px solid #ecc3cf;border-radius:12px;padding:12px 14px;margin-bottom:18px;font-size:12px;color:#8a4a5c">
+        <div style="margin-bottom:8px">You already paid for a surprise that didn't finish generating. Want to pick up where it left off?</div>
         <div style="display:flex;gap:8px">
           <button class="btn btn-sm" style="flex:1" onclick="resumePendingOrder()">Resume</button>
           <button class="btn-ghost btn-sm" style="flex:1" onclick="discardPendingOrder()">Discard</button>
         </div>
       </div>
-      <div class="font-display" style="font-size:23px;font-weight:800;color:var(--ink);text-align:center;margin-bottom:4px">🎀 Make Their Surprise</div>
-      <p style="text-align:center;color:#8a8496;font-size:12.5px;margin-bottom:20px">Three photos, a few words — that's all it takes.</p>
+      <div class="font-display" style="font-size:24px;font-weight:700;color:#3a0f1a;text-align:center;margin-bottom:4px">Make Her Surprise</div>
+      <p style="text-align:center;color:#b8718a;font-size:12.5px;margin-bottom:22px">Three photos, a few words — that's all it takes.</p>
 
-      <div style="display:flex;flex-direction:column;gap:13px">
-        <input id="in-recipient" class="inp" placeholder="Your friend's name" />
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <input id="in-recipient" class="inp" placeholder="Her name" />
         <input id="in-sender" class="inp" placeholder="Your name" />
 
         <div>
-          <div style="font-size:11px;color:var(--ink);font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">Three photos, for the vision board</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px">
-            <div class="photo-slot" data-slot="0" onclick="pickPhoto(0)"><span style="font-size:10px;color:#a49cb5;text-align:center;padding:0 6px">photo 1</span></div>
-            <div class="photo-slot" data-slot="1" onclick="pickPhoto(1)"><span style="font-size:10px;color:#a49cb5;text-align:center;padding:0 6px">photo 2</span></div>
-            <div class="photo-slot" data-slot="2" onclick="pickPhoto(2)"><span style="font-size:10px;color:#a49cb5;text-align:center;padding:0 6px">photo 3</span></div>
+          <div style="font-size:11px;color:#8a4a5c;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Three photos, for the board</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+            <div class="photo-slot" data-slot="0" onclick="pickPhoto(0)"><span style="font-size:10px;color:#d9a9b5;text-align:center;padding:0 6px">photo 1</span></div>
+            <div class="photo-slot" data-slot="1" onclick="pickPhoto(1)"><span style="font-size:10px;color:#d9a9b5;text-align:center;padding:0 6px">photo 2</span></div>
+            <div class="photo-slot" data-slot="2" onclick="pickPhoto(2)"><span style="font-size:10px;color:#d9a9b5;text-align:center;padding:0 6px">photo 3</span></div>
           </div>
-          <input type="file" id="file-input" accept="image/*" style="display:none" />
+          <input type="file" id="file-input" accept="image/*" class="hidden" style="display:none" />
         </div>
 
-        <div>
-          <div style="font-size:11px;color:var(--ink);font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">A short note (shows on the vision board)</div>
-          <textarea id="in-message" class="inp" rows="3" style="resize:none">You're the friend I never have to explain myself to. Happy Friendship Day — here's to more chaos together. 🎀</textarea>
-        </div>
+        <textarea id="in-message" class="inp" rows="7" style="resize:none">I know I don't say it enough, so let me say it properly today: you are, hands down, the best part of my life.
+
+You turn the most ordinary days into something worth remembering — a random Tuesday feels a little more magical just because you're in it. Your laugh is my favorite sound, your hugs are my favorite place, and your heart is honestly the softest, kindest thing I know.
+
+Thank you for choosing me, again and again, even on the days I don't make it easy. I promise to keep choosing you right back — today, tomorrow, and every ordinary Tuesday after that.
+
+Happy Girlfriend's Day, my love. You're stuck with me forever now. 💕</textarea>
       </div>
 
       <div id="intake-err" style="display:none;color:#c62828;font-size:12px;margin-top:10px">Add both names and a message first.</div>
@@ -231,14 +240,14 @@
     </section>
 
     <!-- ============ STEP PAY — COUPON + PAYMENT ============ -->
-    <section id="step-payment" style="display:none;flex:1;flex-direction:column;padding:30px 24px">
-      <div class="font-display" style="font-size:21px;font-weight:800;color:var(--ink);text-align:center;margin-bottom:6px">Almost there 🎀</div>
-      <p style="text-align:center;color:#8a8496;font-size:12.5px;margin-bottom:24px">Unlock the link to send it to them.</p>
+    <section id="step-payment" style="display:none;flex:1;flex-direction:column;padding:34px 26px">
+      <div class="font-display" style="font-size:22px;font-weight:700;color:#3a0f1a;text-align:center;margin-bottom:6px">Almost there</div>
+      <p style="text-align:center;color:#b8718a;font-size:12.5px;margin-bottom:26px">Unlock the link to send it to her.</p>
 
-      <div style="background:var(--butter);border:3px solid var(--ink);border-radius:16px;padding:20px;text-align:center;margin-bottom:16px;box-shadow:3px 3px 0 rgba(25,23,34,.2)">
-        <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#6b6478;margin-bottom:6px">Total</div>
-        <div class="font-display" id="pay-price" style="font-size:34px;font-weight:800;color:var(--ink)">₹99</div>
-        <div id="pay-coupon-applied" style="display:none;font-size:11px;color:#2f7a4d;margin-top:4px;font-weight:600"></div>
+      <div style="background:#fff2f5;border-radius:14px;padding:20px;text-align:center;margin-bottom:18px">
+        <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#b8718a;margin-bottom:6px">Total</div>
+        <div class="font-display" id="pay-price" style="font-size:34px;font-weight:700;color:#b83b5e">₹99</div>
+        <div id="pay-coupon-applied" style="display:none;font-size:11px;color:#4a8a5c;margin-top:4px"></div>
       </div>
 
       <div style="display:flex;gap:8px;margin-bottom:6px">
@@ -247,15 +256,15 @@
       </div>
       <div id="coupon-err" style="display:none;color:#c62828;font-size:12px;margin-bottom:8px">Invalid coupon code.</div>
 
-      <button id="pay-btn" class="btn" style="margin-top:16px;width:100%" onclick="handlePayment()">Pay &amp; Get Link</button>
-      <button class="btn-ghost" style="margin-top:10px;width:100%" onclick="goTo('step-visionboard')">← Back</button>
+      <button id="pay-btn" class="btn" style="margin-top:18px;width:100%" onclick="handlePayment()">Pay & Get Link</button>
+      <button class="btn-ghost" style="margin-top:10px;width:100%" onclick="goTo('step-gallery')">← Back</button>
 
       <div id="pay-loading" style="display:none;align-items:center;justify-content:center;gap:10px;margin-top:18px">
         <div class="spinner"></div>
-        <span id="pay-loading-text" style="font-size:12.5px;color:#8a8496">Creating your surprise…</span>
+        <span id="pay-loading-text" style="font-size:12.5px;color:#b8718a">Creating your surprise…</span>
       </div>
 
-      <div id="pay-fail" style="display:none;background:var(--butter);border:3px solid var(--ink);border-radius:14px;padding:14px;margin-top:16px;font-size:12px;text-align:center">
+      <div id="pay-fail" style="display:none;background:#fff2f5;border:1.5px solid #ecc3cf;border-radius:12px;padding:14px;margin-top:18px;font-size:12px;color:#8a4a5c;text-align:center">
         <div style="margin-bottom:10px">Payment went through, but we hit a snag creating the link. Your payment is safe — just tap retry.</div>
         <button class="btn" style="width:100%" onclick="retryFinalize()">Retry</button>
       </div>
@@ -263,13 +272,13 @@
 
     <!-- ============ STEP LINK — SHAREABLE LINK ============ -->
     <section id="step-linkout" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:36px 26px;text-align:center">
-      <div class="font-display fade-up" style="font-size:22px;font-weight:800;color:var(--ink);margin-bottom:10px">It's ready 🎀</div>
-      <p style="color:#8a8496;font-size:12.5px;margin-bottom:20px">Copy this link and send it to them.</p>
+      <div class="font-display fade-up" style="font-size:22px;font-weight:700;color:#3a0f1a;margin-bottom:10px">It's ready 💕</div>
+      <p style="color:#b8718a;font-size:12.5px;margin-bottom:20px">Copy this link and send it to her.</p>
       <div style="display:flex;gap:8px;width:100%">
         <input id="out-link" class="inp" readonly style="font-size:11px" />
         <button class="btn btn-sm" onclick="copyLink()">Copy</button>
       </div>
-      <div id="copy-msg" style="display:none;color:#2f7a4d;font-size:11px;margin-top:8px;font-weight:600">Copied!</div>
+      <div id="copy-msg" style="display:none;color:#4a8a5c;font-size:11px;margin-top:8px">Copied!</div>
       <button class="btn-ghost" style="margin-top:20px" onclick="goTo('step-notifications')">Preview it</button>
     </section>
 
@@ -279,11 +288,11 @@
       <div class="phone-bg">
         <div class="phone-time">
           <div class="hh" id="notif-clock">9:41</div>
-          <div class="dd">Friendship Day</div>
+          <div class="dd">Girlfriend's Day</div>
         </div>
 
         <div class="notif">
-          <div class="notif-ico" style="background:#B8E1FF">📦</div>
+          <div class="notif-ico" style="background:#ffe3ec">📦</div>
           <div class="notif-body">
             <div class="notif-top"><span>Delivery</span><span>2m</span></div>
             <div class="notif-sender">Your package</div>
@@ -291,7 +300,7 @@
           </div>
         </div>
         <div class="notif">
-          <div class="notif-ico" style="background:#C9F7D6">💧</div>
+          <div class="notif-ico" style="background:#e3f3e6">💧</div>
           <div class="notif-body">
             <div class="notif-top"><span>Reminder</span><span>6m</span></div>
             <div class="notif-sender">Hydration check</div>
@@ -299,7 +308,7 @@
           </div>
         </div>
         <div class="notif">
-          <div class="notif-ico" style="background:#F5D7FF">🎧</div>
+          <div class="notif-ico" style="background:#f3e3fb">🎧</div>
           <div class="notif-body">
             <div class="notif-top"><span>Music</span><span>14m</span></div>
             <div class="notif-sender">Your playlist</div>
@@ -307,11 +316,11 @@
           </div>
         </div>
         <div class="notif notif-target" onclick="openNotification()">
-          <div class="notif-ico">🎀</div>
+          <div class="notif-ico">💌</div>
           <div class="notif-body">
             <div class="notif-top"><span>Now</span><span>•</span></div>
             <div class="notif-sender" id="notif-sender-name">Someone</div>
-            <div class="notif-msg">sent you something 👀 tap to open</div>
+            <div class="notif-msg">sent you something 💕 tap to open</div>
           </div>
         </div>
         <div class="phone-hint">tap the glowing one</div>
@@ -319,93 +328,155 @@
     </section>
 
     <!-- ============ STEP 2 — ENVELOPE ============ -->
-    <section id="step-envelope" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:36px 26px;text-align:center;position:relative">
-      <button id="envelope-edit-btn" class="btn-ghost btn-sm" style="position:absolute;top:14px;left:14px;z-index:5" onclick="goTo('step-intake')">← Edit</button>
-      <div class="font-display fade-up" style="font-size:25px;font-weight:800;color:var(--ink);margin-bottom:24px" id="env-title">Happy Friendship Day</div>
+    <section id="step-envelope" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:36px 26px;text-align:center">
+      <button id="env-edit-btn" class="btn-ghost btn-sm" style="position:absolute;top:14px;left:14px;z-index:5" onclick="goBackTo('step-intake')">← Edit</button>
+      <div class="font-display fade-up" style="font-size:26px;font-weight:700;color:#3a0f1a;margin-bottom:26px" id="env-title">Happy Girlfriend's Day</div>
 
-      <div id="envelope" class="fade-up" onclick="openEnvelope()" style="cursor:pointer;width:220px;position:relative">
-        <div style="width:220px;height:150px;background:#fff;border:3px solid var(--ink);border-radius:10px;position:relative;box-shadow:5px 5px 0 rgba(25,23,34,.3);overflow:hidden">
-          <img id="env-photo" src="" style="width:100%;height:100%;object-fit:cover;opacity:.35" />
-          <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,247,232,.35),rgba(255,247,232,.55))"></div>
-          <div id="env-flap" style="position:absolute;top:-1px;left:-1px;width:0;height:0;border-left:111px solid transparent;border-right:111px solid transparent;border-top:76px solid var(--butter);transform-origin:top;transition:transform .6s ease"></div>
-          <div style="position:absolute;top:0;left:0;width:100%;height:100%;border:3px solid var(--ink);border-radius:10px;pointer-events:none"></div>
-          <div style="position:absolute;top:56px;left:50%;transform:translateX(-50%);width:36px;height:36px;border-radius:50%;background:var(--accent);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;z-index:2">
-            <span style="color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15px" id="env-seal">F</span>
+      <div id="envelope" class="fade-up" onclick="openEnvelope()" style="cursor:pointer;width:230px;position:relative;perspective:600px">
+        <div style="width:230px;height:150px;background:#fff6f0;border-radius:6px;position:relative;box-shadow:0 16px 30px -12px rgba(90,10,30,.35);overflow:hidden">
+          <img id="env-photo" src="photo1.jpeg" style="width:100%;height:100%;object-fit:cover;opacity:.9" />
+          <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,246,240,.55),rgba(255,246,240,.15))"></div>
+          <div id="env-flap" style="position:absolute;top:0;left:0;width:0;height:0;border-left:115px solid transparent;border-right:115px solid transparent;border-top:78px solid #fdeef0;transform-origin:top;transition:transform .6s ease"></div>
+          <div style="position:absolute;top:58px;left:50%;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e28aa3,#b83b5e);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 6px rgba(0,0,0,.25);z-index:2">
+            <span style="color:#fff;font-family:'Playfair Display',serif;font-style:italic;font-size:16px">C</span>
           </div>
         </div>
       </div>
-      <div class="font-script fade-up" style="font-size:16px;color:var(--ink);margin-top:18px" id="env-hint">tap to open</div>
-      <div style="font-size:10px;letter-spacing:2px;color:#a49cb5;text-transform:uppercase;margin-top:28px">designs by joy</div>
+      <div class="font-script fade-up" style="font-size:15px;color:#b8718a;margin-top:18px" id="env-hint">tap to open</div>
+      <div style="font-size:10px;letter-spacing:2px;color:#d9a9b5;text-transform:uppercase;margin-top:30px">designs by joy</div>
     </section>
 
-    <!-- ============ STEP 3 — LETTER BEING TYPED ============ -->
-    <section id="step-letter" style="display:none;flex:1;flex-direction:column;padding:28px 22px 22px">
+    <!-- ============ STEP 2.5 — GIF WELCOME ============ -->
+    <section id="step-gif" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:34px 26px;text-align:center;position:relative;overflow:hidden">
       <button class="btn-ghost btn-sm" style="position:absolute;top:14px;left:14px;z-index:5" onclick="goBackTo('step-envelope')">← Back</button>
-      <div class="font-display" style="font-size:19px;font-weight:800;color:var(--ink);text-align:center;margin-bottom:2px">A Little Letter</div>
-      <div class="font-script" style="font-size:14px;color:var(--accent);text-align:center;margin-bottom:16px">read it slow</div>
+      <div style="position:absolute;top:18px;left:22px;font-size:16px;opacity:.5">🎀</div>
+      <div style="position:absolute;top:26px;right:26px;font-size:14px;opacity:.5">💗</div>
+      <div style="position:absolute;bottom:22px;left:28px;font-size:14px;opacity:.4">💌</div>
+      <div style="position:absolute;bottom:16px;right:20px;font-size:16px;opacity:.5">🎀</div>
 
-      <div class="letter-row">
-        <div class="letter-paper" id="letter-paper">
-          <span id="letter-text"></span><span class="letter-cursor" id="letter-cursor">&nbsp;</span>
-        </div>
-        <div class="letter-photo-wrap">
-          <img class="letter-photo" src="photo2.jpeg" />
-          <div class="letter-photo-cap">for you 🌸</div>
-        </div>
+      <div class="font-script fade-up" style="font-size:28px;color:#b83b5e;margin-bottom:4px">welcome, love</div>
+      <p class="fade-up" style="color:#8a4a5c;font-size:12px;margin-bottom:22px;letter-spacing:.3px">a little something, just for you</p>
+
+      <div class="fade-up" style="width:200px;background:#fffaf5;padding:10px 10px 16px;border-radius:16px;box-shadow:0 20px 36px -14px rgba(184,59,94,.45);transform:rotate(-2deg);position:relative;border:1px solid #f3d3da">
+        <div style="position:absolute;top:-12px;left:-12px;font-size:22px;transform:rotate(-8deg)">💗</div>
+        <div style="position:absolute;top:-10px;right:-14px;font-size:18px;transform:rotate(10deg)">🎀</div>
+        <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHk0c2pwMHNnMHVtMmEzNnlyNzhjN2J0OXpiMTJyZ3JjMTdzd21paiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/s6fnVyWTfM2nUKuMVY/giphy.gif" alt="a warm hug" style="width:100%;border-radius:10px;display:block" />
+        <div style="position:absolute;bottom:-10px;right:-10px;font-size:20px;transform:rotate(-6deg)">💕</div>
       </div>
 
-      <div style="display:flex;justify-content:space-between;margin-top:18px">
-        <button class="btn-ghost btn-sm" onclick="goBackTo('step-envelope')">← Back</button>
-        <button id="letter-next-btn" class="btn-ghost btn-sm" disabled onclick="goTo('step-visionboard')">Continue →</button>
+      <div class="font-display fade-up" style="font-size:14.5px;font-style:italic;color:#3a0f1a;margin-top:24px;max-width:260px;line-height:1.65">
+        Every hug, every quiet moment, every little "us" — that's what this is for.
+      </div>
+      <div class="font-script fade-up" style="font-size:15px;color:#b8718a;margin-top:6px">happy girlfriend's day 💕</div>
+
+      <button class="btn fade-up" style="margin-top:28px" onclick="goTo('step-letter')">Open the letter →</button>
+    </section>
+
+    <!-- ============ STEP 3 — LETTER ============ -->
+    <section id="step-letter" style="display:none;flex:1;flex-direction:column">
+      <div style="display:flex;flex:1;min-height:0">
+        <div style="width:38%;position:relative;overflow:hidden">
+          <img id="letter-photo" src="photo.jpeg" style="width:100%;height:100%;object-fit:cover" />
+        </div>
+        <div style="width:62%;padding:26px 20px 20px;display:flex;flex-direction:column;position:relative">
+          <div style="position:absolute;top:12px;right:14px;font-size:15px;opacity:.55">💗</div>
+          <div class="font-display" style="font-size:19px;font-style:italic;font-weight:600;color:#3a0f1a;margin-bottom:6px">Dear <span id="letter-name"></span>,</div>
+          <div style="width:34px;height:2px;background:#e7b9c6;border-radius:2px;margin-bottom:14px"></div>
+          <div id="letter-body" style="font-size:12.5px;line-height:22px;color:#4a2530;flex:1;overflow-y:auto;white-space:pre-wrap;border-left:1.5px dashed #ecc3cf;padding-left:10px;background-image:repeating-linear-gradient(to bottom, transparent, transparent 21px, #f3d3da 22px);background-position:10px 3px"><span id="letter-body-text"></span><span id="letter-cursor" class="write-cursor"></span></div>
+          <div class="font-display" style="font-style:italic;font-size:13px;color:#b83b5e;margin-top:14px;text-align:right">— <span id="letter-sender"></span></div>
+          <div style="display:flex;justify-content:space-between;margin-top:14px">
+            <button class="btn-ghost btn-sm" onclick="goTo('step-gif')">← Back</button>
+            <button class="btn btn-sm" onclick="goTo('step-agreement')">Next</button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- ============ STEP 4 — VISION BOARD (final) ============ -->
-    <section id="step-visionboard" style="display:none;flex:1;flex-direction:column;padding:26px 20px 22px;text-align:center;overflow-y:auto">
-      <div class="font-script fade-up" style="font-size:21px;color:var(--ink);margin-bottom:3px">every little moment, together</div>
-      <div class="fade-up" style="font-size:10px;letter-spacing:1px;color:#8a8496;text-transform:uppercase;margin-bottom:14px">pinned, just for us</div>
+    <!-- ============ STEP 3.5 — CERTIFICATION / AGREEMENT ============ -->
+    <section id="step-agreement" style="display:none;flex:1;flex-direction:column;padding:30px 24px 24px">
+      <div class="font-display" style="font-size:19px;font-weight:700;color:#3a0f1a;text-align:center;margin-bottom:2px">Certificate of Official Girlfriend-ness</div>
+      <div class="font-script" style="font-size:15px;color:#b83b5e;text-align:center;margin-bottom:16px">read carefully, tick honestly</div>
+
+      <div class="agree-card">
+        <div style="font-size:11px;color:#b8718a;margin-bottom:10px;font-family:'Inter',sans-serif">By continuing, <b id="agree-recipient-name" style="color:#3a0f1a">she</b> confirms the following is true:</div>
+
+        <div class="agree-item"><div class="agree-check locked">✓</div><div>Puts up with his jokes, every single time</div></div>
+        <div class="agree-item"><div class="agree-check locked">✓</div><div>Steals the blanket and somehow still gets the credit</div></div>
+        <div class="agree-item"><div class="agree-check locked">✓</div><div>Always right, even when she isn't — especially then</div></div>
+        <div class="agree-item"><div class="agree-check locked">✓</div><div>Makes an ordinary Tuesday feel like a good day</div></div>
+        <div class="agree-item agree-final-row" onclick="toggleAgree()">
+          <div class="agree-check final" id="agree-final-check"></div>
+          <div><b>Officially agrees to stay his favorite person — no takebacks, no expiry</b></div>
+        </div>
+
+        <div class="agree-terms">
+          <span>Term: Forever</span>
+          <span>Notice period: None</span>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+        <button id="agree-cert-btn" class="btn" style="width:100%" disabled onclick="downloadCertificate()">Download Certificate</button>
+        <div style="display:flex;justify-content:space-between">
+          <button class="btn-ghost btn-sm" onclick="goBackToLetter()">← Back</button>
+          <button id="agree-next-btn" class="btn-ghost btn-sm" disabled onclick="goTo('step-gallery')">Continue →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STEP 4 — VISION BOARD (pinterest-style masonry, final) ============ -->
+    <section id="step-gallery" style="display:none;flex:1;flex-direction:column;padding:28px 22px 24px;text-align:center;overflow-y:auto">
+      <div class="font-script fade-up" style="font-size:22px;color:#3a0f1a;margin-bottom:4px">every little moment, with you</div>
+      <div class="fade-up" style="font-size:10.5px;letter-spacing:1px;color:#cda5ae;text-transform:uppercase;margin-bottom:16px">pinned, just for her</div>
 
       <div class="board-masonry">
+
+        <!-- focus photo 1 (user upload #1) -->
         <div class="board-item fade-up">
           <div class="board-photo focus" style="transform:rotate(-4deg)">
-            <div class="board-tape"></div>
+            <div class="board-tape" style="transform:translateX(-50%) rotate(-6deg)"></div>
             <img id="board-photo-0" src="" />
             <div class="board-caption">My Favorite Person</div>
           </div>
         </div>
 
+        <!-- note -->
         <div class="board-item fade-up" style="transform:rotate(2deg)">
           <div class="board-note">
-            <h4>Reasons We Work</h4>
+            <h4>Reasons Why I Love You</h4>
             <ul>
-              <li>Zero effort required to talk</li>
-              <li>Chaos, but the good kind</li>
-              <li>You get all my jokes</li>
-              <li>Always in my corner</li>
+              <li>You understand me like no one else</li>
+              <li>You make me smile every day</li>
+              <li>You're my peace in the chaos</li>
+              <li>You're my today &amp; all my tomorrows</li>
             </ul>
           </div>
         </div>
 
+        <!-- local secondary photo A -->
         <div class="board-item fade-up">
           <div class="board-photo side" style="transform:rotate(3deg)">
             <span class="board-clip">📎</span>
             <img src="photo.jpeg" />
-            <div class="board-caption">for youuu</div>
+            <div class="board-caption">For my Love</div>
           </div>
         </div>
 
+        <!-- focus photo 2 (user upload #2) -->
         <div class="board-item fade-up">
           <div class="board-photo focus" style="transform:rotate(3deg)">
             <span class="board-clip">📎</span>
             <img id="board-photo-1" src="" />
-            <div class="board-caption">Partner in Crime</div>
+            <div class="board-caption">My Happiness</div>
           </div>
         </div>
 
-        <div class="board-item full-span fade-up" style="padding:0 2px">
-          <div class="board-quote" id="board-quote-text"></div>
+        <!-- quote, full width -->
+        <div class="board-item full-span fade-up" style="padding:0 4px">
+          <div class="board-quote">You're not just my girlfriend — you're my best friend, my safe place, and my greatest blessing.</div>
         </div>
 
+        <!-- focus photo 3 (user upload #3) -->
         <div class="board-item fade-up">
           <div class="board-photo focus" style="transform:rotate(-3deg)">
             <div class="board-tape"></div>
@@ -414,39 +485,43 @@
           </div>
         </div>
 
+        <!-- note -->
         <div class="board-item fade-up" style="transform:rotate(-2deg)">
           <div class="board-note">
             <h4>With You</h4>
             <ul>
               <li>I laugh a little louder</li>
-              <li>I overthink a little less</li>
-              <li>Every plan gets better</li>
-              <li>Home, basically</li>
+              <li>I worry a little less</li>
+              <li>I smile a lot more</li>
+              <li>I love a lot deeper</li>
             </ul>
           </div>
         </div>
 
+        <!-- local secondary photo B -->
         <div class="board-item fade-up">
           <div class="board-photo side" style="transform:rotate(-2deg)">
-            <span class="board-clip" style="right:auto;left:12px;transform:rotate(-14deg)">📎</span>
+            <span class="board-clip" style="right:auto;left:14px;transform:rotate(-14deg)">📎</span>
             <img src="photo1.jpeg" />
-            <div class="board-caption">For the Memories</div>
+            <div class="board-caption">The Goal</div>
           </div>
         </div>
 
+        <!-- ribbon, full width -->
         <div class="board-item full-span fade-up">
           <div class="board-ribbon">
-            made for the friend who gets it
-            <span class="font-script">Happy Friendship Day 🎀</span>
+            every moment with you is my favorite
+            <span class="font-script">I Love You 💕</span>
           </div>
         </div>
+
       </div>
 
-      <div style="display:flex;justify-content:space-between;margin-top:22px" id="visionboard-actions">
-        <button class="btn-ghost" onclick="goTo('step-letter')">← Back</button>
+      <div style="display:flex;justify-content:space-between;margin-top:26px" id="gallery-actions">
+        <button class="btn-ghost" onclick="goTo('step-agreement')">← Back</button>
         <button class="btn" onclick="goToPayment()">Generate Link →</button>
       </div>
-      <button class="btn-ghost" style="margin-top:10px;width:100%" onclick="restartFlow()" id="visionboard-restart">Start Over</button>
+      <button class="btn-ghost" style="margin-top:10px;width:100%" onclick="restartFlow()" id="gallery-restart">Start Over</button>
     </section>
 
   </div>
@@ -454,13 +529,13 @@
 
 <script>
 /* ---------- config ---------- */
-const SUPABASE_URL = 'https://qfzpqjbknobsirjpakcc.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmenBxamJrbm9ic2lyanBha2NjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDYxNzcsImV4cCI6MjEwMDg4MjE3N30.MWtwYeBf7FAqR1u92Ac-YeTDZoWTAftxX2XHhOI1oYk';
+const SUPABASE_URL = 'https://sdllonxgnaxlyvtowfku.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkbGxvbnhnbmF4bHl2dG93Zmt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMzk3OTQsImV4cCI6MjEwMDcxNTc5NH0.tn2vWiph6mAv7VKdM4Hl8_VtegmDbfTvZirxiZovL4M';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const RAZORPAY_KEY = 'rzp_live_SzQtvFAXjL2NL5'; // carried over from your other live products — swap if you want a separate key for this one
+const RAZORPAY_KEY = 'rzp_live_SmizRaPApu81ZS';
 const BASE_PRICE = 99;
-const COUPONS = { 'BFF': 0, 'BFF1': 1, 'FRIEND': 59 };
-const PHOTO_COUNT = 3;
+const COUPONS = { 'FAHH': 0, 'FAHH1': 1, 'LOVE': 59 };
+const PHOTO_COUNT = 3; // photos collected from the user for the vision board's focus spots
 
 /* ---------- state ---------- */
 let state = { recipient:'', sender:'', message:'', photos:[null,null,null], photoFiles:[null,null,null] };
@@ -468,6 +543,35 @@ let activeSlot = null;
 let currentPrice = BASE_PRICE;
 let appliedCoupon = null;
 let isViewerMode = false;
+
+/* ---------- decorative corner cherries + scattered bow/heart icons ---------- */
+function cherrySVG(){
+  return `<svg viewBox="0 0 40 44" width="40" height="44" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 4 Q20 14 20 20" stroke="#e7b9c6" stroke-width="1.4" fill="none"/>
+    <path d="M12 6 Q20 2 28 6" stroke="#e7b9c6" stroke-width="1.4" fill="none"/>
+    <circle cx="14" cy="30" r="8" fill="#b83b5e"/>
+    <circle cx="26" cy="30" r="8" fill="#93304c"/>
+  </svg>`;
+}
+(function initDeco(){
+  const tr=document.createElement('div'); tr.className='corner-deco corner-tr'; tr.innerHTML=cherrySVG();
+  const bl=document.createElement('div'); bl.className='corner-deco corner-bl'; bl.innerHTML=cherrySVG();
+  document.getElementById('frame').append(tr,bl);
+})();
+
+function bowHeartSVG(){
+  return `<svg viewBox="0 0 30 30" width="22" height="22"><path d="M15 8c-2-4-8-3-8 1 0 4 5 6 8 10 3-4 8-6 8-10 0-4-6-5-8-1z" fill="#ffffff"/></svg>`;
+}
+(function scatterIcons(){
+  const wrap = document.getElementById('frame-icons');
+  const positions = [[6,8],[88,6],[10,92],[90,90],[50,4],[4,50],[94,50],[50,95]];
+  positions.forEach(([x,y])=>{
+    const el=document.createElement('div');
+    el.style.left=x+'%'; el.style.top=y+'%'; el.style.transform='translate(-50%,-50%)';
+    el.innerHTML=bowHeartSVG();
+    wrap.appendChild(el);
+  });
+})();
 
 /* ---------- intake ---------- */
 function pickPhoto(idx){ activeSlot = idx; document.getElementById('file-input').click(); }
@@ -507,11 +611,11 @@ document.getElementById('file-input').addEventListener('change', async e=>{
   const idx = activeSlot;
   if(!file || idx===null) return;
   const slot = document.querySelector(`.photo-slot[data-slot="${idx}"]`);
-  slot.innerHTML = `<span style="font-size:10px;color:#a49cb5">optimizing…</span>`;
+  slot.innerHTML = `<span style="font-size:10px;color:#d9a9b5">optimizing…</span>`;
   try{
     const dataUrl = await compressImage(file);
-    state.photos[idx] = dataUrl;
-    state.photoFiles[idx] = dataUrl;
+    state.photos[idx] = dataUrl;          // preview + localStorage-safe copy
+    state.photoFiles[idx] = dataUrl;      // uploaded as a blob at finalize time
     slot.innerHTML = `<img src="${dataUrl}" />`;
   }catch(err){
     console.error(err);
@@ -530,17 +634,15 @@ function startPreview(){
   }
   document.getElementById('intake-err').style.display='none';
   state.recipient = recipient; state.sender = sender; state.message = message;
-  applyStateToDOM();
-  goTo('step-notifications');
-}
 
-function applyStateToDOM(){
-  document.getElementById('notif-sender-name').textContent = state.sender;
-  document.getElementById('env-title').textContent = 'Happy Friendship Day';
-  document.getElementById('env-seal').textContent = (state.sender[0] || 'F').toUpperCase();
-  document.getElementById('env-photo').src = state.photos[0] || '';
-  document.getElementById('board-quote-text').textContent = state.message;
+  document.getElementById('notif-sender-name').textContent = sender;
+  document.getElementById('env-title').textContent = `Happy Girlfriend's Day`;
+  document.getElementById('letter-name').textContent = recipient;
+  document.getElementById('letter-sender').textContent = sender;
+  document.getElementById('agree-recipient-name').textContent = recipient || 'she';
   populateBoard(state.photos);
+
+  goTo('step-notifications');
 }
 
 function goToPayment(){
@@ -551,6 +653,7 @@ function goToPayment(){
   document.getElementById('in-coupon').value = '';
   document.getElementById('coupon-err').style.display = 'none';
   updatePayBtnLabel();
+
   goTo('step-payment');
 }
 
@@ -576,7 +679,7 @@ function updatePayBtnLabel(){
 }
 
 /* ---------- resilience helpers ---------- */
-const PENDING_KEY = 'friendsday_pending_order_v1';
+const PENDING_KEY = 'gfday_pending_order_v1';
 
 function saveOrderLocal(order){
   try{ localStorage.setItem(PENDING_KEY, JSON.stringify(order)); }catch(e){ console.warn('localStorage save failed', e); }
@@ -623,6 +726,7 @@ function ensureRazorpayLoaded(){
     script.onload = ()=> window.Razorpay ? resolve() : reject(new Error('Razorpay failed to initialize'));
     script.onerror = ()=> reject(new Error('Could not load payment gateway — check your connection'));
     if(existing){
+      // give the original tag a moment before assuming it failed
       setTimeout(()=> window.Razorpay ? resolve() : document.head.appendChild(script), 800);
     } else {
       document.head.appendChild(script);
@@ -632,6 +736,7 @@ function ensureRazorpayLoaded(){
 
 /* ---------- payment ---------- */
 async function handlePayment(){
+  // don't let a slow tap fire twice
   const btn = document.getElementById('pay-btn');
   if(btn.disabled) return;
 
@@ -661,9 +766,11 @@ async function handlePayment(){
     key: RAZORPAY_KEY,
     amount: currentPrice * 100,
     currency: 'INR',
-    name: "Friendship Day Surprise",
+    name: "Girlfriend's Day Surprise",
     description: `Surprise for ${state.recipient}`,
     handler: function(response){
+      // payment is confirmed — persist immediately, before any upload/DB call,
+      // so a lost connection or closed tab can never lose a paid order
       const order = {
         paymentId: response.razorpay_payment_id,
         recipient: state.recipient, sender: state.sender, message: state.message,
@@ -672,8 +779,10 @@ async function handlePayment(){
       saveOrderLocal(order);
       finalizeSurprise(order);
     },
-    modal: { ondismiss: function(){ btn.disabled = false; } },
-    theme: { color: '#FF5C8A' }
+    modal: {
+      ondismiss: function(){ btn.disabled = false; }
+    },
+    theme: { color: '#b83b5e' }
   });
   rzp.on('payment.failed', function(resp){
     btn.disabled = false;
@@ -695,8 +804,11 @@ async function finalizeSurprise(order){
   setLoadingText('Checking your order…');
 
   try{
+    // idempotency: if this payment already produced a row (e.g. a previous
+    // attempt got the DB insert through but failed before showing the link),
+    // reuse it instead of uploading again or double-billing the DB.
     const existing = await withRetry(
-      ()=> sb.from('friendship_day').select('*').eq('payment_id', order.paymentId).limit(1),
+      ()=> sb.from('girlfriends_day').select('*').eq('payment_id', order.paymentId).limit(1),
       { attempts: 2, baseDelay: 700 }
     );
     let row = existing.data && existing.data[0];
@@ -708,7 +820,7 @@ async function finalizeSurprise(order){
       urls = [];
       for(let i=0;i<PHOTO_COUNT;i++){
         if(!order.photos[i]){
-          urls.push('');
+          urls.push(''); // no photo picked for this focus spot
           continue;
         }
         setLoadingText(`Uploading photo ${i+1} of ${PHOTO_COUNT}…`);
@@ -724,7 +836,7 @@ async function finalizeSurprise(order){
 
       setLoadingText('Saving your surprise…');
       row = await withRetry(async ()=>{
-        const { data, error: dbErr } = await sb.from('friendship_day').insert({
+        const { data, error: dbErr } = await sb.from('girlfriends_day').insert({
           recipient: order.recipient,
           sender: order.sender,
           message: order.message,
@@ -742,17 +854,24 @@ async function finalizeSurprise(order){
     }
 
     const link = `${location.origin}${location.pathname}?id=${row.id}`;
+
     document.getElementById('out-link').value = link;
 
-    state.recipient = order.recipient; state.sender = order.sender; state.message = order.message;
+    document.getElementById('notif-sender-name').textContent = order.sender;
+    document.getElementById('env-title').textContent = `Happy Girlfriend's Day`;
+    document.getElementById('letter-name').textContent = order.recipient;
+    document.getElementById('letter-sender').textContent = order.sender;
+    document.getElementById('agree-recipient-name').textContent = order.recipient || 'she';
+    state.message = order.message;
     state.photos = urls;
-    applyStateToDOM();
+    populateBoard(state.photos);
 
     clearOrderLocal();
     document.getElementById('resume-banner').style.display = 'none';
     goTo('step-linkout');
   }catch(err){
     console.error(err);
+    // order stays in localStorage — nothing is lost, user can retry any time
     document.getElementById('pay-fail').style.display = 'block';
   }finally{
     finalizeInFlight = false;
@@ -805,42 +924,252 @@ function openNotification(){
 function openEnvelope(){
   document.getElementById('env-flap').style.transform = 'scaleY(0)';
   document.getElementById('env-hint').textContent = 'opening...';
-  setTimeout(()=> goTo('step-letter'), 550);
+  setTimeout(()=> goTo('step-gif'), 550);
 }
 
-/* ---------- letter: typewriter reveal of the user's message ---------- */
-let letterTypeTimer = null;
-
-function startLetterTyping(){
-  clearInterval(letterTypeTimer);
-  const textEl = document.getElementById('letter-text');
-  const nextBtn = document.getElementById('letter-next-btn');
-  const text = state.message || '';
-  textEl.textContent = '';
-  nextBtn.disabled = true;
-  let i = 0;
-  letterTypeTimer = setInterval(()=>{
-    i++;
-    textEl.textContent = text.slice(0, i);
-    if(i >= text.length){
-      clearInterval(letterTypeTimer);
-      nextBtn.disabled = false;
-    }
-  }, 38);
-}
-function resetLetter(){
-  clearInterval(letterTypeTimer);
-  const textEl = document.getElementById('letter-text');
-  const nextBtn = document.getElementById('letter-next-btn');
-  if(textEl) textEl.textContent = '';
-  if(nextBtn) nextBtn.disabled = true;
-}
-
-/* ---------- vision board: fills the 3 focus photo slots with the user's uploads ---------- */
+/* ---------- vision board: fills the 3 "focus" slots with the user's uploads.
+   The 2 secondary photos (photo.jpeg, photo1.jpeg) are static in the HTML. ---------- */
 function populateBoard(photos){
   for(let i=0;i<PHOTO_COUNT;i++){
     const img = document.getElementById(`board-photo-${i}`);
-    if(img) img.src = photos[i] || '';
+    if(img) img.src = photos[i] || 'photo1.jpeg';
+  }
+}
+
+/* ---------- letter typewriter ---------- */
+let letterTypeTimer = null;
+function typewriterLetter(text){
+  const textEl = document.getElementById('letter-body-text');
+  const cursorEl = document.getElementById('letter-cursor');
+  const bodyEl = document.getElementById('letter-body');
+  if(!textEl) return;
+  if(letterTypeTimer){ clearInterval(letterTypeTimer); letterTypeTimer = null; }
+  textEl.textContent = '';
+  cursorEl.style.display = 'inline-block';
+  const chars = Array.from(text || '');
+  let i = 0;
+  letterTypeTimer = setInterval(()=>{
+    textEl.textContent += chars[i] || '';
+    i++;
+    bodyEl.scrollTop = bodyEl.scrollHeight;
+    if(i >= chars.length){
+      clearInterval(letterTypeTimer);
+      letterTypeTimer = null;
+      cursorEl.style.display = 'none';
+    }
+  }, 24);
+}
+
+/* ---------- certification agreement checkbox ---------- */
+let agreeChecked = false;
+function toggleAgree(){
+  agreeChecked = !agreeChecked;
+  const box = document.getElementById('agree-final-check');
+  const certBtn = document.getElementById('agree-cert-btn');
+  const nextBtn = document.getElementById('agree-next-btn');
+  box.classList.toggle('checked', agreeChecked);
+  box.textContent = agreeChecked ? '✓' : '';
+  certBtn.disabled = !agreeChecked;
+  nextBtn.disabled = !agreeChecked;
+}
+function resetAgreement(){
+  agreeChecked = false;
+  const box = document.getElementById('agree-final-check');
+  if(box){ box.classList.remove('checked'); box.textContent = ''; }
+  const certBtn = document.getElementById('agree-cert-btn');
+  const nextBtn = document.getElementById('agree-next-btn');
+  if(certBtn) certBtn.disabled = true;
+  if(nextBtn) nextBtn.disabled = true;
+}
+function goBackToLetter(){
+  resetAgreement();
+  goTo('step-letter');
+}
+
+/* ---------- certificate: rendered on a canvas, then dropped into a PDF ---------- */
+function wrapCanvasText(ctx, text, cx, y, maxWidth, lineHeight){
+  const words = text.split(' ');
+  let line = '';
+  const lines = [];
+  for(const word of words){
+    const test = line ? line + ' ' + word : word;
+    if(ctx.measureText(test).width > maxWidth && line){
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  }
+  if(line) lines.push(line);
+  lines.forEach((l,i)=> ctx.fillText(l, cx, y + i*lineHeight));
+  return lines.length;
+}
+
+async function downloadCertificate(){
+  const btn = document.getElementById('agree-cert-btn');
+  const original = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Preparing…';
+  try{
+    await Promise.all([
+      document.fonts.load('700 52px "Dancing Script"'),
+      document.fonts.load('600 30px "Dancing Script"'),
+      document.fonts.load('italic 700 34px "Playfair Display"'),
+      document.fonts.load('700 16px "Playfair Display"'),
+      document.fonts.load('600 16px "Inter"'),
+      document.fonts.load('500 14px "Inter"'),
+      document.fonts.load('700 13px "Inter"')
+    ]);
+    await document.fonts.ready;
+
+    const GOLD = '#c9a227';
+    const MAROON = '#8a1f3b';
+    const INK = '#3a0f1a';
+    const ROSE = '#b83b5e';
+    const w = 1000, h = 1360;
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    const sender = state.sender || 'Him';
+    const recipient = state.recipient || 'Her';
+
+    // cream paper
+    ctx.fillStyle = '#fff8ee';
+    ctx.fillRect(0,0,w,h);
+
+    // outer maroon border + inner gold line, like a proper keepsake
+    ctx.lineWidth = 10; ctx.strokeStyle = MAROON;
+    ctx.strokeRect(30,30,w-60,h-60);
+    ctx.lineWidth = 2; ctx.strokeStyle = GOLD;
+    ctx.strokeRect(48,48,w-96,h-96);
+
+    // small scroll flourish in each corner
+    function flourish(x,y,sx,sy){
+      ctx.save();
+      ctx.translate(x,y);
+      ctx.scale(sx,sy);
+      ctx.strokeStyle = '#a9a9a9';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0,40); ctx.quadraticCurveTo(10,0,55,0);
+      ctx.moveTo(10,50); ctx.quadraticCurveTo(20,15,58,12);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(20,20,4,0,Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+    flourish(64,64,1,1);
+    flourish(w-64,64,-1,1);
+    flourish(64,h-64,1,-1);
+    flourish(w-64,h-64,-1,-1);
+
+    ctx.textAlign = 'center';
+
+    // two overlapping outline hearts up top
+    function heart(cx,cy,size,color){
+      ctx.save();
+      ctx.translate(cx,cy);
+      ctx.beginPath();
+      const s = size;
+      ctx.moveTo(0, s*0.3);
+      ctx.bezierCurveTo(-s*0.5,-s*0.4, -s,s*0.2, 0,s);
+      ctx.bezierCurveTo(s,s*0.2, s*0.5,-s*0.4, 0,s*0.3);
+      ctx.closePath();
+      ctx.lineWidth = 3; ctx.strokeStyle = color; ctx.stroke();
+      ctx.restore();
+    }
+    heart(w/2-18, 116, 34, ROSE);
+    heart(w/2+18, 116, 34, GOLD);
+
+    ctx.font = '600 13px "Inter"'; ctx.fillStyle = '#b8718a';
+    ctx.fillText('EXHIBIT LOVE', w/2, 178);
+
+    ctx.font = 'italic 700 34px "Playfair Display"'; ctx.fillStyle = INK;
+    wrapCanvasText(ctx, 'Certificate of Official Girlfriend-ness', w/2, 222, w-260, 42);
+
+    ctx.font = '500 14px "Inter"'; ctx.fillStyle = ROSE;
+    ctx.fillText('Awarded With Full Honors, No Objections Raised', w/2, 288);
+
+    ctx.strokeStyle = MAROON; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(w/2-110,306); ctx.lineTo(w/2+110,306); ctx.stroke();
+
+    ctx.font = '500 15px "Inter"'; ctx.fillStyle = '#4a2530';
+    ctx.fillText('This is to certify that, before this document and the group chat,', w/2, 344);
+
+    ctx.font = '700 52px "Dancing Script"'; ctx.fillStyle = ROSE;
+    ctx.fillText(recipient, w/2, 408);
+
+    ctx.font = '500 16px "Inter"'; ctx.fillStyle = '#4a2530';
+    wrapCanvasText(ctx, 'has been unanimously appointed Chief Vibe Officer, Head of Cuddles, and Most Important Person — a title with no vacancy and no competition.', w/2, 448, w-260, 25);
+
+    // articles, left-aligned like a real contract
+    const articles = [
+      ['Article I — Duties', 'Mandatory hand-holding, weekend cuddle shifts, and hearing every joke like it\u2019s the first time.'],
+      ['Article II — Perks', 'Full veto power on movie night, the last bite of everything, and unlimited good-morning texts.'],
+      ['Article III — Term', 'Effective immediately, no renewal needed — this one just keeps going on its own.']
+    ];
+    let ay = 555;
+    ctx.textAlign = 'left';
+    articles.forEach(([title, body])=>{
+      ctx.font = '700 16px "Playfair Display"'; ctx.fillStyle = MAROON;
+      ctx.fillText(title, 110, ay);
+      ctx.font = '500 14px "Inter"'; ctx.fillStyle = '#4a2530';
+      const lines = wrapCanvasText(ctx, body, 110, ay+24, w-220, 21);
+      ay += 46 + Math.max(0, lines-1)*21;
+    });
+    ctx.textAlign = 'center';
+
+    // gold seal
+    ctx.beginPath();
+    ctx.arc(w/2, h-268, 68, 0, Math.PI*2);
+    ctx.fillStyle = '#f3d98a';
+    ctx.fill();
+    ctx.lineWidth = 4; ctx.strokeStyle = GOLD; ctx.stroke();
+    ctx.font = '700 12px "Inter"'; ctx.fillStyle = INK;
+    ctx.fillText('100% APPROVED', w/2, h-274);
+    ctx.fillText('NO RETURNS', w/2, h-256);
+
+    // torn "stamp of approval" badge, bottom-left
+    ctx.save();
+    ctx.translate(150, h-188);
+    ctx.rotate(-0.16);
+    ctx.strokeStyle = ROSE; ctx.lineWidth = 2; ctx.setLineDash([4,3]);
+    ctx.strokeRect(-72,-32,144,64);
+    ctx.setLineDash([]);
+    ctx.font = '700 13px "Inter"'; ctx.fillStyle = ROSE;
+    ctx.fillText('STAMP OF', 0, -8);
+    ctx.fillText('APPROVAL', 0, 10);
+    ctx.font = '500 10px "Inter"'; ctx.fillStyle = '#b8718a';
+    ctx.fillText('best of the best', 0, 27);
+    ctx.restore();
+
+    // signature line, bottom-right
+    ctx.textAlign = 'left';
+    ctx.strokeStyle = '#4a2530'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(w-330, h-172); ctx.lineTo(w-110, h-172); ctx.stroke();
+    ctx.font = '600 30px "Dancing Script"'; ctx.fillStyle = MAROON;
+    ctx.fillText(sender, w-320, h-186);
+    ctx.font = '500 12px "Inter"'; ctx.fillStyle = '#b8718a';
+    ctx.fillText('by order of', w-330, h-152);
+
+    const dateStr = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' });
+    ctx.font = '500 13px "Inter"'; ctx.fillStyle = '#b8718a';
+    ctx.fillText('Executed on ' + dateStr, 110, h-96);
+
+    ctx.textAlign = 'center';
+    ctx.font = '400 10px "Inter"'; ctx.fillStyle = '#cda5ae';
+    ctx.fillText('Terms and conditions apply. None of them are enforceable in any court. All of them are true.', w/2, h-60);
+
+    const dataUrl = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation:'portrait', unit:'px', format:[w,h] });
+    pdf.addImage(dataUrl, 'PNG', 0, 0, w, h);
+    pdf.save(`girlfriend-certificate-${(state.recipient || 'certificate').replace(/\s+/g,'-').toLowerCase()}.pdf`);
+  }catch(err){
+    console.error('Certificate generation failed', err);
+    alert("Couldn't generate the certificate — try again.");
+  }finally{
+    btn.disabled = !agreeChecked;
+    btn.textContent = original;
   }
 }
 
@@ -858,24 +1187,25 @@ function populateBoard(photos){
 
 /* ---------- nav ---------- */
 function goTo(id){
-  ['step-intake','step-payment','step-linkout','step-notifications','step-envelope','step-letter','step-visionboard','step-bootload'].forEach(s=>{
+  ['step-intake','step-payment','step-linkout','step-notifications','step-envelope','step-gif','step-letter','step-agreement','step-gallery','step-bootload'].forEach(s=>{
     document.getElementById(s).style.display = 'none';
   });
   const el = document.getElementById(id);
   el.style.display = 'flex';
   el.classList.remove('fade-up'); void el.offsetWidth; el.classList.add('fade-up');
-  if(id === 'step-letter') startLetterTyping();
+  if(id === 'step-letter') typewriterLetter(state.message);
 }
 function restartFlow(){
   document.getElementById('env-flap').style.transform = 'scaleY(1)';
   document.getElementById('env-hint').textContent = 'tap to open';
-  resetLetter();
+  resetAgreement();
   goTo('step-intake');
 }
 function goBackTo(id){
+  // stepping back through the envelope must reset it, otherwise it looks
+  // already-opened next time it's shown
   document.getElementById('env-flap').style.transform = 'scaleY(1)';
   document.getElementById('env-hint').textContent = 'tap to open';
-  resetLetter();
   goTo(id);
 }
 
@@ -886,12 +1216,18 @@ function renderViewer(recipient, sender, message, photos){
   state.sender = sender;
   state.message = message;
   state.photos = photos;
-  applyStateToDOM();
 
-  document.getElementById('visionboard-actions').innerHTML = '';
-  document.getElementById('visionboard-restart').style.display = 'none';
+  document.getElementById('notif-sender-name').textContent = sender;
+  document.getElementById('env-title').textContent = `Happy Girlfriend's Day`;
+  document.getElementById('letter-name').textContent = recipient;
+  document.getElementById('letter-sender').textContent = sender;
+  document.getElementById('agree-recipient-name').textContent = recipient || 'she';
+  populateBoard(photos);
+
+  document.getElementById('gallery-actions').innerHTML = '<button class="btn-ghost" onclick="goTo(\'step-agreement\')">← Back</button>';
+  document.getElementById('gallery-restart').style.display = 'none';
   document.getElementById('notif-edit-btn').style.display = 'none';
-  document.getElementById('envelope-edit-btn').style.display = 'none';
+  document.getElementById('env-edit-btn').style.display = 'none';
   goTo('step-notifications');
 }
 
@@ -909,7 +1245,7 @@ function renderViewer(recipient, sender, message, photos){
   if(id){
     try{
       const { data, error } = await withRetry(
-        ()=> sb.from('friendship_day').select('*').eq('id', id).eq('paid', true).single(),
+        ()=> sb.from('girlfriends_day').select('*').eq('id', id).eq('paid', true).single(),
         { attempts: 3, baseDelay: 800 }
       );
       if(error || !data) throw error || new Error('not found');
@@ -934,6 +1270,7 @@ function renderViewer(recipient, sender, message, photos){
     return;
   }
 
+  // creator flow — surface any unfinished paid order so it's never silently lost
   if(loadOrderLocal()) document.getElementById('resume-banner').style.display = 'block';
 })();
 </script>
