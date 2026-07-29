@@ -637,6 +637,7 @@ function startPreview(){
 
   document.getElementById('notif-sender-name').textContent = sender;
   document.getElementById('env-title').textContent = `Happy Girlfriend's Day`;
+  document.getElementById('env-photo').src = state.photos[0] || 'photo1.jpeg';
   document.getElementById('letter-name').textContent = recipient;
   document.getElementById('letter-sender').textContent = sender;
   document.getElementById('agree-recipient-name').textContent = recipient || 'she';
@@ -859,6 +860,7 @@ async function finalizeSurprise(order){
 
     document.getElementById('notif-sender-name').textContent = order.sender;
     document.getElementById('env-title').textContent = `Happy Girlfriend's Day`;
+    document.getElementById('env-photo').src = urls[0] || 'photo1.jpeg';
     document.getElementById('letter-name').textContent = order.recipient;
     document.getElementById('letter-sender').textContent = order.sender;
     document.getElementById('agree-recipient-name').textContent = order.recipient || 'she';
@@ -1219,6 +1221,7 @@ function renderViewer(recipient, sender, message, photos){
 
   document.getElementById('notif-sender-name').textContent = sender;
   document.getElementById('env-title').textContent = `Happy Girlfriend's Day`;
+  document.getElementById('env-photo').src = photos[0] || 'photo1.jpeg';
   document.getElementById('letter-name').textContent = recipient;
   document.getElementById('letter-sender').textContent = sender;
   document.getElementById('agree-recipient-name').textContent = recipient || 'she';
