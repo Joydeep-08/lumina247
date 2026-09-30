@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Happy Girlfriend's Day 💕</title>
+<title>Happy Boyfriend's Day 💕</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Dancing+Script:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -188,6 +188,7 @@
 </style>
 </head>
 <body>
+<audio id="bg-song" src="song.mp3" loop preload="auto"></audio>
 
 <div class="frame" id="frame">
   <div class="frame-pattern"></div>
@@ -210,11 +211,11 @@
           <button class="btn-ghost btn-sm" style="flex:1" onclick="discardPendingOrder()">Discard</button>
         </div>
       </div>
-      <div class="font-display" style="font-size:24px;font-weight:700;color:#3a0f1a;text-align:center;margin-bottom:4px">Make Her Surprise</div>
+      <div class="font-display" style="font-size:24px;font-weight:700;color:#3a0f1a;text-align:center;margin-bottom:4px">Make His Surprise</div>
       <p style="text-align:center;color:#b8718a;font-size:12.5px;margin-bottom:22px">Three photos, a few words — that's all it takes.</p>
 
       <div style="display:flex;flex-direction:column;gap:14px">
-        <input id="in-recipient" class="inp" placeholder="Her name" />
+        <input id="in-recipient" class="inp" placeholder="His name" />
         <input id="in-sender" class="inp" placeholder="Your name" />
 
         <div>
@@ -227,13 +228,9 @@
           <input type="file" id="file-input" accept="image/*" class="hidden" style="display:none" />
         </div>
 
-        <textarea id="in-message" class="inp" rows="7" style="resize:none">I know I don't say it enough, so let me say it properly today: you are, hands down, the best part of my life.
+        <textarea id="in-message" class="inp" rows="3" style="resize:none">You make every ordinary day better just by being in it. Thank you for being you, I'm lucky to have you.
 
-You turn the most ordinary days into something worth remembering — a random Tuesday feels a little more magical just because you're in it. Your laugh is my favorite sound, your hugs are my favorite place, and your heart is honestly the softest, kindest thing I know.
-
-Thank you for choosing me, again and again, even on the days I don't make it easy. I promise to keep choosing you right back — today, tomorrow, and every ordinary Tuesday after that.
-
-Happy Girlfriend's Day, my love. You're stuck with me forever now. 💕</textarea>
+Happy Boyfriend's Day. 💕</textarea>
       </div>
 
       <div id="intake-err" style="display:none;color:#c62828;font-size:12px;margin-top:10px">Add both names and a message first.</div>
@@ -243,7 +240,7 @@ Happy Girlfriend's Day, my love. You're stuck with me forever now. 💕</textare
     <!-- ============ STEP PAY — COUPON + PAYMENT ============ -->
     <section id="step-payment" style="display:none;flex:1;flex-direction:column;padding:34px 26px">
       <div class="font-display" style="font-size:22px;font-weight:700;color:#3a0f1a;text-align:center;margin-bottom:6px">Almost there</div>
-      <p style="text-align:center;color:#b8718a;font-size:12.5px;margin-bottom:26px">Unlock the link to send it to her.</p>
+      <p style="text-align:center;color:#b8718a;font-size:12.5px;margin-bottom:26px">Unlock the link to send it to him.</p>
 
       <div style="background:#fff2f5;border-radius:14px;padding:20px;text-align:center;margin-bottom:18px">
         <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#b8718a;margin-bottom:6px">Total</div>
@@ -274,7 +271,7 @@ Happy Girlfriend's Day, my love. You're stuck with me forever now. 💕</textare
     <!-- ============ STEP LINK — SHAREABLE LINK ============ -->
     <section id="step-linkout" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:36px 26px;text-align:center">
       <div class="font-display fade-up" style="font-size:22px;font-weight:700;color:#3a0f1a;margin-bottom:10px">It's ready 💕</div>
-      <p style="color:#b8718a;font-size:12.5px;margin-bottom:20px">Copy this link and send it to her.</p>
+      <p style="color:#b8718a;font-size:12.5px;margin-bottom:20px">Copy this link and send it to him.</p>
       <div style="display:flex;gap:8px;width:100%">
         <input id="out-link" class="inp" readonly style="font-size:11px" />
         <button class="btn btn-sm" onclick="copyLink()">Copy</button>
@@ -289,7 +286,7 @@ Happy Girlfriend's Day, my love. You're stuck with me forever now. 💕</textare
       <div class="phone-bg">
         <div class="phone-time">
           <div class="hh" id="notif-clock">9:41</div>
-          <div class="dd">Girlfriend's Day</div>
+          <div class="dd">Boyfriend's Day</div>
         </div>
 
         <div class="notif">
@@ -331,7 +328,7 @@ Happy Girlfriend's Day, my love. You're stuck with me forever now. 💕</textare
     <!-- ============ STEP 2 — ENVELOPE ============ -->
     <section id="step-envelope" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:36px 26px;text-align:center">
       <button id="env-edit-btn" class="btn-ghost btn-sm" style="position:absolute;top:14px;left:14px;z-index:5" onclick="goBackTo('step-intake')">← Edit</button>
-      <div class="font-display fade-up" style="font-size:26px;font-weight:700;color:#3a0f1a;margin-bottom:26px" id="env-title">Happy Girlfriend's Day</div>
+      <div class="font-display fade-up" style="font-size:26px;font-weight:700;color:#3a0f1a;margin-bottom:26px" id="env-title">Happy Boyfriend's Day</div>
 
       <div id="envelope" class="fade-up" onclick="openEnvelope()" style="cursor:pointer;width:230px;position:relative;perspective:600px">
         <div style="width:230px;height:150px;background:#fff6f0;border-radius:6px;position:relative;box-shadow:0 16px 30px -12px rgba(90,10,30,.35);overflow:hidden">
@@ -368,7 +365,7 @@ Happy Girlfriend's Day, my love. You're stuck with me forever now. 💕</textare
       <div class="font-display fade-up" style="font-size:14.5px;font-style:italic;color:#3a0f1a;margin-top:24px;max-width:260px;line-height:1.65">
         Every hug, every quiet moment, every little "us" — that's what this is for.
       </div>
-      <div class="font-script fade-up" style="font-size:15px;color:#b8718a;margin-top:6px">happy girlfriend's day 💕</div>
+      <div class="font-script fade-up" style="font-size:15px;color:#b8718a;margin-top:6px">happy boyfriend's day 💕</div>
 
       <button class="btn fade-up" style="margin-top:28px" onclick="goTo('step-letter')">Open the letter →</button>
     </section>
@@ -395,19 +392,19 @@ Happy Girlfriend's Day, my love. You're stuck with me forever now. 💕</textare
 
     <!-- ============ STEP 3.5 — CERTIFICATION / AGREEMENT ============ -->
     <section id="step-agreement" style="display:none;flex:1;flex-direction:column;padding:30px 24px 24px">
-      <div class="font-display" style="font-size:19px;font-weight:700;color:#3a0f1a;text-align:center;margin-bottom:2px">Certificate of Official Girlfriend-ness</div>
+      <div class="font-display" style="font-size:19px;font-weight:700;color:#3a0f1a;text-align:center;margin-bottom:2px">Certificate of Official Boyfriend-ness</div>
       <div class="font-script" style="font-size:15px;color:#b83b5e;text-align:center;margin-bottom:16px">read carefully, tick honestly</div>
 
       <div class="agree-card">
-        <div style="font-size:11px;color:#b8718a;margin-bottom:10px;font-family:'Inter',sans-serif">By continuing, <b id="agree-recipient-name" style="color:#3a0f1a">she</b> confirms the following is true:</div>
+        <div style="font-size:11px;color:#b8718a;margin-bottom:10px;font-family:'Inter',sans-serif">By continuing, <b id="agree-recipient-name" style="color:#3a0f1a">he</b> confirms the following is true:</div>
 
-        <div class="agree-item"><div class="agree-check locked">✓</div><div>Puts up with his jokes, every single time</div></div>
+        <div class="agree-item"><div class="agree-check locked">✓</div><div>Puts up with her jokes, every single time</div></div>
         <div class="agree-item"><div class="agree-check locked">✓</div><div>Steals the blanket and somehow still gets the credit</div></div>
-        <div class="agree-item"><div class="agree-check locked">✓</div><div>Always right, even when she isn't — especially then</div></div>
+        <div class="agree-item"><div class="agree-check locked">✓</div><div>Always right, even when he isn't — especially then</div></div>
         <div class="agree-item"><div class="agree-check locked">✓</div><div>Makes an ordinary Tuesday feel like a good day</div></div>
         <div class="agree-item agree-final-row" onclick="toggleAgree()">
           <div class="agree-check final" id="agree-final-check"></div>
-          <div><b>Officially agrees to stay his favorite person — no takebacks, no expiry</b></div>
+          <div><b>Officially agrees to stay her favorite person — no takebacks, no expiry</b></div>
         </div>
 
         <div class="agree-terms">
@@ -428,7 +425,7 @@ Happy Girlfriend's Day, my love. You're stuck with me forever now. 💕</textare
     <!-- ============ STEP 4 — VISION BOARD (pinterest-style masonry, final) ============ -->
     <section id="step-gallery" style="display:none;flex:1;flex-direction:column;padding:28px 22px 24px;text-align:center;overflow-y:auto">
       <div class="font-script fade-up" style="font-size:22px;color:#3a0f1a;margin-bottom:4px">every little moment, with you</div>
-      <div class="fade-up" style="font-size:10.5px;letter-spacing:1px;color:#cda5ae;text-transform:uppercase;margin-bottom:16px">pinned, just for her</div>
+      <div class="fade-up" style="font-size:10.5px;letter-spacing:1px;color:#cda5ae;text-transform:uppercase;margin-bottom:16px">pinned, just for him</div>
 
       <div class="board-masonry">
 
@@ -474,7 +471,7 @@ Happy Girlfriend's Day, my love. You're stuck with me forever now. 💕</textare
 
         <!-- quote, full width -->
         <div class="board-item full-span fade-up" style="padding:0 4px">
-          <div class="board-quote">You're not just my girlfriend — you're my best friend, my safe place, and my greatest blessing.</div>
+          <div class="board-quote">You're not just my boyfriend — you're my best friend, my safe place, and my greatest blessing.</div>
         </div>
 
         <!-- focus photo 3 (user upload #3) -->
@@ -637,11 +634,11 @@ function startPreview(){
   state.recipient = recipient; state.sender = sender; state.message = message;
 
   document.getElementById('notif-sender-name').textContent = sender;
-  document.getElementById('env-title').textContent = `Happy Girlfriend's Day`;
+  document.getElementById('env-title').textContent = `Happy Boyfriend's Day`;
   document.getElementById('env-photo').src = state.photos[0] || 'photo1.jpeg';
   document.getElementById('letter-name').textContent = recipient;
   document.getElementById('letter-sender').textContent = sender;
-  document.getElementById('agree-recipient-name').textContent = recipient || 'she';
+  document.getElementById('agree-recipient-name').textContent = recipient || 'he';
   populateBoard(state.photos);
 
   goTo('step-notifications');
@@ -768,7 +765,7 @@ async function handlePayment(){
     key: RAZORPAY_KEY,
     amount: currentPrice * 100,
     currency: 'INR',
-    name: "Girlfriend's Day Surprise",
+    name: "Boyfriend's Day Surprise",
     description: `Surprise for ${state.recipient}`,
     handler: function(response){
       // payment is confirmed — persist immediately, before any upload/DB call,
@@ -860,11 +857,11 @@ async function finalizeSurprise(order){
     document.getElementById('out-link').value = link;
 
     document.getElementById('notif-sender-name').textContent = order.sender;
-    document.getElementById('env-title').textContent = `Happy Girlfriend's Day`;
+    document.getElementById('env-title').textContent = `Happy Boyfriend's Day`;
     document.getElementById('env-photo').src = urls[0] || 'photo1.jpeg';
     document.getElementById('letter-name').textContent = order.recipient;
     document.getElementById('letter-sender').textContent = order.sender;
-    document.getElementById('agree-recipient-name').textContent = order.recipient || 'she';
+    document.getElementById('agree-recipient-name').textContent = order.recipient || 'he';
     state.message = order.message;
     state.photos = urls;
     populateBoard(state.photos);
@@ -918,8 +915,19 @@ function copyLink(){
   });
 }
 
+/* ---------- song ---------- */
+function playSong(){
+  const a = document.getElementById('bg-song');
+  if(a) a.play().catch(e=>console.warn('song blocked', e));
+}
+function stopSong(){
+  const a = document.getElementById('bg-song');
+  if(a){ a.pause(); a.currentTime = 0; }
+}
+
 /* ---------- notification tap ---------- */
 function openNotification(){
+  playSong();
   goTo('step-envelope');
 }
 
@@ -1032,8 +1040,8 @@ async function downloadCertificate(){
     const canvas = document.createElement('canvas');
     canvas.width = w; canvas.height = h;
     const ctx = canvas.getContext('2d');
-    const sender = state.sender || 'Him';
-    const recipient = state.recipient || 'Her';
+    const sender = state.sender || 'Her';
+    const recipient = state.recipient || 'Him';
 
     // cream paper
     ctx.fillStyle = '#fff8ee';
@@ -1087,7 +1095,7 @@ async function downloadCertificate(){
     ctx.fillText('EXHIBIT LOVE', w/2, 178);
 
     ctx.font = 'italic 700 34px "Playfair Display"'; ctx.fillStyle = INK;
-    wrapCanvasText(ctx, 'Certificate of Official Girlfriend-ness', w/2, 222, w-260, 42);
+    wrapCanvasText(ctx, 'Certificate of Official Boyfriend-ness', w/2, 222, w-260, 42);
 
     ctx.font = '500 14px "Inter"'; ctx.fillStyle = ROSE;
     ctx.fillText('Awarded With Full Honors, No Objections Raised', w/2, 288);
@@ -1166,7 +1174,7 @@ async function downloadCertificate(){
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation:'portrait', unit:'px', format:[w,h] });
     pdf.addImage(dataUrl, 'PNG', 0, 0, w, h);
-    pdf.save(`girlfriend-certificate-${(state.recipient || 'certificate').replace(/\s+/g,'-').toLowerCase()}.pdf`);
+    pdf.save(`boyfriend-certificate-${(state.recipient || 'certificate').replace(/\s+/g,'-').toLowerCase()}.pdf`);
   }catch(err){
     console.error('Certificate generation failed', err);
     alert("Couldn't generate the certificate — try again.");
@@ -1197,6 +1205,7 @@ function goTo(id){
   el.style.display = 'flex';
   el.classList.remove('fade-up'); void el.offsetWidth; el.classList.add('fade-up');
   if(id === 'step-letter') typewriterLetter(state.message);
+  if(id === 'step-intake') stopSong();
 }
 function restartFlow(){
   document.getElementById('env-flap').style.transform = 'scaleY(1)';
@@ -1221,11 +1230,11 @@ function renderViewer(recipient, sender, message, photos){
   state.photos = photos;
 
   document.getElementById('notif-sender-name').textContent = sender;
-  document.getElementById('env-title').textContent = `Happy Girlfriend's Day`;
+  document.getElementById('env-title').textContent = `Happy Boyfriend's Day`;
   document.getElementById('env-photo').src = photos[0] || 'photo1.jpeg';
   document.getElementById('letter-name').textContent = recipient;
   document.getElementById('letter-sender').textContent = sender;
-  document.getElementById('agree-recipient-name').textContent = recipient || 'she';
+  document.getElementById('agree-recipient-name').textContent = recipient || 'he';
   populateBoard(photos);
 
   document.getElementById('gallery-actions').innerHTML = '<button class="btn-ghost" onclick="goTo(\'step-agreement\')">← Back</button>';
