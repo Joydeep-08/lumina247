@@ -182,6 +182,8 @@
   .board-ribbon{background:#b83b5e;color:#fff;border-radius:10px;padding:12px 10px;font-size:11px;letter-spacing:.3px;text-align:center;line-height:1.6}
   .board-ribbon .font-script{font-size:16px;display:block;margin-top:2px}
 
+  .board-empty{display:none;width:100%;aspect-ratio:4/5;align-items:center;justify-content:center;text-align:center;background:#f3d3da;color:#b8718a;font-size:12px;letter-spacing:.5px;padding:0 10px}
+
   /* shared-link boot state — kills the form flash before JS decides what to show */
   html.viewer-boot #step-intake{display:none !important}
   html.viewer-boot #step-bootload{display:flex !important}
@@ -332,7 +334,7 @@ Happy Boyfriend's Day. 💕</textarea>
 
       <div id="envelope" class="fade-up" onclick="openEnvelope()" style="cursor:pointer;width:230px;position:relative;perspective:600px">
         <div style="width:230px;height:150px;background:#fff6f0;border-radius:6px;position:relative;box-shadow:0 16px 30px -12px rgba(90,10,30,.35);overflow:hidden">
-          <img id="env-photo" src="photo1.jpeg" style="width:100%;height:100%;object-fit:cover;opacity:.9" />
+          <img id="env-photo" src="photo.jpeg" style="width:100%;height:100%;object-fit:cover;opacity:.9" />
           <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,246,240,.55),rgba(255,246,240,.15))"></div>
           <div id="env-flap" style="position:absolute;top:0;left:0;width:0;height:0;border-left:115px solid transparent;border-right:115px solid transparent;border-top:78px solid #fdeef0;transform-origin:top;transition:transform .6s ease"></div>
           <div style="position:absolute;top:58px;left:50%;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e28aa3,#b83b5e);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 6px rgba(0,0,0,.25);z-index:2">
@@ -635,7 +637,7 @@ function startPreview(){
 
   document.getElementById('notif-sender-name').textContent = sender;
   document.getElementById('env-title').textContent = `Happy Boyfriend's Day`;
-  document.getElementById('env-photo').src = state.photos[0] || 'photo1.jpeg';
+  document.getElementById('env-photo').src = 'photo.jpeg';
   document.getElementById('letter-name').textContent = recipient;
   document.getElementById('letter-sender').textContent = sender;
   document.getElementById('agree-recipient-name').textContent = recipient || 'he';
@@ -858,7 +860,7 @@ async function finalizeSurprise(order){
 
     document.getElementById('notif-sender-name').textContent = order.sender;
     document.getElementById('env-title').textContent = `Happy Boyfriend's Day`;
-    document.getElementById('env-photo').src = urls[0] || 'photo1.jpeg';
+    document.getElementById('env-photo').src = 'photo.jpeg';
     document.getElementById('letter-name').textContent = order.recipient;
     document.getElementById('letter-sender').textContent = order.sender;
     document.getElementById('agree-recipient-name').textContent = order.recipient || 'he';
@@ -943,7 +945,24 @@ function openEnvelope(){
 function populateBoard(photos){
   for(let i=0;i<PHOTO_COUNT;i++){
     const img = document.getElementById(`board-photo-${i}`);
-    if(img) img.src = photos[i] || 'download (1).png';
+    if(!img) continue;
+    let ph = document.getElementById(`board-empty-${i}`);
+    if(!ph){
+      ph = document.createElement('div');
+      ph.id = `board-empty-${i}`;
+      ph.className = 'board-empty';
+      ph.textContent = 'Upload photos';
+      img.after(ph);
+    }
+    if(photos[i]){
+      img.src = photos[i];
+      img.style.display = 'block';
+      ph.style.display = 'none';
+    } else {
+      img.removeAttribute('src');
+      img.style.display = 'none';
+      ph.style.display = 'flex';
+    }
   }
 }
 
@@ -1231,7 +1250,7 @@ function renderViewer(recipient, sender, message, photos){
 
   document.getElementById('notif-sender-name').textContent = sender;
   document.getElementById('env-title').textContent = `Happy Boyfriend's Day`;
-  document.getElementById('env-photo').src = photos[0] || 'photo1.jpeg';
+  document.getElementById('env-photo').src = 'photo.jpeg';
   document.getElementById('letter-name').textContent = recipient;
   document.getElementById('letter-sender').textContent = sender;
   document.getElementById('agree-recipient-name').textContent = recipient || 'he';
