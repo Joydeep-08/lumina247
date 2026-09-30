@@ -10,6 +10,7 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
   
 <script>
   // runs immediately, before the body paints — if this is a shared link
@@ -279,7 +280,12 @@ Happy Boyfriend's Day. 💕</textarea>
         <button class="btn btn-sm" onclick="copyLink()">Copy</button>
       </div>
       <div id="copy-msg" style="display:none;color:#4a8a5c;font-size:11px;margin-top:8px">Copied!</div>
-      <button class="btn-ghost" style="margin-top:20px" onclick="goTo('step-notifications')">Preview it</button>
+
+      <div style="margin-top:22px;width:100%;max-width:250px">
+        <canvas id="qr-canvas" style="width:100%;height:auto;border-radius:18px;box-shadow:0 14px 28px -12px rgba(184,59,94,.45);display:block"></canvas>
+        <button class="btn btn-sm" style="margin-top:12px;width:100%" onclick="downloadQR()">Download QR ↓</button>
+      </div>
+      <button class="btn-ghost" style="margin-top:14px" onclick="goTo('step-notifications')">Preview it</button>
     </section>
 
     <!-- ============ STEP 1 — NOTIFICATIONS (phone lock screen) ============ -->
@@ -857,6 +863,7 @@ async function finalizeSurprise(order){
     const link = `${location.origin}${location.pathname}?id=${row.id}`;
 
     document.getElementById('out-link').value = link;
+    try{ drawAestheticQR(link, order.recipient); }catch(e){ console.warn('QR failed', e); }
 
     document.getElementById('notif-sender-name').textContent = order.sender;
     document.getElementById('env-title').textContent = `Happy Boyfriend's Day`;
@@ -915,6 +922,95 @@ function copyLink(){
     msg.style.display = 'block';
     setTimeout(()=> msg.style.display='none', 1800);
   });
+}
+
+/* ---------- aesthetic QR ---------- */
+function drawAestheticQR(text, recipient){
+  const qr = qrcode(0, 'H');
+  qr.addData(text); qr.make();
+  const n = qr.getModuleCount();
+  const W = 900, H = 1080, pad = 90, top = 90;
+  const cv = document.getElementById('qr-canvas');
+  cv.width = W; cv.height = H;
+  const c = cv.getContext('2d');
+
+  const rr = (x,y,w,h,r)=>{ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); };
+
+  // background card
+  const bg = c.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#fff6f0'); bg.addColorStop(1,'#fde3ea');
+  rr(0,0,W,H,60); c.fillStyle = bg; c.fill();
+  c.save(); rr(0,0,W,H,60); c.clip();
+  // soft floating hearts
+  c.fillStyle = 'rgba(184,59,94,.07)';
+  [[80,70,34],[810,120,26],[840,900,38],[60,960,28],[450,1030,20],[790,560,18],[70,520,20]].forEach(([x,y,r])=>heart(c,x,y,r));
+  c.restore();
+  // frame
+  rr(28,28,W-56,H-56,44); c.lineWidth = 3; c.strokeStyle = 'rgba(184,59,94,.35)'; c.setLineDash([2,12]); c.lineCap='round'; c.stroke(); c.setLineDash([]);
+
+  // QR panel
+  const qrSize = W - pad*2;
+  const panelPad = 34;
+  rr(pad-panelPad, top-panelPad+30, qrSize+panelPad*2, qrSize+panelPad*2, 40);
+  c.fillStyle = '#ffffff'; c.shadowColor = 'rgba(184,59,94,.30)'; c.shadowBlur = 40; c.shadowOffsetY = 14; c.fill();
+  c.shadowColor = 'transparent';
+
+  const ox = pad, oy = top + 30;
+  const m = qrSize / n;
+  const g = c.createLinearGradient(ox, oy, ox+qrSize, oy+qrSize);
+  g.addColorStop(0,'#7d1730'); g.addColorStop(.55,'#b83b5e'); g.addColorStop(1,'#e28aa3');
+
+  const inFinder = (r,cc)=> (r<7&&cc<7)||(r<7&&cc>=n-7)||(r>=n-7&&cc<7);
+  const dark = (r,cc)=> r>=0&&cc>=0&&r<n&&cc<n&&qr.isDark(r,cc);
+
+  // clear zone for center heart
+  const zone = Math.floor(n*0.2);
+  const cz0 = Math.floor((n-zone)/2), cz1 = cz0+zone;
+  const inZone = (r,cc)=> r>=cz0&&r<cz1&&cc>=cz0&&cc<cz1;
+
+  c.fillStyle = g;
+  for(let r=0;r<n;r++){
+    for(let cc=0;cc<n;cc++){
+      if(!dark(r,cc) || inFinder(r,cc) || inZone(r,cc)) continue;
+      const x = ox+cc*m, y = oy+r*m;
+      c.beginPath(); c.arc(x+m/2, y+m/2, m*0.43, 0, Math.PI*2); c.fill();
+    }
+  }
+  // finder patterns — rounded squares
+  [[0,0],[0,n-7],[n-7,0]].forEach(([r,cc])=>{
+    const x = ox+cc*m, y = oy+r*m;
+    rr(x,y,7*m,7*m,m*2.2); c.fillStyle = g; c.fill();
+    rr(x+m,y+m,5*m,5*m,m*1.5); c.fillStyle = '#fff'; c.fill();
+    rr(x+2*m,y+2*m,3*m,3*m,m*1.0); c.fillStyle = g; c.fill();
+  });
+  // center heart badge
+  const cx = ox+qrSize/2, cy = oy+qrSize/2, br = zone*m*0.52;
+  c.beginPath(); c.arc(cx,cy,br,0,Math.PI*2); c.fillStyle = '#fff'; c.fill();
+  c.lineWidth = 4; c.strokeStyle = 'rgba(184,59,94,.25)'; c.stroke();
+  c.fillStyle = g; heart(c,cx,cy+br*0.05,br*0.58);
+
+  // captions
+  c.textAlign = 'center';
+  c.fillStyle = '#b83b5e'; c.font = '600 64px "Dancing Script", cursive';
+  c.fillText('scan to open your surprise', W/2, oy+qrSize+panelPad+95);
+  c.fillStyle = '#3a0f1a'; c.font = 'italic 600 34px "Playfair Display", serif';
+  c.fillText(recipient ? ('made with love, for '+recipient+' 💕') : 'made with love 💕', W/2, oy+qrSize+panelPad+150);
+  c.fillStyle = '#d9a9b5'; c.font = '600 20px Inter, sans-serif';
+  c.fillText('DESIGNS BY JOY', W/2, H-52);
+}
+function heart(c,x,y,s){
+  c.beginPath();
+  c.moveTo(x, y+s*0.9);
+  c.bezierCurveTo(x-s*1.5, y-s*0.1, x-s*0.8, y-s*1.1, x, y-s*0.4);
+  c.bezierCurveTo(x+s*0.8, y-s*1.1, x+s*1.5, y-s*0.1, x, y+s*0.9);
+  c.closePath(); c.fill();
+}
+function downloadQR(){
+  const cv = document.getElementById('qr-canvas');
+  const a = document.createElement('a');
+  a.href = cv.toDataURL('image/png');
+  a.download = 'surprise-qr.png';
+  document.body.appendChild(a); a.click(); a.remove();
 }
 
 /* ---------- song ---------- */
