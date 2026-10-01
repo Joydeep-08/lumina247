@@ -1005,12 +1005,64 @@ function heart(c,x,y,s){
   c.bezierCurveTo(x+s*0.8, y-s*1.1, x+s*1.5, y-s*0.1, x, y+s*0.9);
   c.closePath(); c.fill();
 }
+
+/* ---------- QR download (blob + share sheet + long-press fallback) ---------- */
 function downloadQR(){
   const cv = document.getElementById('qr-canvas');
-  const a = document.createElement('a');
-  a.href = cv.toDataURL('image/png');
-  a.download = 'surprise-qr.png';
-  document.body.appendChild(a); a.click(); a.remove();
+  if(!cv || !cv.width){ alert('QR is not ready yet — try again in a second.'); return; }
+
+  const fileName = 'surprise-qr.png';
+  const ua = navigator.userAgent || '';
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(ua);
+  // in-app browsers ignore the download attribute completely
+  const isInApp = /FBAN|FBAV|Instagram|Line\/|MicroMessenger|Snapchat|GSA\//i.test(ua);
+
+  cv.toBlob(async (blob)=>{
+    if(!blob || isInApp){ showQRFallback(cv.toDataURL('image/png')); return; }
+
+    const file = new File([blob], fileName, { type:'image/png' });
+
+    // mobile: native share sheet -> "Save Image" / WhatsApp / etc.
+    if(isMobile && navigator.canShare && navigator.canShare({ files:[file] })){
+      try{
+        await navigator.share({ files:[file], title:'Surprise QR' });
+        return;
+      }catch(e){
+        if(e && e.name === 'AbortError') return; // user closed the sheet
+        // otherwise fall through to normal download
+      }
+    }
+
+    // desktop / normal browsers: blob URL download (way more reliable than data URLs)
+    try{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{ a.remove(); URL.revokeObjectURL(url); }, 4000);
+    }catch(e){
+      showQRFallback(cv.toDataURL('image/png'));
+    }
+  }, 'image/png');
+}
+
+// last resort: show the QR as a plain image so the user can long-press to save
+function showQRFallback(dataUrl){
+  const old = document.getElementById('qr-fallback');
+  if(old) old.remove();
+  const ov = document.createElement('div');
+  ov.id = 'qr-fallback';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(58,15,26,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:14px';
+  ov.innerHTML = `
+    <img src="${dataUrl}" style="max-width:100%;max-height:70vh;border-radius:18px" alt="QR code" />
+    <div style="color:#fff;font-size:13px;text-align:center;font-family:Inter,sans-serif">
+      Press and hold the image, then tap <b>Save image</b>
+    </div>
+    <button class="btn btn-sm" onclick="document.getElementById('qr-fallback').remove()">Close</button>`;
+  document.body.appendChild(ov);
 }
 
 /* ---------- song ---------- */
@@ -1037,7 +1089,7 @@ function openEnvelope(){
 }
 
 /* ---------- vision board: fills the 3 "focus" slots with the user's uploads.
-   The 2 secondary photos (photo.jpeg, photo1.jpeg) are static in the HTML. ---------- */
+   The 2 secondary photos (photo.jpeg, download (1).png) are static in the HTML. ---------- */
 function populateBoard(photos){
   for(let i=0;i<PHOTO_COUNT;i++){
     const img = document.getElementById(`board-photo-${i}`);
